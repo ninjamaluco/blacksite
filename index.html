@@ -1,0 +1,1868 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Windows 98 - BLACKBYTE</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=MS+Sans+Serif:wght@400;700&display=swap');
+        
+        body {
+          
+            font-family: 'MS Sans Serif', sans-serif;
+            background-color: #008080;
+            color: #000;
+            overflow: hidden;
+            height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+        
+        .desktop {
+            position: relative;
+            width: 100%;
+            height: calc(100% - 40px);
+            padding: 10px;
+            overflow: hidden;
+            background-image: url('https://i.imgur.com/QExucdA.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        .matrix-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: -1;
+  background-color: black; /* <- cor preta */
+}
+        
+.resizer {
+  width: 16px;
+  height: 16px;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  cursor: se-resize;
+  background: url('data:image/svg+xml;utf8,<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg"><path d="M0 16 L16 0 M4 16 L16 4 M8 16 L16 8 M12 16 L16 12" stroke="gray" /></svg>') no-repeat center;
+}
+
+
+        .blackbyte-logo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 72px;
+            font-weight: bold;
+            color: #000;
+            text-shadow: 2px 2px 0 #fff, -2px -2px 0 #fff, 2px -2px 0 #fff, -2px 2px 0 #fff;
+            opacity: 0.2;
+            z-index: -1;
+            pointer-events: none;
+        }
+        
+        .icon {
+            width: 80px;
+            text-align: center;
+            margin: 10px;
+            cursor: pointer;
+            color: #fff;
+            font-size: 13px;
+            background-color: transparent;
+            padding: 5px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .icon img {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 5px;
+        }
+        
+        .icon:hover {
+            background-color: rgba(255, 0, 0, 0.2);
+        }
+        
+        .window {
+            position: absolute;
+            border: 3px solid;
+            border-color: #dfdfdf #808080 #808080 #dfdfdf;
+            background-color: #c0c0c0;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+            min-width: 300px;
+            min-height: 200px;
+            z-index: 10;
+            color: #000;
+        }
+        
+        .title-bar {
+            background: linear-gradient(to right, #D32F2F, #000000);
+            color: #fff;
+            padding: 3px 4px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: move;
+            font-size: 13px;
+            border-bottom: 1px solid #000;
+        }
+        
+        .window-content {
+            padding: 10px;
+            background-color: #c0c0c0;
+            height: calc(100% - 30px);
+            overflow: auto;
+            border: 1px solid #808080;
+            font-size: 13px;
+        }
+        
+        .window-buttons {
+            display: flex;
+        }
+        
+        .window-button {
+            width: 18px;
+            height: 18px;
+            margin-left: 2px;
+            background-color: #c0c0c0;
+            border: 1px solid #808080;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 12px;
+            cursor: pointer;
+            line-height: 1;
+            color: #000;
+        }
+        
+        .window-button:active {
+            border-color: #808080;
+            border-top-color: #000;
+            border-left-color: #000;
+        }
+        
+        .taskbar {
+            position: fixed;
+            bottom: 0;
+              left: 0;
+            width: 100%;
+            height: 30px;
+            background-color: #c0c0c0;
+            border-top: 2px solid #dfdfdf;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+            color: #000;
+        }
+        
+        .start-button {
+            height: 100%;
+            padding: 0 8px;
+            background: linear-gradient(to right, #D32F2F, #000000);
+            color: #fff;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            border-right: 2px solid #000;
+            font-size: 13px;
+        }
+        
+        .clock {
+            margin-left: auto;
+            padding: 0 8px;
+            background-color: #c0c0c0;
+            border-left: 2px solid #808080;
+            border-top: 2px solid #808080;
+            border-bottom: 2px solid #fff;
+            border-right: 2px solid #fff;
+            height: calc(100% - 4px);
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+        }
+        
+        .start-menu {
+            position: fixed;
+            bottom: 30px;
+            left: 0;
+            width: 200px;
+            background-color: #c0c0c0;
+            border: 2px solid #808080;
+            border-bottom-color: #fff;
+            border-right-color: #fff;
+            z-index: 101;
+            display: none;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .start-menu-item {
+            padding: 3px 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #000;
+        }
+        
+        .start-menu-item:hover {
+            background-color: #000080;
+            color: #fff;
+        }
+        
+        .start-menu-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+            color: #000;
+        }
+        
+        .start-menu-item:hover i {
+            color: #fff;
+        }
+        
+        .bsod {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 9999;
+    width: 100%;
+    height: 100%;
+    background-color: #0000AA;
+    color: white;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+        
+        .bsod-text {
+            margin-bottom: 30px;
+            max-width: 600px;
+        }
+        
+        .bsod-button {
+            padding: 6px 12px;
+            background-color: #c0c0c0;
+            color: #000;
+            border: 2px solid #808080;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        
+        .bsod-button:active {
+            border-color: #808080;
+            border-top-color: #000;
+            border-left-color: #000;
+        }
+        
+        .button-98 {
+            background-color: #c0c0c0;
+            border: 2px solid #808080;
+            border-top-color: #fff;
+            border-left-color: #fff;
+            padding: 4px 8px;
+            font-size: 13px;
+            cursor: pointer;
+            outline: none;
+            color: #000;
+        }
+        
+        .button-98:active {
+            border-color: #808080;
+            border-top-color: #000;
+            border-left-color: #000;
+        }
+        
+        .button-98-primary {
+            background-color: #FF0000;
+            color: #fff;
+        }
+        
+        .input-98 {
+            background-color: #fff;
+            border: 2px solid #808080;
+            border-top-color: #000;
+            border-left-color: #000;
+            padding: 3px 5px;
+            font-size: 13px;
+            font-family: 'MS Sans Serif', sans-serif;
+            color: #000;
+        }
+        
+        .input-98:focus {
+            outline: none;
+            border-color: #FF0000;
+        }
+        
+        .progress-98 {
+            height: 16px;
+            background-color: #fff;
+            border: 2px solid #808080;
+            border-top-color: #000;
+            border-left-color: #000;
+            position: relative;
+        }
+        
+        .progress-98-bar {
+            height: 100%;
+            background-color: #FF0000;
+            width: 0%;
+        }
+        
+        .scrollbar-98 {
+            scrollbar-width: thin;
+            scrollbar-color: #808080 #c0c0c0;
+        }
+        
+        .scrollbar-98::-webkit-scrollbar {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .scrollbar-98::-webkit-scrollbar-track {
+            background: #c0c0c0;
+            border: 2px solid #808080;
+            border-top-color: #fff;
+            border-left-color: #fff;
+        }
+        
+        .scrollbar-98::-webkit-scrollbar-thumb {
+            background-color: #808080;
+            border: 2px solid #808080;
+            border-top-color: #fff;
+            border-left-color: #fff;
+        }
+        
+        .file-explorer-item {
+            padding: 2px 5px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            color: #000;
+        }
+        
+        .file-explorer-item:hover {
+            background-color: #FF0000;
+            color: #fff;
+        }
+        
+        .file-explorer-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+            color: #000;
+        }
+        
+        .file-explorer-item:hover i {
+            color: #fff;
+        }
+        
+        /* Matrix effect */
+        .matrix-column {
+            position: absolute;
+            top: 0;
+            color: #f00;
+            font-size: 16px;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            text-shadow: 0 0 5px #f00;
+            opacity: 0.8;
+            animation: matrix-fall linear infinite;
+        }
+        
+        @keyframes matrix-fall {
+            0% {
+                transform: translateY(-100%);
+            }
+            100% {
+                transform: translateY(100vh);
+            }
+        }
+        
+        /* Glitch effect */
+        .glitch {
+            position: relative;
+        }
+        
+        .glitch::before, .glitch::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000080;
+        }
+        
+        .glitch::before {
+            left: 2px;
+            text-shadow: -2px 0 #ff00ff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim 5s infinite linear alternate-reverse;
+        }
+        
+        .glitch::after {
+            left: -2px;
+            text-shadow: -2px 0 #00ffff;
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-anim2 5s infinite linear alternate-reverse;
+        }
+        
+        @keyframes glitch-anim {
+            0% { clip: rect(31px, 9999px, 94px, 0); }
+            10% { clip: rect(112px, 9999px, 76px, 0); }
+            20% { clip: rect(85px, 9999px, 77px, 0); }
+            30% { clip: rect(27px, 9999px, 97px, 0); }
+            40% { clip: rect(64px, 9999px, 98px, 0); }
+            50% { clip: rect(61px, 9999px, 85px, 0); }
+            60% { clip: rect(99px, 9999px, 114px, 0); }
+            70% { clip: rect(34px, 9999px, 115px, 0); }
+            80% { clip: rect(98px, 9999px, 129px, 0); }
+            90% { clip: rect(43px, 9999px, 96px, 0); }
+            100% { clip: rect(82px, 9999px, 64px, 0); }
+        }
+        
+        @keyframes glitch-anim2 {
+            0% { clip: rect(65px, 9999px, 119px, 0); }
+            10% { clip: rect(79px, 9999px, 66px, 0); }
+            20% { clip: rect(75px, 9999px, 99px, 0); }
+            30% { clip: rect(58px, 9999px, 93px, 0); }
+            40% { clip: rect(78px, 9999px, 94px, 0); }
+            50% { clip: rect(98px, 9999px, 90px, 0); }
+            60% { clip: rect(93px, 9999px, 98px, 0); }
+            70% { clip: rect(53px, 9999px, 57px, 0); }
+            80% { clip: rect(115px, 9999px, 102px, 0); }
+            90% { clip: rect(129px, 9999px, 74px, 0); }
+            100% { clip: rect(34px, 9999px, 103px, 0); }
+        }
+        
+        /* Flicker effect */
+        @keyframes flicker {
+            0%, 19.999%, 22%, 62.999%, 64%, 64.999%, 70%, 100% {
+                opacity: 1;
+            }
+            20%, 21.999%, 63%, 63.999%, 65%, 69.999% {
+                opacity: 0.5;
+            }
+        }
+        
+        .flicker {
+            animation: flicker 3s linear infinite;
+        }
+        
+        /* Loading animation */
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .loading {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top: 4px solid #fff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        
+        /* Computer face */
+        .computer-face {
+            font-size: 60px;
+            margin: 20px 0;
+            animation: flicker 2s infinite;
+        }
+        
+        /* Textarea for multiple wallets */
+        .textarea-98 {
+            background-color: #fff;
+            border: 2px solid #808080;
+            border-top-color: #000;
+            border-left-color: #000;
+            padding: 5px;
+            font-size: 13px;
+            font-family: 'MS Sans Serif', sans-serif;
+            color: #000;
+            width: 100%;
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        .textarea-98:focus {
+            outline: none;
+            border-color: #FF0000;
+        }
+        
+        .wallet-count {
+            font-size: 11px;
+            color: #555;
+            margin-top: 2px;
+            text-align: right;
+        }
+        
+        /* MSN Messenger Styles */
+        .msn-window {
+           width: 350px;
+          height: 500px;
+          background: linear-gradient(to bottom, #D32F2F, #000000);
+          border: 1px solid #550000;
+          color: white;
+}
+
+        
+        .msn-title {
+            background: linear-gradient(to right, #0066CC, #003366);
+            padding: 5px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .msn-content {
+            padding: 10px;
+            height: calc(100% - 80px);
+            overflow-y: auto;
+        }
+        
+.msn-footer {
+    background: #300000;
+    padding: 5px;
+    position: absolute;
+    bottom: 0;
+    width: calc(100% - 10px);
+    display: flex;
+    justify-content: space-between;
+}
+
+        
+     .msn-button {
+    background: linear-gradient(to bottom, #FF5C5C, #B20000);
+    border: 1px solid #550000;
+    border-radius: 3px;
+    padding: 3px 8px;
+    color: white;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+        
+        .msn-button:hover {
+            background: linear-gradient(to bottom, #0099FF, #0066CC);
+        }
+        
+        .msn-message {
+            margin-bottom: 10px;
+            padding: 8px;
+            border-radius: 5px;
+            max-width: 80%;
+            word-wrap: break-word;
+        }
+        
+        .msn-question {
+            background-color: #E6F2FF;
+            color: #003366;
+            margin-left: auto;
+            margin-right: 10px;
+            border-top-right-radius: 0;
+        }
+        
+        .msn-answer {
+            background-color: #FFFFFF;
+            color: #000000;
+            margin-right: auto;
+            margin-left: 10px;
+            border-top-left-radius: 0;
+        }
+        
+        .msn-contact {
+            display: flex;
+            align-items: center;
+            padding: 5px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            cursor: pointer;
+        }
+        
+        .msn-contact:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        
+        .msn-contact img {
+            width: 32px;
+            height: 32px;
+            margin-right: 10px;
+            border-radius: 50%;
+        }
+        
+        .msn-status {
+            font-size: 11px;
+            color: #CCCCCC;
+        }
+        
+        .msn-input {
+            width: calc(100% - 20px);
+            padding: 5px;
+            margin: 5px;
+            border: 1px solid #003366;
+            border-radius: 3px;
+        }
+        
+        .msn-select {
+            width: 100%;
+            padding: 5px;
+            margin-bottom: 10px;
+            background-color: white;
+            color: #003366;
+            border: 1px solid #003366;
+        }
+
+        /* Login Window Styles */
+        .login-window {
+            width: 300px;
+            background-color: #c0c0c0;
+        }
+
+        .login-form {
+            padding: 20px;
+        }
+
+        .login-input-group {
+            margin-bottom: 15px;
+        }
+
+        .login-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .login-error {
+            color: #D32F2F;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+  <!-- BSOD estático — cole AQUI -->
+  <div id="bsod" class="bsod">
+    <div class="bsod-text">
+      <h1 class="text-2xl font-bold mb-4 glitch"
+          data-text="Error: 404 - An error has occurred">
+        Error: 404 - An error has occurred
+      </h1>
+      <div class="computer-face">(╯°□°）╯︵ ┻━┻</div>
+      <p class="mb-2">
+        A fatal exception 0E has occurred at 0028:C0011E36 in VXD VMM(01) + 00010E36.
+      </p>
+      <p class="mb-4">The current application will be terminated.</p>
+      <p>* Press any key to terminate the current application.</p>
+      <p>* Press F again to restart your computer. You will lose any unsaved information in all applications.</p>
+    </div>
+    <button class="bsod-button flicker" onclick="restartSystem()">
+      Restart Website
+    </button>
+  </div>
+
+  <!-- resto do seu corpo O ERRO TA AQUI --> 
+
+    <div class="matrix-bg" id="matrix-bg"></div>
+    <div class="blackbyte-logo">BLACKBYTE</div>
+    
+    <div class="desktop">
+        <!-- Desktop Icons -->
+        <div class="icon absolute" style="top: 10px; left: 10px;" onclick="showBSOD()">
+            <img src="https://win98icons.alexmeub.com/icons/png/computer-4.png" />
+            <div>My Computer</div>
+        </div>
+        
+        <div class="icon absolute" style="top: 10px; left: 100px;" onclick="openWindow('wallet-connect')">
+            <img src="https://win98icons.alexmeub.com/icons/png/mouse_padlock.png" alt="Connect Wallet">
+            <div>Connect Wallet</div>
+        </div>
+        
+        <div class="icon absolute" style="top: 100px; left: 10px;" onclick="openWindow('whitelist-checker')">
+            <img src="https://win98icons.alexmeub.com/icons/png/document-0.png" alt="Whitelist Checker">
+            <div>Whitelist Checker</div>
+        </div>
+        
+        <div class="icon absolute" style="top: 100px; left: 100px;" onclick="openWindow('music-player')">
+            <img src="https://win98icons.alexmeub.com/icons/png/cd_drive_purple-0.png" alt="Music Player">
+            <div>Music Player</div>
+        </div>
+        
+        <div class="icon absolute" style="top: 10px; left: 190px; display: none;" onclick="openAdminPanel()">
+         <img src="https://win98icons.alexmeub.com/icons/png/clean_drive-5.png" alt="Admin Panel">
+         <div>Admin Panel</div>
+      </div>
+
+      <div class="icon absolute" style="top: 370px; left: 10px" onclick="openWindow('internet-explorer')">
+    <img src="https://win98icons.alexmeub.com/icons/png/game_spider-0.png" alt="Byte Casino" style="width: 32px; height: 32px;">
+    <div>Byte Casino</div>
+</div>
+
+ <div class="icon absolute" style="top: 465px; left: 10px"onclick="openWindow('ai-byte')">
+  <img src="https://win98icons.alexmeub.com/icons/png/computer_taskmgr-0.png" alt="AI Byte" style="width: 32px; height: 32px;">
+  <div>AI Byte</div>
+</div>
+
+
+
+        
+        <!-- New MSN Messenger Icon -->
+        <div class="icon absolute" style="top: 195px; left: 100px;" onclick="openWindow('msn-faq')">
+            <img src="https://win98icons.alexmeub.com/icons/png/msn2-2.png" alt="BSN">
+            <div>MSN</div>
+        </div>
+
+        <div class="icon absolute" style="top: 190px; left: 10px;" onclick="openWindow('staking')">
+            <img src="https://win98icons.alexmeub.com/icons/png/msie1-2.png" alt="NFT Staking" style="width: 32px; height: 32px;">
+            <div>Byte Staking</div>
+        </div>
+
+        <!-- Ícone do Twitter -->
+        <div class="icon absolute" style="top: 290px; left: 10px;" onclick="window.open('https://twitter.com/BlackByteNFT', '_blank')">
+            <img src="https://win98icons.alexmeub.com/icons/png/channels-3.png" alt="Twitter">
+            <div>Twitter</div>
+        </div>
+    
+    <!-- Windows -->
+    <div id="my-computer-window" class="window hidden" style="top: 50px; left: 50px; width: 500px; height: 400px;">
+        <div class="title-bar">
+            <div>My Computer</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('my-computer')">_</div>
+                <div class="window-button" onclick="maximizeWindow('my-computer')">□</div>
+                <div class="window-button" onclick="closeWindow('my-computer')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <div class="flex h-full">
+                <div class="w-1/4 border-r border-gray-500 pr-2">
+                    <div class="file-explorer-item">
+                        <i class="fas fa-desktop"></i> Desktop
+                    </div>
+                    <div class="file-explorer-item">
+                        <i class="fas fa-hdd"></i> Local Disk (C:)
+                    </div>
+                    <div class="file-explorer-item">
+                        <i class="fas fa-network-wired"></i> Network
+                    </div>
+                    <div class="file-explorer-item" onclick="showBSOD()">
+                        <i class="fas fa-folder"></i> System Files
+                    </div>
+                </div>
+                <div class="w-3/4 pl-4">
+                    <h3 class="font-bold mb-2">Local Disk (C:)</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="text-center cursor-pointer" onclick="showBSOD()">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iIzAwMDA4MCIgZD0iTTI0IDRIOEM2LjkgNCA2IDQuOSA2IDZ2MjBjMCAxLjEuOSAyIDIgMmgxNmMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0yem0wIDJ2MTBINlY2aDE4em0wIDEyVjI0SDZ2LThoMTh6Ii8+PC9zdmc+" alt="Folder" class="mx-auto mb-1">
+                            <div>System Files</div>
+                        </div>
+                        <div class="text-center cursor-pointer">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iIzAwMDA4MCIgZD0iTTI0IDRIOEM2LjkgNCA2IDQuOSA2IDZ2MjBjMCAxLjEuOSAyIDIgMmgxNmMxLjEgMCAyLS45IDItMlY2YzAtMS4xLS45LTItMi0yem0wIDJ2MTBINlY2aDE4em0wIDEyVjI0SDZ2LThoMTh6Ii8+PC9zdmc+" alt="Folder" class="mx-auto mb-1">
+                            <div>Program Files</div>
+                        </div>
+                        <div class="text-center cursor-pointer">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iIzAwMDA4MCIgZD0iTTI0IDRIOEM2LjkgNCA2IDQuOSA2IDZ2MjBjMCA1LjEgLjkgMiAyIDJoMTZjMS4xIDAgMi0uOSAyLTJWNmMwLTEuMS0uOS0yLTItMnptMCAydjEwSDZWNGgxOHptMCAxMlYyNEg2di04aDE4eiIvPjwvc3ZnPg==" alt="Folder" class="mx-auto mb-1">
+                            <div>Documents</div>
+                        </div>
+                        <div class="text-center cursor-pointer">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZmlsbD0iIzEwODRkMCIgZD0iTTI2IDRINkMyLjcgNCAwIDYuNyAwIDEwdjEyYzAgMy4zIDIuNyA2IDYgNmgxOWMxLjEgMCAyLS45IDItMnYtMTZsLTUtNXptLTUgMnY0aDRsLTQtNHptNSA0djE0SDZjLTIuMiAwLTQtMS44LTQtNFYxMGMwLTIuMiAxLjgtNCA0LTRoMTB2NGMwIDEuMS45IDIgMiAyaDR6Ii8+PC9zdmc+" alt="File" class="mx-auto mb-1">
+                            <div>readme.txt</div>
+                        </div>
+                        <div class="text-center cursor-pointer">
+                            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAzMiAzMiI+PHBhdGggZillbD0iIzEwODRkMCIgZD0iTTI2IDRINkMyLjcgNCAwIDYuNyAwIDEwdjEyYzAgMy4zIDIuNyA2IDYgNmgxOWMxLjEgMCAyLS45IDItMnYtMTZsLTUtNXptLTUgMnY0aDRsLTQtNHptNSA0djE0SDZjLTIyIDAtNC0xLjgtNC00VjEwYzAtMi4yIDEuOC00IDQtNGgxMHY0YzAgMS4xLjkgMiAyIDJoNHoiLz48L3N2Zz4=" alt="File" class="mx-auto mb-1">
+                            <div>config.ini</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="wallet-connect-window" class="window hidden" style="top: 100px; left: 100px; width: 400px;">
+        <div class="title-bar">
+            <div>Connect EVM Wallet</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('wallet-connect')">_</div>
+                <div class="window-button" onclick="maximizeWindow('wallet-connect')">□</div>
+                <div class="window-button" onclick="closeWindow('wallet-connect')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <h2 class="text-xl font-bold mb-4">Connect Your Wallet</h2>
+            <p class="mb-4">Select your wallet provider to connect to BLACKBYTE:</p>
+            
+            <div id="wallet-not-connected" class="space-y-2">
+                <button class="button-98 w-full text-left" disabled style="opacity: 0.6; cursor: not-allowed; background-color: #e57373;">
+                    <i class="fab fa-ethereum mr-2"></i> MetaMask
+                </button>
+                <button class="button-98 w-full text-left" disabled style="opacity: 0.6; cursor: not-allowed; background-color: #e57373;">
+                    <i class="fas fa-wallet mr-2"></i> Rabby Wallet
+                </button>
+                <button class="button-98 w-full text-left" disabled style="opacity: 0.6; cursor: not-allowed; background-color: #e57373;">
+                    <i class="fab fa-bitcoin mr-2"></i> Coinbase Wallet
+                </button>
+            </div>
+
+            <div id="wallet-connected" class="hidden">
+                <div class="bg-gray-200 p-3 rounded mb-3 border border-gray-500">
+                    <p class="text-sm font-mono break-all">Connected Wallet: <span id="wallet-address" class="text-blue-800">0x742d35Cc6634C0532925a3b844Bc454e4438f44e</span></p>
+                </div>
+                <button class="button-98 w-full" onclick="disconnectWallet()">
+                    <i class="fas fa-sign-out-alt mr-2"></i> Disconnect
+                </button>
+            </div>
+            
+            <div class="mt-4 text-sm text-blue-800">
+                <p>Supported chains: Ape  Chain</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="whitelist-checker-window" class="window hidden" style="top: 150px; left: 150px; width: 400px;">
+        <div class="title-bar">
+            <div>Whitelist Checker</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('whitelist-checker')">_</div>
+                <div class="window-button" onclick="maximizeWindow('whitelist-checker')">□</div>
+                <div class="window-button" onclick="closeWindow('whitelist-checker')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <h2 class="text-xl font-bold mb-4">Check Whitelist Status</h2>
+            <p class="mb-4">Enter a wallet address to check if it's whitelisted for BLACKBYTE access:</p>
+            
+            <div class="mb-4">
+                <input type="text" id="wallet-input" class="input-98 w-full mb-2" placeholder="0x...">
+                <button class="button-98 button-98-primary" onclick="checkWhitelist()">
+                    <i class="fas fa-search mr-2"></i> Check Status
+                </button>
+            </div>
+            
+            <div id="whitelist-status" class="hidden p-4 border border-gray-500 bg-gray-200">
+                <p class="font-bold">Status: <span id="status-text" class="text-blue-800">Checking...</span></p>
+                <p id="status-details" class="text-sm mt-1"></p>
+            </div>
+            
+            <div class="mt-4 text-sm text-blue-800">
+                <p>Note: You must be connected to check your own wallet.</p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="music-player-window" class="window hidden" style="top: 200px; left: 200px; width: 350px;">
+        <div class="title-bar">
+            <div>Music Player</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('music-player')">_</div>
+                <div class="window-button" onclick="maximizeWindow('music-player')">□</div>
+                <div class="window-button" onclick="closeWindow('music-player')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <div class="text-center mb-4">
+                <img src="https://i.imgur.com/5JTHxDu.png" alt="Album Cover" class="w-32 h-32 mx-auto mb-2 border border-gray-500">
+                <h3 class="font-bold">Wet Hands</h3>
+                <p class="text-sm">Make in the Black World</p>
+            </div>
+            
+            <div class="mb-4">
+                <div class="flex justify-between text-xs mb-1">
+                    <span id="current-time">0:00</span>
+                    <span id="duration">2:41</span>
+                </div>
+                <div class="progress-98">
+                <div id="progress-bar" class="progress-98-bar"></div>
+                </div>
+            </div>
+            
+            <div class="flex justify-center space-x-4 mb-4">
+                <button class="button-98" onclick="prevTrack()">
+                    <i class="fas fa-step-backward"></i>
+                </button>
+                <button id="play-button" class="button-98" onclick="togglePlay()">
+                    <i class="fas fa-play"></i>
+                </button>
+                <button class="button-98" onclick="nextTrack()">
+                    <i class="fas fa-step-forward"></i>
+                </button>
+            </div>
+            
+            <div class="flex items-center mb-4">
+                <i class="fas fa-volume-up mr-2"></i>
+                <div class="progress-98 flex-1">
+                    <div id="volume-bar" class="progress-98-bar" style="width: 70%"></div>
+                </div>
+            </div>
+            
+            <div class="flex justify-between text-sm">
+                <span>Track 1 of 1</span>
+                <span>84 objects</span>
+            </div>
+            
+            <audio id="audio-player" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+        </div>
+    </div>
+    
+    <!-- Admin Panel Window -->
+    <div id="admin-panel-window" class="window hidden" style="top: 100px; left: 100px; width: 500px; height: 400px;">
+        <div class="title-bar">
+            <div>Admin Panel - Whitelist Management</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('admin-panel')">_</div>
+                <div class="window-button" onclick="maximizeWindow('admin-panel')">□</div>
+                <div class="window-button" onclick="closeWindow('admin-panel')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <h2 class="text-xl font-bold mb-4">Whitelist Management</h2>
+            
+            <div class="mb-4">
+                <h3 class="font-bold mb-2">Add Wallets to Whitelist</h3>
+                <textarea id="admin-wallet-input" class="textarea-98" placeholder="Enter wallet addresses, one per line (0x...)"></textarea>
+                <div id="wallet-count" class="wallet-count">0 wallets detected</div>
+                <button class="button-98 button-98-primary mt-2" onclick="addToWhitelist()">
+                    <i class="fas fa-plus mr-2"></i> Add Wallets
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="font-bold mb-2">Remove Wallet from Whitelist</h3>
+                <select id="wallet-select" class="input-98 w-full mb-2">
+                    <option value="">Select a wallet to remove</option>
+                </select>
+                <button class="button-98" onclick="removeFromWhitelist()">
+                    <i class="fas fa-trash mr-2"></i> Remove Wallet
+                </button>
+            </div>
+            
+            <div class="mb-4">
+                <h3 class="font-bold mb-2">Google Sheets Integration</h3>
+                <input type="text" id="sheet-url" class="input-98 w-full mb-2" placeholder="Google Sheet URL">
+                <button class="button-98 button-98-primary" onclick="syncWithGoogleSheet()">
+                    <i class="fab fa-google mr-2"></i> Sync with Google Sheet
+                </button>
+            </div>
+            
+            <div id="admin-status" class="hidden p-4 border border-gray-500 bg-gray-200">
+                <p class="font-bold">Status: <span id="admin-status-text" class="text-blue-800">Processing...</span></p>
+                <p id="admin-status-details" class="text-sm mt-1"></p>
+            </div>
+        </div>
+    </div>
+    
+    <div id="staking-window" class="window hidden" style="top: 150px; left: 150px; width: 500px; height: 300px;">
+        <div class="title-bar">
+            <div>BLACKBYTE NFT STAKING</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('staking')">_</div>
+                <div class="window-button" onclick="maximizeWindow('staking')">□</div>
+                <div class="window-button" onclick="closeWindow('staking')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <h2 class="text-lg font-bold mb-2">Stake Your Black Bytes</h2>
+            <p class="mb-4">Connect your wallet and select NFTs to stake into the BLACKBYTE pool.</p>
+            <button class="button-98 button-98-primary mb-2 opacity-50 cursor-not-allowed" disabled>
+                <i class="fas fa-plug mr-2"></i> COMING SOON
+            </button>
+            <div class="mt-4 text-sm text-blue-800">
+                <p>Coming soon: $BLK Rewards dashboard and unstake function.</p>
+            </div>
+        </div>
+    </div>
+    
+    <!-- MSN Messenger FAQ Window -->
+    <div id="msn-faq-window" class="window hidden msn-window" style="top: 150px; left: 150px; width: 350px; height: 500px;">
+        <div class="title-bar">
+            <div>BlackByte MSN</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('msn-faq')">_</div>
+                <div class="window-button" onclick="maximizeWindow('msn-faq')">□</div>
+                <div class="window-button" onclick="closeWindow('msn-faq')">×</div>
+            </div>
+        </div>
+        <!-- Cabeçalho com foto de perfil estilo MSN -->
+<div style="display: flex; align-items: center; background: #000; padding: 8px; border-bottom: 2px inset #999;">
+  <img src="https://i.imgur.com/HBBMr5s.png" width="40" height="40" style="border: 2px inset #999; margin-right: 8px;">
+  <div style="font-size: 12px;">
+    <strong>BlackChat</strong><br>
+    <span style="color: green;">Online</span>
+  </div>
+</div>
+
+        <div class="msn-content scrollbar-98" id="msn-conversation">
+        </div>
+        <div class="msn-footer">
+            <select id="faq-select" class="msn-select">
+                <option value="">Select a question....</option>
+                <option value="supply">What is the total supply?</option>
+                <option value="mint">When is the mint date?</option>
+                <option value="price">What is the mint price?</option>
+                <option value="blockchain">Which blockchain?</option>
+                <option value="staking">Is there staking?</option>
+                <option value="royalties">What are the royalties?</option>
+                <option value="whitelist">How to get whitelisted?</option>
+            </select>
+            <button class="msn-button" onclick="askQuestion()">Ask</button>
+        </div>
+    </div>
+    
+    <!-- Login Window -->
+    <div id="login-window" class="window hidden login-window" style="top: 150px; left: 150px; width: 300px;">
+        <div class="title-bar">
+            <div>Admin Login</div>
+            <div class="window-buttons">
+                <div class="window-button" onclick="minimizeWindow('login')">_</div>
+                <div class="window-button" onclick="maximizeWindow('login')">□</div>
+                <div class="window-button" onclick="closeWindow('login')">×</div>
+            </div>
+        </div>
+        <div class="window-content scrollbar-98">
+            <div class="login-form">
+                <div class="text-center mb-4">
+                    <img src="https://i.imgur.com/HBBMr5s.png" alt="Admin" width="64" height="64" class="mx-auto mb-2">
+                    <h2 class="font-bold">Admin Authentication</h2>
+                </div>
+                
+                <div class="login-input-group">
+                    <label for="username" class="login-label">Username:</label>
+                    <input type="text" id="username" class="input-98 w-full" placeholder="Enter admin username">
+                    <div id="username-error" class="login-error">Username is required</div>
+                </div>
+                
+                <div class="login-input-group">
+                    <label for="password" class="login-label">Password:</label>
+                    <input type="password" id="password" class="input-98 w-full" placeholder="Enter password">
+                    <div id="password-error" class="login-error">Password is required</div>
+                </div>
+                
+                <div id="login-error" class="login-error mb-4 text-center"></div>
+                
+                <button class="button-98 button-98-primary w-full" onclick="attemptLogin()">
+                    <i class="fas fa-sign-in-alt mr-2"></i> Login
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- BSOD Screen -->
+    <div id="bsod" class="bsod">
+        <div class="bsod-text">
+            <h1 class="text-2xl font-bold mb-4 glitch" data-text="Error: 404 - An error has occurred">Error: 404 - An error has occurred</h1>
+            <div class="computer-face">(╯°□°）╯︵ ┻━┻</div>
+            <p class="mb-2">A fatal exception 0E has occurred at 0028:C0011E36 in VXD VMM(01) + 00010E36.</p>
+            <p class="mb-4">The current application will be terminated.</p>
+            <p>* Press any key to terminate the current application.</p>
+            <p>* Press CTRL+ALT+DEL again to restart your computer. You will lose any unsaved information in all applications.</p>
+        </div>
+        <button class="bsod-button flicker" onclick="restartSystem()">
+            Restart Website
+        </button>
+    </div>
+    
+    <!-- Taskbar -->
+    <div class="taskbar">
+        <div class="start-button" onclick="toggleStartMenu()">
+            <img src="https://win98icons.alexmeub.com/icons/png/windows_slanted-1.png" alt="Windows Logo" class="h-4 mr-2">
+            Start
+        </div>
+        <div class="clock" id="clock">
+            3:14 PM
+        </div>
+    </div>
+    
+    <!-- Start Menu -->
+    <div id="start-menu" class="start-menu">
+        <div class="start-menu-item" onclick="openWindow('my-computer')">
+            <i class="fas fa-desktop"></i> My Computer
+        </div>
+        <div class="start-menu-item" onclick="openWindow('wallet-connect')">
+            <i class="fas fa-wallet"></i> Connect Wallet
+        </div>
+        <div class="start-menu-item" onclick="openWindow('whitelist-checker')">
+            <i class="fas fa-user-shield"></i> Whitelist Checker
+        </div>
+        <div class="start-menu-item" onclick="openWindow('music-player')">
+            <i class="fas fa-music"></i> Music Player
+        </div>
+        <div class="start-menu-item" onclick="openAdminPanel()"style="display: none;"> > 
+            <i class="fas fa-user-cog"></i> Admin Panel
+        </div>
+        <div class="start-menu-item" onclick="openWindow('msn-faq')">
+            <i class="fas fa-question-circle"></i> BSN
+        </div>
+        <div class="start-menu-item border-t border-gray-500 mt-1" onclick="showBSOD()">
+            <i class="fas fa-power-off"></i> Shut Down
+        </div>
+    </div>
+    
+    <script>
+        // Window management
+        function openWindow(windowId) {
+            document.getElementById(`${windowId}-window`).classList.remove('hidden');
+            bringToFront(`${windowId}-window`);
+            document.getElementById('start-menu').style.display = 'none';
+        }
+        
+        function closeWindow(windowId) {
+            document.getElementById(`${windowId}-window`).classList.add('hidden');
+        }
+        
+        function minimizeWindow(windowId) {
+            document.getElementById(`${windowId}-window`).classList.add('hidden');
+        }
+        
+        function maximizeWindow(windowId) {
+            const windowEl = document.getElementById(`${windowId}-window`);
+            if (windowEl.style.width === '90%') {
+                windowEl.style.width = '400px';
+                windowEl.style.height = '300px';
+            } else {
+                windowEl.style.width = '90%';
+                windowEl.style.height = '90%';
+            }
+        }
+        
+        function bringToFront(windowId) {
+            const windows = document.querySelectorAll('.window');
+            let maxZ = 10;
+            
+            windows.forEach(win => {
+                const z = parseInt(win.style.zIndex) || 10;
+                if (z > maxZ) maxZ = z;
+                win.style.zIndex = 10;
+            });
+            
+            document.getElementById(windowId).style.zIndex = maxZ + 1;
+        }
+        
+        // Make windows draggable
+        document.querySelectorAll('.title-bar').forEach(titleBar => {
+            titleBar.addEventListener('mousedown', function(e) {
+                const windowEl = this.parentElement;
+                bringToFront(windowEl.id);
+                
+                let posX = e.clientX;
+                let posY = e.clientY;
+                
+                function mouseMoveHandler(e) {
+                    const dx = e.clientX - posX;
+                    const dy = e.clientY - posY;
+                    
+                    const top = parseInt(windowEl.style.top) || 0;
+                    const left = parseInt(windowEl.style.left) || 0;
+                    
+                    windowEl.style.top = `${top + dy}px`;
+                    windowEl.style.left = `${left + dx}px`;
+                    
+                    posX = e.clientX;
+                    posY = e.clientY;
+                }
+                
+                function mouseUpHandler() {
+                    document.removeEventListener('mousemove', mouseMoveHandler);
+                    document.removeEventListener('mouseup', mouseUpHandler);
+                }
+                
+                document.addEventListener('mousemove', mouseMoveHandler);
+                document.addEventListener('mouseup', mouseUpHandler);
+            });
+        });
+
+        // Start menu
+        function toggleStartMenu() {
+            const menu = document.getElementById('start-menu');
+            if (menu.style.display === 'block') {
+                menu.style.display = 'none';
+            } else {
+                menu.style.display = 'block';
+                bringToFront('start-menu');
+            }
+        }
+
+        // Close start menu when clicking elsewhere
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('#start-menu') && !e.target.closest('.start-button')) {
+                document.getElementById('start-menu').style.display = 'none';
+            }
+        });
+
+        // Clock
+        function updateClock() {
+            const now = new Date();
+            let hours = now.getHours();
+            const minutes = now.getMinutes().toString().padStart(2, '0');
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; // the hour '0' should be '12'
+            document.getElementById('clock').textContent = `${hours}:${minutes} ${ampm}`;
+        }
+
+        setInterval(updateClock, 1000);
+        updateClock();
+
+        // BSOD
+        function showBSOD() {
+            // Play error sound
+            const audio = new Audio('https://www.soundjay.com/mechanical/sounds/computer-error-1.mp3');
+            audio.volume = 0.3;
+            audio.play();
+            
+            // Show BSOD after a short delay
+            setTimeout(() => {
+                document.getElementById('bsod').style.display = 'flex';
+                document.querySelector('.desktop').style.display = 'none';
+                document.querySelector('.taskbar').style.display = 'none';
+            }, 500);
+        }
+
+        function restartSystem() {
+            // Play boot sound
+            const audio = new Audio('https://www.soundjay.com/computer/sounds/windows-xp-startup.mp3');
+            audio.volume = 0.3;
+            audio.play();
+            
+            // Show loading animation
+            document.getElementById('bsod').innerHTML = `
+                <div class="loading"></div>
+                <p class="mt-4">Restarting system...</p>
+            `;
+            
+            // After delay, restore desktop
+            setTimeout(() => {
+                document.getElementById('bsod').style.display = 'none';
+                document.querySelector('.desktop').style.display = 'block';
+                document.querySelector('.taskbar').style.display = 'flex';
+                
+                // Reset BSOD for next time
+                document.getElementById('bsod').innerHTML = `
+                    <div class="bsod-text">
+                        <h1 class="text-2xl font-bold mb-4 glitch" data-text="Error: 404 - An error has occurred">Error: 404 - An error has occurred</h1>
+                        <div class="computer-face">(╯°□°）╯︵ ┻━┻</div>
+                        <p class="mb-2">A fatal exception 0E has occurred at 0028:C0011E36 in VXD VMM(01) + 00010E36.</p>
+                        <p class="mb-4">The current application will be terminated.</p>
+                        <p>* Press any key to terminate the current application.</p>
+                        <p>* Press CTRL+ALT+DEL again to restart your computer. You will lose any unsaved information in all applications.</p>
+                    </div>
+                    <button class="bsod-button flicker" onclick="restartSystem()">
+                        Restart Website
+                    </button>
+                `;
+            }, 3000);
+        }
+
+        // Wallet functions
+        function connectWallet(provider) {
+            document.getElementById('wallet-not-connected').classList.add('hidden');
+            document.getElementById('wallet-connected').classList.remove('hidden');
+            
+            // Simulate different wallet addresses
+            const addresses = {
+                'metamask': '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+                'rabby': '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
+                'coinbase': '0x2f318C334780961FB129D2a6c30D0763d9a5C970'
+            };
+            
+            document.getElementById('wallet-address').textContent = addresses[provider] || addresses.metamask;
+            
+            // In a real implementation, this would connect to the actual wallet provider
+            alert(`Connecting to ${provider}... (simulated)`);
+        }
+
+        function disconnectWallet() {
+            document.getElementById('wallet-not-connected').classList.remove('hidden');
+            document.getElementById('wallet-connected').classList.add('hidden');
+        }
+
+        // Whitelist functions
+        let whitelist = [
+            '0x742d35Cc6634C0532925a3b844Bc454e4438f44e',
+            '0xAb5801a7D398351b8bE11C439e05C5B3259aeC9B',
+            '0x2f318C334780961FB129D2a6c30D0763d9a5C970'
+        ];
+
+        // Update wallet count in textarea
+        document.getElementById('admin-wallet-input').addEventListener('input', function() {
+            const text = this.value.trim();
+            const wallets = text.split('\n').filter(line => line.trim().length > 0);
+            const count = wallets.length;
+            document.getElementById('wallet-count').textContent = `${count} wallet${count !== 1 ? 's' : ''} detected`;
+        });
+
+        function checkWhitelist() {
+            const input = document.getElementById('wallet-input').value.trim();
+            const statusEl = document.getElementById('whitelist-status');
+            const statusText = document.getElementById('status-text');
+            const statusDetails = document.getElementById('status-details');
+            
+            if (!input) {
+                alert('Please enter a wallet address');
+                return;
+            }
+            
+            statusEl.classList.remove('hidden');
+            statusText.textContent = 'Checking...';
+            statusText.className = 'text-blue-800';
+            statusDetails.textContent = '';
+            
+            // Simulate checking whitelist
+            setTimeout(() => {
+                const isWhitelisted = whitelist.includes(input.toLowerCase());
+                
+                if (isWhitelisted) {
+                    statusText.textContent = 'Whitelisted';
+                    statusText.className = 'text-blue-800';
+                    statusDetails.textContent = 'This wallet has access to BLACKBYTE features.';
+                } else {
+                    statusText.textContent = 'Not Whitelisted';
+                    statusText.className = 'text-red-500';
+                    statusDetails.textContent = 'This wallet does not have access. Contact admin.';
+                }
+            }, 1500);
+        }
+
+        // Admin functions
+        function addToWhitelist() {
+            const textarea = document.getElementById('admin-wallet-input');
+            const input = textarea.value.trim();
+            const statusEl = document.getElementById('admin-status');
+            const statusText = document.getElementById('admin-status-text');
+            const statusDetails = document.getElementById('admin-status-details');
+            
+            if (!input) {
+                alert('Please enter at least one wallet address');
+                return;
+            }
+            
+            // Split by new lines and filter out empty lines
+            const wallets = input.split('\n')
+                .map(w => w.trim())
+                .filter(w => w.length > 0);
+            
+            // Validate each wallet
+            const invalidWallets = wallets.filter(w => !w.startsWith('0x') || w.length !== 42);
+            
+            if (invalidWallets.length > 0) {
+                alert(`The following wallets are invalid:\n${invalidWallets.join('\n')}`);
+                return;
+            }
+            
+            statusEl.classList.remove('hidden');
+            statusText.textContent = 'Adding...';
+            statusText.className = 'text-blue-800';
+            statusDetails.textContent = `Adding ${wallets.length} wallets to whitelist...`;
+            
+            // Simulate adding to whitelist
+            setTimeout(() => {
+                let addedCount = 0;
+                let alreadyExistsCount = 0;
+                
+                wallets.forEach(wallet => {
+                    const lowerWallet = wallet.toLowerCase();
+                    if (!whitelist.includes(lowerWallet)) {
+                        whitelist.push(lowerWallet);
+                        addedCount++;
+                    } else {
+                        alreadyExistsCount++;
+                    }
+                });
+                
+                updateWalletSelect();
+                textarea.value = ''; // Clear the textarea
+                document.getElementById('wallet-count').textContent = '0 wallets detected';
+                
+                statusText.textContent = 'Success';
+                statusDetails.innerHTML = `
+                    Added ${addedCount} new wallet${addedCount !== 1 ? 's' : ''} to whitelist.<br>
+                    ${alreadyExistsCount} wallet${alreadyExistsCount !== 1 ? 's' : ''} were already in whitelist.
+                `;
+            }, 1500);
+        }
+
+        function removeFromWhitelist() {
+            const select = document.getElementById('wallet-select');
+            const selectedWallet = select.value;
+            
+            if (!selectedWallet) {
+                alert('Please select a wallet to remove');
+                return;
+            }
+            
+            const statusEl = document.getElementById('admin-status');
+            const statusText = document.getElementById('admin-status-text');
+            const statusDetails = document.getElementById('admin-status-details');
+            
+            statusEl.classList.remove('hidden');
+            statusText.textContent = 'Removing...';
+            statusText.className = 'text-blue-800';
+            statusDetails.textContent = '';
+            
+            // Simulate removing from whitelist
+            setTimeout(() => {
+                whitelist = whitelist.filter(wallet => wallet !== selectedWallet);
+                updateWalletSelect();
+                statusText.textContent = 'Success';
+                statusDetails.textContent = `Wallet ${selectedWallet} has been removed from the whitelist.`;
+            }, 1000);
+        }
+
+        function updateWalletSelect() {
+            const select = document.getElementById('wallet-select');
+            select.innerHTML = '<option value="">Select a wallet to remove</option>';
+            
+            whitelist.forEach(wallet => {
+                const option = document.createElement('option');
+                option.value = wallet;
+                option.textContent = wallet;
+                select.appendChild(option);
+            });
+        }
+
+        function syncWithGoogleSheet() {
+            const sheetUrl = document.getElementById('sheet-url').value.trim();
+            const statusEl = document.getElementById('admin-status');
+            const statusText = document.getElementById('admin-status-text');
+            const statusDetails = document.getElementById('admin-status-details');
+            
+            if (!sheetUrl) {
+                alert('Please enter a Google Sheet URL');
+                return;
+            }
+            
+            statusEl.classList.remove('hidden');
+            statusText.textContent = 'Syncing...';
+            statusText.className = 'text-blue-800';
+            statusDetails.textContent = '';
+            
+            // Simulate syncing with Google Sheet
+            setTimeout(() => {
+                // In a real implementation, this would fetch data from the Google Sheet
+                // For demo purposes, we'll just add some dummy data
+                const newWallets = [
+                    '0x' + Math.random().toString(16).substr(2, 40),
+                    '0x' + Math.random().toString(16).substr(2, 40)
+                ];
+                
+                newWallets.forEach(wallet => {
+                    if (!whitelist.includes(wallet)) {
+                        whitelist.push(wallet);
+                    }
+                });
+                
+                updateWalletSelect();
+                statusText.textContent = 'Success';
+                statusDetails.textContent = `Synced with Google Sheet. Added ${newWallets.length} new wallets to whitelist.`;
+            }, 2000);
+        }
+
+        // Music player functions
+        const audioPlayer = document.getElementById('audio-player');
+        const playButton = document.getElementById('play-button');
+        const progressBar = document.getElementById('progress-bar');
+        const volumeBar = document.getElementById('volume-bar');
+        const currentTimeEl = document.getElementById('current-time');
+        const durationEl = document.getElementById('duration');
+
+        audioPlayer.addEventListener('loadedmetadata', function() {
+            durationEl.textContent = formatTime(audioPlayer.duration);
+        });
+
+        audioPlayer.addEventListener('timeupdate', function() {
+            const currentTime = audioPlayer.currentTime;
+            const duration = audioPlayer.duration;
+            const progressPercent = (currentTime / duration) * 100;
+            
+            progressBar.style.width = `${progressPercent}%`;
+            currentTimeEl.textContent = formatTime(currentTime);
+        });
+
+        audioPlayer.addEventListener('ended', function() {
+            playButton.innerHTML = '<i class="fas fa-play"></i>';
+        });
+
+        function togglePlay() {
+            if (audioPlayer.paused) {
+                audioPlayer.play();
+                playButton.innerHTML = '<i class="fas fa-pause"></i>';
+            } else {
+                audioPlayer.pause();
+                playButton.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        function prevTrack() {
+            // In a full implementation, this would go to previous track
+            audioPlayer.currentTime = 0;
+        }
+
+        function nextTrack() {
+            // In a full implementation, this would go to next track
+            audioPlayer.currentTime = 0;
+            if (!audioPlayer.paused) {
+                audioPlayer.play();
+            }
+        }
+
+        function formatTime(seconds) {
+            const mins = Math.floor(seconds / 60);
+            const secs = Math.floor(seconds % 60);
+            return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+        }
+
+        // Make volume bar interactive
+        volumeBar.addEventListener('click', function(e) {
+            const rect = this.parentElement.getBoundingClientRect();
+            const clickPosition = e.clientX - rect.left;
+            const percent = (clickPosition / rect.width) * 100;
+            
+            volumeBar.style.width = `${percent}%`;
+            audioPlayer.volume = percent / 100;
+        });
+
+        // Make progress bar interactive
+        progressBar.parentElement.addEventListener('click', function(e) {
+            const rect = this.getBoundingClientRect();
+            const clickPosition = e.clientX - rect.left;
+            const percent = (clickPosition / rect.width);
+            
+            audioPlayer.currentTime = percent * audioPlayer.duration;
+        });
+
+        // MSN FAQ functions
+        const faqData = {
+            'supply': {
+                question: 'What is the total supply of BLACKBYTE?',
+                answer: 'The total supply of BlackByte  is 3333 unique NFT´s.'
+            },
+            'mint': {
+                question: 'When is the mint date?',
+                answer: 'TBA.'
+            },
+            'price': {
+                question: 'What is the mint price?',
+                answer: 'TBA.'
+            },
+            'blockchain': {
+                question: 'Which blockchain is BLACKBYTE on?',
+                answer: 'BlackByte is an ApeChain-based NFT collection.'
+            },
+            'staking': {
+                question: 'Is there a staking system?',
+                answer: 'Yes! You can stake your BLACKBYTE NFTs to earn $BLK tokens.'
+            },
+            'royalties': {
+                question: 'What are the royalties?',
+                answer: 'There is a 6% royalty on secondary sales.'
+            },
+            'whitelist': {
+                question: 'How do I get whitelisted?',
+                answer: 'Twitter and Forms, Good Luck!'
+            }
+        };
+
+        function askQuestion() {
+            const select = document.getElementById('faq-select');
+            const selectedValue = select.value;
+            
+            if (!selectedValue) {
+                alert('Please select a question');
+                return;
+            }
+            
+            const faq = faqData[selectedValue];
+            const conversation = document.getElementById('msn-conversation');
+            
+            // Add question
+            const questionDiv = document.createElement('div');
+            questionDiv.className = 'msn-message msn-question';
+            questionDiv.textContent = faq.question;
+            conversation.appendChild(questionDiv);
+            
+            // Add answer after a short delay
+            setTimeout(() => {
+                const answerDiv = document.createElement('div');
+                answerDiv.className = 'msn-message msn-answer';
+                answerDiv.textContent = faq.answer;
+                conversation.appendChild(answerDiv);
+                
+                // Scroll to bottom
+                conversation.scrollTop = conversation.scrollHeight;
+            }, 500);
+            
+            // Reset select
+            select.value = '';
+        }
+
+        // Login System
+const encodedUsername = "Qnl0ZTc1NTY=";
+const encodedPassword = "dW1icmVsbGExNDU=";
+
+const adminCredentials = {
+  username: atob(encodedUsername),
+  password: atob(encodedPassword)
+};
+
+
+        let isLoggedIn = false;
+
+        function openAdminPanel() {
+            if (isLoggedIn) {
+                openWindow('admin-panel');
+            } else {
+                openWindow('login');
+            }
+        }
+
+        function attemptLogin() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const usernameError = document.getElementById('username-error');
+            const passwordError = document.getElementById('password-error');
+            const loginError = document.getElementById('login-error');
+            
+            // Reset errors
+            usernameError.style.display = 'none';
+            passwordError.style.display = 'none';
+            loginError.style.display = 'none';
+            
+            // Validate inputs
+            let isValid = true;
+            
+            if (!username) {
+                usernameError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!password) {
+                passwordError.style.display = 'block';
+                isValid = false;
+            }
+            
+            if (!isValid) return;
+            
+            // Check credentials
+            if (username === adminCredentials.username && password === adminCredentials.password) {
+                // Successful login
+                isLoggedIn = true;
+                closeWindow('login');
+                openWindow('admin-panel');
+                
+                // Play success sound
+                const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-09.mp3');
+                audio.volume = 0.3;
+                audio.play();
+            } else {
+                // Failed login
+                loginError.textContent = 'Invalid username or password';
+                loginError.style.display = 'block';
+                
+                // Play error sound
+                const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
+                audio.volume = 0.3;
+                audio.play();
+            }
+        }
+
+        // Initialize matrix effect
+        createMatrixEffect();
+
+        // Initialize admin panel
+        updateWalletSelect();
+    </script>
+    
+    <script>
+  // outros scripts...
+
+  // Initialize admin panel
+  updateWalletSelect();
+
+  // Atalho secreto para abrir o painel (CTRL + ALT + A)
+  document.addEventListener('keydown', function(e) {
+    if (e.ctrlKey && e.altKey && e.key.toLowerCase() === 'a') {
+      openAdminPanel();
+    }
+  });
+</script>
+
+<div id="internet-explorer-window" class="window hidden" style="top: 150px; left: 150px; width: 600px; height: 400px;">
+    <div class="title-bar">
+        <div>Internet Explorer</div>
+        <div class="window-buttons">
+            <div class="window-button" onclick="minimizeWindow('internet-explorer')">_</div>
+            <div class="window-button" onclick="maximizeWindow('internet-explorer')">□</div>
+            <div class="window-button" onclick="closeWindow('internet-explorer')">×</div>
+            <div class="window-body">
+              <div class="resizer"></div>
+</div>
+
+        </div>
+    </div>
+    <div class="window-content scrollbar-98">
+        <iframe src="https://www.blackbyte.fun/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+</div>
+
+<div id="ai-byte-window" class="window hidden" style="top: 150px; left: 150px; width: 600px; height: 400px;">
+    <div class="title-bar">
+        <div>Ai Byte</div>
+        <div class="window-buttons">
+               <div class="window-button" onclick="minimizeWindow('ai-byte')">-</div>
+               <div class="window-button" onclick="maximizeWindow('ai-byte')">□</div>
+               <div class="window-button" onclick="closeWindow('ai-byte')">✕</div>
+            <div class="window-body">
+              <div class="resizer"></div>
+</div>
+
+        </div>
+    </div>
+    <div class="window-content scrollbar-98">
+        <iframe src="https://ai-bet-production.up.railway.app/" width="100%" height="100%" frameborder="0"></iframe>
+    </div>
+</div>
+
+
+<script>
+    // Função para arrastar a janela
+    function dragElement(elmnt) {
+        var pos1 = 0, pos2 = 0, pos3 = 0, pos4 = 0;
+        if (document.getElementById(elmnt.id + "-header")) {
+            // Se houver um cabeçalho para a janela, use ele como ponto de partida para arrastar
+            document.getElementById(elmnt.id + "-header").onmousedown = dragMouseDown;
+        } else {
+            // Caso contrário, use a própria janela
+            elmnt.onmousedown = dragMouseDown;
+        }
+
+        function dragMouseDown(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // Pegue a posição inicial do mouse
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            document.onmouseup = closeDragElement;
+            document.onmousemove = elementDrag;
+        }
+
+        document.querySelectorAll('.resizer').forEach(resizer => {
+  const windowEl = resizer.closest('.window');
+  let isResizing = false;
+
+resizer.addEventListener('mousedown', function(e) {
+    e.stopPropagation(); // <- isso bloqueia o conflito com o drag da janela
+    isResizing = true;
+    let prevX = e.clientX;
+    let prevY = e.clientY;
+
+    function mouseMoveHandler(e) {
+      if (!isResizing) return;
+
+      const dx = e.clientX - prevX;
+      const dy = e.clientY - prevY;
+
+      const rect = windowEl.getBoundingClientRect();
+
+      windowEl.style.width = rect.width + dx + "px";
+      windowEl.style.height = rect.height + dy + "px";
+
+      prevX = e.clientX;
+      prevY = e.clientY;
+    }
+
+    function mouseUpHandler() {
+      isResizing = false;
+      document.removeEventListener('mousemove', mouseMoveHandler);
+      document.removeEventListener('mouseup', mouseUpHandler);
+    }
+
+    document.addEventListener('mousemove', mouseMoveHandler);
+    document.addEventListener('mouseup', mouseUpHandler);
+  });
+});
+
+
+        function elementDrag(e) {
+            e = e || window.event;
+            e.preventDefault();
+            // Calcule a nova posição do mouse
+            pos1 = pos3 - e.clientX;
+            pos2 = pos4 - e.clientY;
+            pos3 = e.clientX;
+            pos4 = e.clientY;
+            // Defina a nova posição para a janela
+            elmnt.style.top = (elmnt.offsetTop - pos2) + "px";
+            elmnt.style.left = (elmnt.offsetLeft - pos1) + "px";
+        }
+
+        function closeDragElement() {
+            // Quando o mouse é solto, pare de mover a janela
+            document.onmouseup = null;
+            document.onmousemove = null;
+        }
+    }
+
+    // Chame a função para permitir arrastar a janela
+     dragElement(document.getElementById("internet-explorer-window"));
+  dragElement(document.getElementById("ai-byte-window")); // <- adicione esta linha
+</script>
+
+<div id="bsod" class="bsod hidden"></div>
+
+<script>
+document.querySelectorAll('.resizer').forEach(resizer => {
+    const windowEl = resizer.closest('.window');
+    let isResizing = false;
+
+    resizer.addEventListener('mousedown', function(e) {
+        isResizing = true;
+        let prevX = e.clientX;
+        let prevY = e.clientY;
+
+        function mouseMoveHandler(e) {
+            if (!isResizing) return;
+
+            const dx = e.clientX - prevX;
+            const dy = e.clientY - prevY;
+
+            const rect = windowEl.getBoundingClientRect();
+
+            windowEl.style.width = rect.width + dx + 'px';
+            windowEl.style.height = rect.height + dy + 'px';
+
+            prevX = e.clientX;
+            prevY = e.clientY;
+        }
+
+        function mouseUpHandler() {
+            isResizing = false;
+            document.removeEventListener('mousemove', mouseMoveHandler);
+            document.removeEventListener('mouseup', mouseUpHandler);
+        }
+
+        document.addEventListener('mousemove', mouseMoveHandler);
+        document.addEventListener('mouseup', mouseUpHandler);
+    });
+});
+</script>
+
+
+<p style="border-radius: 8px; text-align: center; font-size: 12px; color: #fff; margin-top: 16px;position: fixed; left: 8px; bottom: 8px; z-index: 10; background: rgba(0, 0, 0, 0.8); padding: 4px 8px;">Made with <img src="https://enzostvs-deepsite.hf.space/logo.svg" alt="DeepSite Logo" style="width: 16px; height: 16px; vertical-align: middle;display:inline-block;margin-right:3px;filter:brightness(0) invert(1);"><a href="https://enzostvs-deepsite.hf.space" style="color: #fff;text-decoration: underline;" target="_blank" >DeepSite</a> - 🧬 <a href="https://enzostvs-deepsite.hf.space?remix=Mattonweb3/blackbyte" style="color: #fff;text-decoration: underline;" target="_blank" >Remix</a></p></body>
+</html>

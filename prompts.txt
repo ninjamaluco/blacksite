@@ -1,0 +1,1 @@
+faça com que os 'Credits' sejam descontados da conta quando comprar os itens do 'credit shop'

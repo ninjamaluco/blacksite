@@ -14,7 +14,7 @@ let userHasNft = false;// NOVO: Adicione esta variável no topo do arquivo junto
 
 // Constants
 // const ADMIN_PASSWORD = "admin" // ✨ REMOVA ESTA LINHA - NÃO PRECISAMOS MAIS DE SENHA FIXA NO FRONTEND!
-const BACKEND_URL = "https://blackholderbackend.onrender.com"; // Adicione esta constante
+const BACKEND_URL = "https://blackbyte-backend.onrender.com"; // Adicione esta constante
 
 // NOVO: Configurações do Contrato da NFT
 const NFT_CONTRACT_ADDRESS = "0x669c46bdf06e111685fd58b271fb3a6a02423274"; // SEU CONTRATO

@@ -80,7 +80,7 @@ function initializeElements() {
     // userAvatar: document.getElementById("user-avatar"), // REMOVIDO
     walletInfo: document.getElementById("wallet-info"), // NOVO
     connectedWalletAddress: document.getElementById("connected-wallet-address"), // NOVO
-    userAvatar: document.getElementById("user-avatar"), // Manter, but its usage logic will be different
+    userAvatar: document.getElementById("user-avatar"), // Manter, mas sua lógica de uso será diferente
 
     // User Account
     accountUsername: document.getElementById("account-username"),
@@ -130,7 +130,7 @@ function showNotification(message, type = "info") {
 function showLoginFirstMessage() {
   const msg = document.createElement("div")
   msg.className = "login-first-msg"
-  msg.textContent = "Connect wallet first." // Original text, already good
+  msg.textContent = "Connect wallet first." // Texto original, já é bom
   document.body.appendChild(msg)
 
   setTimeout(() => msg.classList.add("fade-out"), 2000)
@@ -144,9 +144,9 @@ function showLoginFirstMessage() {
 // Modal Management
 function showModal(modalElement) {
   if (modalElement) {
-    modalElement.style.display = "block"; // Makes the element visible
-    document.body.classList.add("modal-open"); // Adds class for overflow: hidden to body
-    // Fade-in animation
+    modalElement.style.display = "block"; // Torna o elemento visível
+    document.body.classList.add("modal-open"); // Adiciona classe para overflow: hidden no body
+    // Animação de fade-in
     setTimeout(() => {
       modalElement.style.opacity = "1";
     }, 10);
@@ -155,19 +155,19 @@ function showModal(modalElement) {
 
 function hideModal(modalElement) {
   if (modalElement) {
-    modalElement.style.opacity = "0"; // Starts fade-out animation
+    modalElement.style.opacity = "0"; // Inicia a animação de fade-out
     setTimeout(() => {
-      modalElement.style.display = "none"; // Hides the element after transition
-      document.body.classList.remove("modal-open"); // Removes class from body
-      // Remove backdrop-filter from body if it was applied globally, or if it's causing problems.
-      // If backdrop-filter is only on the modal itself, this is not needed.
-    }, 200); // Time corresponding to CSS transition
+      modalElement.style.display = "none"; // Oculta o elemento após a transição
+      document.body.classList.remove("modal-open"); // Remove a classe do body
+      // Remova backdrop-filter do body se ele foi aplicado globalmente, ou se estiver causando problemas.
+      // Se o backdrop-filter está apenas no próprio modal, não precisa disso.
+    }, 200); // Tempo correspondente à transição CSS
   }
 }
 
 function showWrongChainModal() {
   if (elements.wrongChainModal) {
-    elements.wrongChainModal.style.display = "flex"; // Uses flex for centering
+    elements.wrongChainModal.style.display = "flex"; // Usa flex para centralizar
     document.body.classList.add("modal-open");
     setTimeout(() => {
       elements.wrongChainModal.style.opacity = "1";
@@ -234,8 +234,8 @@ function handleTabContent(tabId) {
   const contentEl = document.getElementById(mapping.content)
   const promptEl = document.getElementById(mapping.prompt)
 
-  // NOVO: NFT ownership check
-  if (currentUser && currentUser.walletAddress && userHasNft) { // NOW ONLY ACCESS IF HAS NFT
+  // NOVO: Verificação de posse de NFT
+  if (currentUser && currentUser.walletAddress && userHasNft) { // AGORA SÓ ACESSA SE TIVER NFT
     if (contentEl) contentEl.classList.remove("hidden")
     if (promptEl) promptEl.classList.add("hidden")
 
@@ -252,20 +252,20 @@ function handleTabContent(tabId) {
         break
       case "staking":
         renderStakingDashboard();
-        break; // NOVO: Renders the staking dashboard
+        break; // NOVO: Renderiza o dashboard de staking
     }
-  } else { // If not logged in OR does not have NFT
+  } else { // Se não está logado OU não tem NFT
     if (contentEl) contentEl.classList.add("hidden")
     if (promptEl) promptEl.classList.remove("hidden")
-    // More specific message for those who don't have NFT
+    // Mensagem mais específica para quem não tem NFT
     if (currentUser && currentUser.walletAddress && !userHasNft) {
       if (promptEl) promptEl.querySelector('p').textContent = "You need a BlackByte NFT in your wallet to access this section.";
-      // Optional: Change button
+      // Opcional: Mudar o botão
       if (promptEl) {
         const authButton = promptEl.querySelector('button');
         if (authButton) {
           authButton.textContent = "Learn more about BlackByte NFTs";
-          // Add a link or other action to the button if desired
+          // Adicione um link ou outra ação ao botão se quiser
           // authButton.onclick = () => window.open("URL_DA_SUA_PAGINA_NFT", "_blank");
         }
       }
@@ -273,7 +273,7 @@ function handleTabContent(tabId) {
   }
 }
 
-// ✅ CORRECTED: Function to load only JACKPOT recent wins
+// ✅ CORRIGIDO: Função para carregar apenas recent wins de JACKPOT
 async function loadRecentJackpotWins() {
   const homepageContainer = document.getElementById("homepage-recent-jackpot-wins")
   const casinoContainer = document.getElementById("recent-jackpot-wins")
@@ -288,15 +288,15 @@ async function loadRecentJackpotWins() {
 
     const allWins = await response.json()
 
-    // ✅ FILTER ONLY JACKPOT WINS
+    // ✅ FILTRAR APENAS JACKPOT WINS
     const jackpotWins = allWins.filter((win) => win.type === "jackpot")
 
-    // Render on homepage
+    // Renderizar na homepage
     if (homepageContainer) {
       renderJackpotWinsForHomepage(jackpotWins, homepageContainer)
     }
 
-    // Render on casino page
+    // Renderizar na página do casino
     if (casinoContainer) {
       renderJackpotWinsForCasino(jackpotWins, casinoContainer)
     }
@@ -313,18 +313,18 @@ async function loadRecentJackpotWins() {
   }
 }
 
-// NOVO: Function to get NFTs the user owns in wallet
-// ATTENTION: This is a SIMULATION or requires a blockchain indexer (Subgraph, Alchemy, Moralis, etc.)
-// The balanceOf() API only checks the total number of NFTs for an address.
-// To list the specific IDs (tokenIds) the user owns, you would need an API or subgraph.
+// NOVO: Função para obter as NFTs que o usuário possui na carteira
+// ATENÇÃO: Esta é uma SIMULAÇÃO ou requer um indexador de blockchain (Subgraph, Alchemy, Moralis, etc.)
+// A API balanceOf() verifica APENAS a quantidade total de NFTs para um endereço.
+// Para listar os IDs (tokenIds) específicos que o usuário possui, você precisaria de uma API ou subgraph.
 async function getUserNftsInWallet(walletAddress) {
-  if (!walletAddress) { // Removed web3Provider and ABI check here, as Alchemy doesn't need them for this specific call.
+  if (!walletAddress) { // Removi a verificação de web3Provider e ABI aqui, pois a Alchemy não precisa deles para esta chamada específica.
     console.warn("Wallet address missing for fetching NFTs.");
     return [];
   }
 
   try {
-    // ✨ NOVO: Chain ID validation before trying to fetch NFTs with Alchemy
+    // ✨ NOVO: Validação do Chain ID antes de tentar buscar NFTs com Alchemy
     const network = await web3Provider.getNetwork();
     const chainId = network.chainId;
 
@@ -333,9 +333,9 @@ async function getUserNftsInWallet(walletAddress) {
       return [];
     }
 
-    // ✨ ALCHEMY API CALL
-    // We build the URL for the getNFTsForOwner endpoint
-    // Include contractAddresses[] to filter only by your NFT.
+    // ✨ CHAMADA À API DA ALCHEMY
+    // Construímos a URL para o endpoint getNFTsForOwner
+    // Inclua o contractAddresses[] para filtrar apenas pela sua NFT.
     const url = `${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTsForOwner/?owner=${walletAddress}&contractAddresses[]=${NFT_CONTRACT_ADDRESS}`;
 
     console.log("Fetching NFTs from Alchemy URL:", url);
@@ -354,17 +354,17 @@ async function getUserNftsInWallet(walletAddress) {
     console.log("NFTs from Alchemy:", data);
 
     const userNfts = data.ownedNfts.map(nft => {
-      // Alchemy returns tokenId in hexadecimal format, we need to convert it to decimal
-      const tokenId = parseInt(nft.id.tokenId, 16).toString(); // Converts hex to decimal
+      // A Alchemy retorna o tokenId em formato hexadecimal, precisamos convertê-lo para decimal
+      const tokenId = parseInt(nft.id.tokenId, 16).toString(); // Converte hex para decimal
 
-      // Alchemy also returns the NFT image URL, which is very useful!
-      // nft.media[0].gateway is usually the direct HTTP(s) URL to the image.
+      // A Alchemy também retorna a URL da imagem da NFT, que é muito útil!
+      // nft.media[0].gateway geralmente é a URL HTTP(s) direta para a imagem.
       const imageUrl = nft.media.length > 0 && nft.media[0].gateway ? nft.media[0].gateway : "nft-placeholder.png";
 
       return {
         tokenId: tokenId,
-        isStaked: false, // Stake status will still be managed by your backend
-        imageUrl: imageUrl // We use the image URL provided by Alchemy
+        isStaked: false, // O status de stake ainda será gerenciado pelo seu backend
+        imageUrl: imageUrl // Usamos a URL da imagem fornecida pela Alchemy
       };
     });
 
@@ -372,13 +372,13 @@ async function getUserNftsInWallet(walletAddress) {
 
   } catch (error) {
     console.error("DETAILED ERROR fetching user NFTs with Alchemy:", error);
-    // Ensure the user notification is clear
+    // Garanta que a notificação ao usuário seja clara
     showNotification("Error loading your NFTs. Please ensure your wallet is on the correct network and try again.", "error");
     return [];
   }
 }
 
-// ✅ NOVO: Render jackpot wins for homepage
+// ✅ NOVA: Renderizar jackpot wins para homepage
 function renderJackpotWinsForHomepage(jackpotWins, container) {
   container.innerHTML = ""
 
@@ -393,7 +393,7 @@ function renderJackpotWinsForHomepage(jackpotWins, container) {
     return
   }
 
-  // Show the last 3 jackpot winners
+  // Mostrar os últimos 3 ganhadores de jackpot
   const recentJackpotWins = jackpotWins.slice(0, 3)
 
   recentJackpotWins.forEach((win, index) => {
@@ -435,7 +435,7 @@ function renderJackpotWinsForHomepage(jackpotWins, container) {
   })
 }
 
-// ✅ NOVO: Render jackpot wins for casino
+// ✅ NOVA: Renderizar jackpot wins para casino
 function renderJackpotWinsForCasino(jackpotWins, container) {
   container.innerHTML = ""
 
@@ -450,7 +450,7 @@ function renderJackpotWinsForCasino(jackpotWins, container) {
     return
   }
 
-  // Show the last 6 jackpot winners
+  // Mostrar os últimos 6 ganhadores de jackpot
   const recentJackpotWins = jackpotWins.slice(0, 6)
 
   recentJackpotWins.forEach((win) => {
@@ -481,7 +481,7 @@ function renderJackpotWinsForCasino(jackpotWins, container) {
   })
 }
 
-// ✅ NOVO: Helper function to calculate elapsed time
+// ✅ NOVA: Função helper para calcular tempo decorrido
 function getTimeAgo(date) {
   const now = new Date()
   const diffInSeconds = Math.floor((now - date) / 1000)
@@ -556,7 +556,7 @@ async function apiRequest(url, options = {}) {
       "Content-Type": "application/json",
       ...options.headers,
     };
-    if (currentUser && currentUser.walletAddress) { // Add walletAddress to header
+    if (currentUser && currentUser.walletAddress) { // Adicione o walletAddress ao header
       headers['X-Wallet-Address'] = currentUser.walletAddress;
     }
 
@@ -566,7 +566,7 @@ async function apiRequest(url, options = {}) {
     })
 
     if (!response.ok) {
-      // Handle errors more specifically, if the backend returns error messages
+      // Trate erros de forma mais específica, se o backend retornar mensagens de erro
       const errorData = await response.json().catch(() => ({
         message: 'Unknown error'
       }));
@@ -582,26 +582,26 @@ async function apiRequest(url, options = {}) {
 
 // User Management
 function updateUserUI() {
-  // if (!elements.authButton) return // REMOVED
+  // if (!elements.authButton) return // REMOVIDO
 
-  if (currentUser && currentUser.walletAddress) { // Change condition
+  if (currentUser && currentUser.walletAddress) { // Mude a condição
     // Hide connect button, show wallet info
     if (elements.connectWalletButton) elements.connectWalletButton.classList.add("hidden");
     if (elements.walletInfo) elements.walletInfo.classList.remove("hidden");
-    // if (elements.userPoints) elements.userPoints.classList.remove("hidden") // REMOVED
-    // if (elements.userAvatar) elements.userAvatar.classList.remove("hidden") // REMOVED
+    // if (elements.userPoints) elements.userPoints.classList.remove("hidden") // REMOVIDO
+    // if (elements.userAvatar) elements.userAvatar.classList.remove("hidden") // REMOVIDO
 
     // Update displays
     if (elements.pointsCounter) {
-      elements.pointsCounter.textContent = currentUser.credits.toLocaleString() + " $BB"; // Now shows value and $BB symbol
+      elements.pointsCounter.textContent = currentUser.credits.toLocaleString() + " $BB"; // Agora mostra o valor e o símbolo $BB
     }
     if (elements.connectedWalletAddress) {
-      // Shows truncated wallet address
+      // Mostra o endereço da carteira truncado
       const address = currentUser.walletAddress;
       elements.connectedWalletAddress.textContent = `${address.substring(0, 6)}...${address.substring(address.length - 4)}`;
     }
 
-    // Update avatar (now with the first letter of username OR "W" for wallet)
+    // Update avatar (agora com a primeira letra do username OU "W" para carteira)
     if (elements.userAvatar) {
       elements.userAvatar.innerHTML = `<span class="font-bold text-white text-lg">W</span>`
       elements.userAvatar.setAttribute("title", `Connected: ${currentUser.username || currentUser.walletAddress}`)
@@ -629,19 +629,19 @@ function updateUserUI() {
     // Show connect button, hide wallet info
     if (elements.connectWalletButton) elements.connectWalletButton.classList.remove("hidden");
     if (elements.walletInfo) elements.walletInfo.classList.add("hidden");
-    // if (elements.userPoints) elements.userPoints.classList.add("hidden") // REMOVED
-    // if (elements.userAvatar) elements.userAvatar.classList.add("hidden") // REMOVED
+    // if (elements.userPoints) elements.userPoints.classList.add("hidden") // REMOVIDO
+    // if (elements.userAvatar) elements.userAvatar.classList.add("hidden") // REMOVIDO
 
     // Update utility sidebar visibility
     updateUtilityItemsVisibility()
   }
 }
 
-// NOVO: Function to check if the wallet owns the NFT
+// NOVO: Função para verificar se a carteira possui a NFT
 async function checkNftOwnership() {
   if (!web3Provider || !currentConnectedWalletAddress) {
     console.warn("Wallet not connected or address missing for NFT check.");
-    hideWrongChainModal(); // Ensures the modal is hidden if there's no connection
+    hideWrongChainModal(); // Garante que o modal esteja oculto se não houver conexão
     return false;
   }
 
@@ -649,21 +649,21 @@ async function checkNftOwnership() {
     const network = await web3Provider.getNetwork();
     const chainId = network.chainId;
 
-    // Checks if the user is on the correct Chain ID
+    // Verifica se o usuário está na Chain ID correta
     if (chainId !== REQUIRED_CHAIN_ID) {
-      showWrongChainModal(); // ✨ SHOWS THE NEW MODAL
-      // showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error"); // REMOVE THIS NOTIFICATION
+      showWrongChainModal(); // ✨ MOSTRA O NOVO MODAL
+      // showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error"); // REMOVER ESTA NOTIFICAÇÃO
       return false;
     } else {
-      hideWrongChainModal(); // ✨ HIDES THE MODAL if the network is correct
+      hideWrongChainModal(); // ✨ ESCONDE O MODAL se a rede estiver correta
     }
 
-    // Creates an instance of the NFT contract
+    // Cria uma instância do contrato NFT
     const nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
 
-    // Calls the balanceOf function of the contract to check the NFT balance
+    // Chama a função balanceOf do contrato para verificar o saldo de NFTs
     const balance = await nftContract.balanceOf(currentConnectedWalletAddress);
-    const nftCount = balance.toNumber(); // Converts BigNumber to number
+    const nftCount = balance.toNumber(); // Converte o BigNumber para número
 
     console.log(`NFT Balance for ${currentConnectedWalletAddress}: ${nftCount}`);
 
@@ -674,7 +674,7 @@ async function checkNftOwnership() {
     }
   } catch (error) {
     console.error("Error checking NFT ownership:", error);
-    hideWrongChainModal(); // Hides the modal if there's another type of error in the check
+    hideWrongChainModal(); // Esconde o modal se houver outro tipo de erro na checagem
     showNotification("Error verifying NFT ownership. Please try again.", "error");
     return false;
   }
@@ -704,7 +704,7 @@ function updateShopButtons() {
     const tagEl = document.getElementById(tag)
 
     if (buttonEl && tagEl) {
-      // Purchase now should be based on walletAddress in user purchases
+      // A compra agora deve ser baseada no walletAddress nas compras do usuário
       const purchased = currentUser?.purchases?.map((p) => p.toUpperCase()).includes(type)
       buttonEl.disabled = purchased
       tagEl.textContent = purchased ? "PURCHASED" : "PURCHASE"
@@ -717,7 +717,7 @@ function updateUtilityItemsVisibility() {
   const adminItem = document.getElementById("util-admin-item")
 
   if (myAccountItem) {
-    myAccountItem.style.display = currentUser && currentUser.walletAddress ? "block" : "none" // Change condition
+    myAccountItem.style.display = currentUser && currentUser.walletAddress ? "block" : "none" // Mude a condição
   }
 
   if (adminItem) {
@@ -1056,14 +1056,14 @@ function createRaffleCard(raffle, userTickets, percentageChance, timeLeft, raffl
         </div>
         <input type="text" id="raffle-wallet-input-${raffle._id}" placeholder="Enter your wallet address (0x...)" class="bb-input mt-3 mb-2">
         <button id="buy-raffle-ticket-${raffle._id}" class="bb-btn bb-btn-primary w-full py-2 mt-auto" ${raffleEnded || (raffle.totalTickets - totalSoldTickets <= 0) ? "disabled" : ""}>
-            BUY TICKET (${raaffle.ticketPrice} $BB)
+            BUY TICKET (${raffle.ticketPrice} $BB)
         </button>
     `
   const walletInput = raffleCard.querySelector(`#raffle-wallet-input-${raffle._id}`);
   if (walletInput && currentConnectedWalletAddress) {
     walletInput.value = currentConnectedWalletAddress;
-    walletInput.readOnly = true; // Optional: makes the field read-only to prevent user from changing it
-    walletInput.classList.add('opacity-75', 'cursor-not-allowed'); // Optional: Adds styles to indicate it's read-only
+    walletInput.readOnly = true; // Opcional: torna o campo somente leitura para evitar que o usuário mude
+    walletInput.classList.add('opacity-75', 'cursor-not-allowed'); // Opcional: Adiciona estilos para indicar que é somente leitura
   }
   // Add event listener for buy button
   const buyButton = raffleCard.querySelector(`#buy-raffle-ticket-${raffle._id}`)
@@ -1121,7 +1121,7 @@ async function buyRaffleTicket(raffleId, ticketPrice, ticketsLeft, buttonElement
   const walletInput = document.getElementById(`raffle-wallet-input-${raffleId}`)
   const walletAddress = walletInput ? walletInput.value.trim() : ""
 
-  if (!walletAddress.startsWith("0x") || walletAddress.length < 10) { // Only format validation
+  if (!walletAddress.startsWith("0x") || walletAddress.length < 10) { // Apenas a validação de formato
     showNotification("An invalid wallet address was detected. Please reconnect your wallet.", "error");
     return;
   }
@@ -1232,7 +1232,7 @@ function checkCurrentUserRank() {
   }
 }
 
-// NOVO: Renders the Staking dashboard
+// NOVO: Renderiza o dashboard de Staking
 async function renderStakingDashboard() {
   if (!currentUser || !currentUser.walletAddress) return;
 
@@ -1250,54 +1250,54 @@ async function renderStakingDashboard() {
 
   try {
     const nftsInWallet = await getUserNftsInWallet(currentUser.walletAddress);
-    const stakedRecords = await apiRequest(`${BACKEND_URL}/staking/user-staked-nfts`); // Fetches only the assets from the backend
+    const stakedRecords = await apiRequest(`${BACKEND_URL}/staking/user-staked-nfts`); // Busca apenas os ativos pelo backend
 
     const nftsInWalletMap = new Map();
     nftsInWallet.forEach(nft => nftsInWalletMap.set(nft.tokenId, nft));
 
     let totalAccumulatedRewards = 0;
-    const confirmedStakedNfts = []; // ✨ Array for staked NFTs that are still in the user's wallet
-    const recordsToDeactivate = []; // ✨ Array for staking record IDs that need to be deactivated
+    const confirmedStakedNfts = []; // ✨ Array para NFTs stakadas que ainda estão na carteira do usuário
+    const recordsToDeactivate = []; // ✨ Array para IDs de registros de staking que precisam ser desativados
 
-    // ✨ NOVO: Iterates over the staking records returned by the backend
+    // ✨ NOVO: Itera sobre os registros de staking retornados pelo backend
     for (const record of stakedRecords) {
-      // Tries to verify on-chain ownership for each staked NFT
+      // Tenta verificar a posse on-chain para cada NFT stakada
       let isOwnerOnChain = false;
       try {
-        // Reuses the isUserOwnerOfNft logic (which is in the backend, but we need something similar on the frontend)
-        // Or, for the frontend, we can rely on the Alchemy list to see if it's still in the connected wallet.
-        // If the NFT is in the nftsInWallet list, it's still in the connected wallet.
+        // Reutiliza a lógica de isUserOwnerOfNft (que está no backend, mas precisamos de algo parecido no front)
+        // Ou, para o frontend, podemos confiar na lista da Alchemy para ver se ainda está na carteira
+        // Se o NFT está na lista de nftsInWallet, ele ainda está na carteira conectada.
         isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
 
-        // Alternative for on-chain check on the frontend (slower, but more accurate if the NFT disappeared due to sale/transfer)
+        // Alternativa para checagem on-chain no frontend (mais lenta, mas mais precisa se a NFT sumiu por venda/transferência)
         // const nftContractInstance = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
         // const ownerAddress = await nftContractInstance.ownerOf(record.tokenId);
         // isOwnerOnChain = (ownerAddress.toLowerCase() === currentUser.walletAddress.toLowerCase());
 
       } catch (checkError) {
         console.warn(`Could not verify on-chain ownership for staked NFT ${record.tokenId}:`, checkError.message);
-        isOwnerOnChain = false; // If verification fails, assume it's not the owner.
+        isOwnerOnChain = false; // Se não conseguir verificar, assuma que não é o proprietário.
       }
 
       if (isOwnerOnChain) {
         confirmedStakedNfts.push(record);
         totalAccumulatedRewards += record.accumulatedRewards;
       } else {
-        // If the staked NFT is no longer in the user's wallet, mark for deactivation in the backend
-        // This prevents it from appearing in the UI and also notifies the backend to update the status.
+        // Se a NFT stakada não está mais na carteira do usuário, mark para desativar no backend
+        // Isso evita que ela apareça na UI e também notifica o backend para atualizar o status
         recordsToDeactivate.push(record._id);
         console.log(`Staked NFT #${record.tokenId} found in backend but not in wallet. Will deactivate.`);
       }
     }
 
-    // ✨ RENDERING OF STAKED NFTs (only CONFIRMED ones)
+    // ✨ RENDERIZAÇÃO DAS NFTs STAKADAS (apenas as CONFIRMADAS)
     stakedNftsContainer.innerHTML = '';
     if (confirmedStakedNfts.length === 0) {
       stakedNftsContainer.innerHTML = '<p class="text-gray-400">No NFTs currently staked or found in your wallet.</p>';
     } else {
       confirmedStakedNfts.forEach(record => {
         let stakedImageUrl = "nft-placeholder.png";
-        // Tries to get the image of the staked NFT, using the information from Alchemy
+        // Tenta obter a imagem da NFT que foi stakada, usando a informação que veio da Alchemy
         if (nftsInWalletMap.has(record.tokenId)) {
           stakedImageUrl = nftsInWalletMap.get(record.tokenId).imageUrl;
         }
@@ -1306,7 +1306,7 @@ async function renderStakingDashboard() {
       });
     }
 
-    // ✨ RENDERING OF NFTs IN WALLET (UNSTAKED)
+    // ✨ RENDERIZAÇÃO DAS NFTs NA CARTEIRA (UNSTAKED)
     walletNftsContainer.innerHTML = '';
     const unstakedNfts = nftsInWallet.filter(nft => !confirmedStakedNfts.some(s => s.tokenId === nft.tokenId));
 
@@ -1321,7 +1321,7 @@ async function renderStakingDashboard() {
       });
     }
 
-    // Update total rewards display
+    // Atualizar exibição de recompensas totais
     accumulatedRewardsDisplay.textContent = `${totalAccumulatedRewards.toLocaleString()} $BB`;
     if (totalAccumulatedRewards > 0) {
       claimAllRewardsBtn.disabled = false;
@@ -1331,16 +1331,16 @@ async function renderStakingDashboard() {
       claimAllRewardsBtn.disabled = true;
     }
 
-    // ✨ NOVO: Sends requests to the backend to deactivate records that no longer belong to the user
+    // ✨ NOVO: Envia requisições ao backend para desativar os registros que não são mais do usuário
     if (recordsToDeactivate.length > 0) {
       console.log("Sending requests to deactivate stale staking records:", recordsToDeactivate);
-      // You will need a new endpoint in the backend to handle this, or use unstake for each one.
-      // Unstake already handles ownership checking and deactivation. So we can iterate.
+      // Você precisará de um novo endpoint no backend para lidar com isso, ou usar o unstake para cada um.
+      // O unstake já verifica posse. Então podemos iterar.
       for (const recordId of recordsToDeactivate) {
         const record = stakedRecords.find(r => r._id === recordId);
         if (record) {
           try {
-            // Calls unstake, which already handles ownership checking and deactivation
+            // Chama o unstake, que já lida com a checagem de posse e desativação
             await apiRequest(`${BACKEND_URL}/staking/unstake`, {
               method: 'POST',
               body: JSON.stringify({
@@ -1353,9 +1353,9 @@ async function renderStakingDashboard() {
           }
         }
       }
-      // After trying to deactivate, re-render to ensure the UI is updated
-      // (This can cause a loop if the backend doesn't deactivate, so make sure of the backend logic)
-      // setTimeout(() => renderStakingDashboard(), 1000); // Give a small time for the backend to process
+      // Após tentar desativar, re-renderiza para garantir que a UI esteja atualizada
+      // (Isso pode causar um loop se o backend não desativar, então tenha certeza da lógica do backend)
+      // setTimeout(() => renderStakingDashboard(), 1000); // Dar um pequeno tempo para o backend processar
     }
 
 
@@ -1366,8 +1366,8 @@ async function renderStakingDashboard() {
     stakedNftsContainer.innerHTML = '<p class="text-red-400">Error loading staked NFTs.</p>';
   }
 }
-// NOVO: Function to create the NFT card (stake/unstake)
-// ✨ Keep this function as is, it will now correctly receive the imageUrl.
+// NOVO: Função para criar o card de NFT (stake/unstake)
+// ✨ Mantenha esta função como está, ela agora receberá a imageUrl corretamente.
 function createStakingNftCard(tokenId, isStaked, accumulatedRewards = 0, imageUrl = "nft-placeholder.png") {
   const card = document.createElement("div");
   card.className = "bb-card p-4 text-center";
@@ -1394,7 +1394,7 @@ function createStakingNftCard(tokenId, isStaked, accumulatedRewards = 0, imageUr
   return card;
 }
 
-// NOVO: Function to handle staking an NFT
+// NOVO: Função para lidar com o staking de uma NFT
 async function handleStakeNft(tokenId) {
   if (!currentUser) {
     showModal(elements.walletModal);
@@ -1408,7 +1408,7 @@ async function handleStakeNft(tokenId) {
   button.classList.add('loading');
 
   try {
-    // Calls the staking endpoint on the backend
+    // Chama o endpoint de staking no backend
     const data = await apiRequest(`${BACKEND_URL}/staking/stake`, {
       method: 'POST',
       body: JSON.stringify({
@@ -1417,8 +1417,8 @@ async function handleStakeNft(tokenId) {
     });
 
     showNotification(data.message, 'success');
-    // Since staking doesn't directly change credits on the frontend, just update the dashboard
-    renderStakingDashboard(); // Updates the staking UI
+    // Como o staking não muda créditos diretamente no front-end, apenas atualiza o dashboard
+    renderStakingDashboard(); // Atualiza a UI de staking
   } catch (error) {
     console.error('Error staking NFT:', error);
     showNotification(error.message || 'Failed to stake NFT.', 'error');
@@ -1428,7 +1428,7 @@ async function handleStakeNft(tokenId) {
     button.classList.remove('loading');
   }
 }
-// NOVO: Function to handle unstaking an NFT
+// NOVO: Função para lidar com o desstaking de uma NFT
 async function handleUnstakeNft(tokenId, accumulatedRewards) {
   if (!currentUser) {
     showModal(elements.walletModal);
@@ -1445,7 +1445,7 @@ async function handleUnstakeNft(tokenId, accumulatedRewards) {
   button.classList.add('loading');
 
   try {
-    // Calls the unstaking endpoint on the backend
+    // Chama o endpoint de unstaking no backend
     const data = await apiRequest(`${BACKEND_URL}/staking/unstake`, {
       method: 'POST',
       body: JSON.stringify({
@@ -1454,11 +1454,11 @@ async function handleUnstakeNft(tokenId, accumulatedRewards) {
     });
 
     showNotification(data.message, 'success');
-    // Updates the user's credit balance on the frontend
+    // Atualiza o saldo de créditos do usuário no front-end
     currentUser = data.user;
     sessionStorage.setItem("current_user_wallet", JSON.stringify(currentUser));
-    updateUserUI(); // Updates the header with new $BB
-    renderStakingDashboard(); // Updates the staking UI
+    updateUserUI(); // Atualiza o header com os novos $BB
+    renderStakingDashboard(); // Atualiza a UI de staking
   } catch (error) {
     console.error('Error unstaking NFT:', error);
     showNotification(error.message || 'Failed to unstake NFT.', 'error');
@@ -1468,14 +1468,14 @@ async function handleUnstakeNft(tokenId, accumulatedRewards) {
     button.classList.remove('loading');
   }
 }
-// NOVO: Function to handle claiming all rewards
-async function handleClaimRewards(tokenId = null) { // Allows claiming all or for a specific tokenId
+// NOVO: Função para lidar com o claim de todas as recompensas
+async function handleClaimRewards(tokenId = null) { // Permite clamar todas ou de um tokenId específico
   if (!currentUser) {
     showModal(elements.walletModal);
     return;
   }
 
-  const button = document.getElementById("claim-all-rewards-btn"); // Or the specific NFT button
+  const button = document.getElementById("claim-all-rewards-btn"); // Ou o botão específico da NFT
   const originalText = button.textContent;
   button.disabled = true;
   button.textContent = 'Claiming...';
@@ -1484,18 +1484,18 @@ async function handleClaimRewards(tokenId = null) { // Allows claiming all or fo
   try {
     const body = tokenId ? {
       tokenId
-    } : {}; // Sends tokenId if specific
+    } : {}; // Envia tokenId se for específico
     const data = await apiRequest(`${BACKEND_URL}/staking/claim-rewards`, {
       method: 'POST',
       body: JSON.stringify(body)
     });
 
     showNotification(data.message, 'success');
-    // Updates the user's credit balance on the frontend
+    // Atualiza o saldo de créditos do usuário no front-end
     currentUser = data.user;
     sessionStorage.setItem("current_user_wallet", JSON.stringify(currentUser));
-    updateUserUI(); // Updates the header with new $BB
-    renderStakingDashboard(); // Updates the staking UI
+    updateUserUI(); // Atualiza o header com os novos $BB
+    renderStakingDashboard(); // Atualiza a UI de staking
   } catch (error) {
     console.error('Error claiming rewards:', error);
     showNotification(error.message || 'Failed to claim rewards.', 'error');
@@ -1511,9 +1511,9 @@ function setupEventListeners() {
   // Close modal events
   document.querySelectorAll(".close-modal").forEach((closeBtn) => {
     closeBtn.addEventListener("click", (e) => {
-      // HERE is the adjustment. Use specific IDs or classes to ensure it finds the correct modal.
-      // `my-account-modal` has ID `my-account-modal` and class `auth-modal`.
-      // We will use a combination that covers all your modals with `close-modal`.
+      // AQUI está o ajuste. Use os IDs ou classes específicas para garantir que ele encontre o modal correto.
+      // O `my-account-modal` tem o ID `my-account-modal` e a classe `auth-modal`.
+      // Vamos usar uma combinação que abranja todos os seus modais com `close-modal`.
       const modal = e.target.closest("#my-account-modal, #purchase-modal, #admin-panel, #update-info-modal, #wallet-modal, #wrong-chain-modal"); //
 
       if (modal) {
@@ -1527,21 +1527,21 @@ function setupEventListeners() {
   // NOVO: Connect Wallet button
   if (elements.connectWalletButton) {
     elements.connectWalletButton.addEventListener("click", () => {
-      showModal(elements.walletModal); // Now the main button opens the wallet selection modal
+      showModal(elements.walletModal); // Agora o botão principal abre o modal de seleção
     });
   }
 
   const connectMetamaskBtn = document.getElementById('connect-metamask');
   const connectRabbyBtn = document.getElementById('connect-rabby');
-  // const connectCoinbaseBtn = document.getElementById('connect-coinbase'); // If present in your HTML
+  // const connectCoinbaseBtn = document.getElementById('connect-coinbase'); // Se houver no seu HTML
   if (connectMetamaskBtn) {
     connectMetamaskBtn.addEventListener('click', () => handleWalletOptionClick('injected'));
   }
   if (connectRabbyBtn) {
-    connectRabbyBtn.addEventListener('click', () => handleWalletOptionClick('injected')); // Rabby is usually detected as injected
+    connectRabbyBtn.addEventListener('click', () => handleWalletOptionClick('injected')); // Rabby geralmente é detectada como injetada
   }
   // if (connectCoinbaseBtn) {
-  //     connectCoinbaseBtn.addEventListener('click', () => handleWalletOptionClick('coinbaseWallet')); // Use 'coinbaseWallet' or 'injected' depending on integration
+  //     connectCoinbaseBtn.addEventListener('click', () => handleWalletOptionClick('coinbaseWallet')); // Use 'coinbaseWallet' ou 'injected' dependendo da integração
   // }
 
   // Spin button
@@ -1562,7 +1562,7 @@ function setupEventListeners() {
   // Utilities sidebar
   if (elements.utilitiesBtn) {
     elements.utilitiesBtn.addEventListener("click", () => {
-      if (!currentUser || !currentUser.walletAddress) { // Change condition
+      if (!currentUser || !currentUser.walletAddress) { // Altere a condição
         showLoginFirstMessage()
         return
       }
@@ -1584,7 +1584,7 @@ function setupEventListeners() {
   // User avatar click
   if (elements.userAvatar) {
     elements.userAvatar.addEventListener("click", () => {
-      if (currentUser && currentUser.walletAddress) { // Change condition
+      if (currentUser && currentUser.walletAddress) { // Altere a condição
         showMyAccountModal()
       }
     })
@@ -1593,7 +1593,7 @@ function setupEventListeners() {
   // Play existing game buttons
   document.querySelectorAll(".play-existing-game").forEach((button) => {
     button.addEventListener("click", (event) => {
-      if (!currentUser || !currentUser.walletAddress) { // Change condition
+      if (!currentUser || !currentUser.walletAddress) { // Altere a condição
         showLoginFirstMessage()
         return
       }
@@ -1604,9 +1604,9 @@ function setupEventListeners() {
     })
   })
 
-  // Prompt auth buttons (in tab-contents)
+  // Prompt auth buttons (nos tab-contents)
   document.querySelectorAll('[id$="-prompt-auth-button"]').forEach((button) => {
-    button.addEventListener("click", () => showLoginFirstMessage()) // No longer showModal(authModal)
+    button.addEventListener("click", () => showLoginFirstMessage()) // Não mais showModal(authModal)
   })
 
   // Setup shop buttons
@@ -1622,29 +1622,29 @@ function setupEventListeners() {
     if (e.target === elements.wrongChainModal) hideModal(elements.wrongChainModal); //
   })
 
-  // Event listener for the "SWITCH TO APECHAIN" button in the network error modal
+  // Event listener para o botão "SWITCH TO APECHAIN" no modal de erro de rede
   const wrongChainModalButton = document.getElementById("wrong-chain-modal-button");
   if (wrongChainModalButton) {
     wrongChainModalButton.addEventListener("click", async () => {
       try {
-        // Tries to switch to the correct network
+        // Tenta trocar para a rede correta
         await web3Provider.send("wallet_switchEthereumChain", [{
           chainId: `0x${REQUIRED_CHAIN_ID.toString(16)}`
         }]);
       } catch (switchError) {
-        // If the network is not added, tries to add it
+        // Se a rede não estiver adicionada, tenta adicioná-la
         if (switchError.code === 4902) { // 4902: Chain not added to MetaMask
           try {
             await web3Provider.send("wallet_addEthereumChain", [{
               chainId: `0x${REQUIRED_CHAIN_ID.toString(16)}`,
-              chainName: "ApeChain", // Network name (can be "ApeChain Mainnet")
+              chainName: "ApeChain", // Nome da rede (pode ser "ApeChain Mainnet")
               nativeCurrency: {
-                name: "ApeCoin", // Native currency symbol, e.g., APE or ETH if compatible
-                symbol: "ETH", // Or APE, depending
+                name: "ApeCoin", // Símbolo da moeda nativa, ex: APE ou ETH se for compatível
+                symbol: "ETH", // Ou APE, dependendo
                 decimals: 18
               },
-              rpcUrls: ["https://rpc.apechain.com"], // Your RPC URL
-              blockExplorerUrls: ["https://apechain.apecoin.com/"] // Optional, ApeChain explorer
+              rpcUrls: ["https://rpc.apechain.com"], // Sua URL RPC
+              blockExplorerUrls: ["https://apechain.apecoin.com/"] // Opcional, explorer da ApeChain
             }]);
           } catch (addError) {
             console.error("Failed to add ApeChain:", addError);
@@ -1655,54 +1655,6 @@ function setupEventListeners() {
           showNotification("Failed to switch chain in your wallet. Please switch manually.", "error");
         }
       }
-    });
-  }
-
-  // Wallet events
-  if (window.ethereum) {
-    // Event for when the wallet account changes
-    window.ethereum.on("accountsChanged", async (accounts) => {
-      if (accounts.length === 0) {
-        console.log("Wallet disconnected.");
-        handleLogout();
-      } else {
-        currentConnectedWalletAddress = accounts[0];
-        console.log("Account changed to:", currentConnectedWalletAddress);
-        await authenticateWithBackend(currentConnectedWalletAddress); // Re-authenticates and checks NFT
-      }
-    });
-
-    // Event for when the wallet network/chain ID changes
-    window.ethereum.on("chainChanged", async (chainId) => {
-      console.log("Chain changed to:", chainId);
-      // Forces a re-authentication and re-verification of the NFT
-      // This will also call checkNftOwnership() and update the UI
-      if (currentConnectedWalletAddress) { // Only if there is already a connected wallet
-        await authenticateWithBackend(currentConnectedWalletAddress);
-      } else {
-        // If no wallet was connected, but the chain changed,
-        // we might want to force a new connection/verification attempt
-        // or just wait for the user to connect. For simplicity, we will re-check if there is a user.
-        if (currentUser && currentUser.walletAddress) {
-          await authenticateWithBackend(currentUser.walletAddress);
-        }
-      }
-    });
-
-    // Event for when the wallet connects
-    window.ethereum.on("connect", async (info) => {
-      console.log("Wallet connected:", info);
-      const accounts = await web3Provider.listAccounts();
-      if (accounts.length > 0) {
-        currentConnectedWalletAddress = accounts[0];
-        await authenticateWithBackend(currentConnectedWalletAddress);
-      }
-    });
-
-    // Event for when the wallet disconnects
-    window.ethereum.on("disconnect", (error) => {
-      console.log("Wallet disconnected:", error);
-      handleLogout();
     });
   }
 }
@@ -1729,12 +1681,12 @@ function setupUtilitiesNavigation() {
           if (targetModal === "my-account") {
             showMyAccountModal()
           } else if (targetModal === "admin") {
-            // ✨ MODIFICAÇÃO AQUI: Logic to open Admin panel
-            if (currentUser && currentUser.isAdmin) { // Double check (already done in updateUtilityItemsVisibility, but good for clarity)
+            // ✨ MODIFICAÇÃO AQUI: Lógica para abrir o painel Admin
+            if (currentUser && currentUser.isAdmin) { // Dupla verificação (já feita no updateUtilityItemsVisibility, mas boa para clareza)
               showModal(elements.adminPanel);
-              // Makes admin content visible
+              // Torna o conteúdo do admin visível
               document.getElementById("admin-content").classList.remove("hidden");
-              // Loads specific admin data
+              // Carrega os dados específicos do admin
               loadWLPurchases();
               loadRaffleSelectOptions();
             } else {
@@ -1908,22 +1860,22 @@ async function handleClaimPoints(claimPointsButton) {
   }
 }
 
-// NOVO: Functions to connect the wallet
-// Initializes Web3Modal with theme and providers
+// NOVO: Funções para conectar a carteira
+// Inicializa Web3Modal com o tema e provedores
 function initWeb3Modal() {
-  // Web3Modal configuration
+  // Configuração do Web3Modal
   const providerOptions = {
     injected: {
       display: {
-        name: "Injected", // Generic name for injected providers
+        name: "Injected", // Nome genérico para provedores injetados
         description: "Connect with browser wallet (MetaMask, Rabby, etc.)",
-        // If you have specific icons for Rabby/MetaMask, you can place them here or Web3Modal will detect them.
-        // icon: 'URL_OF_YOUR_DEFAULT_ICON_HERE.svg'
+        // Se você tiver ícones específicos para Rabby/MetaMask, você pode colocar aqui ou o Web3Modal os detectará.
+        // icon: 'URL_DO_SEU_ICONE_PADRAO_AQUI.svg'
       },
       package: null
     },
-    // You had walletconnect before, but if Rabby is being detected as injected, it's not strictly necessary.
-    // If you need broad support for other wallets via QR Code, you can keep it.
+    // Você tinha walletconnect antes, mas se Rabby está sendo detectada como injetada, não é estritamente necessário.
+    // Se precisar de suporte amplo para outras carteiras via QR Code, pode manter.
     // walletconnect: {
     //     package: WalletConnectProvider,
     //     options: {
@@ -1960,7 +1912,7 @@ async function connectWallet() {
     await authenticateWithBackend(currentConnectedWalletAddress);
 
     // Listen for account changes
-    if (instance.on) { // Ensures the provider has the 'on' method
+    if (instance.on) { // Garante que o provedor tem o método 'on'
       instance.on('accountsChanged', (newAccounts) => {
         if (newAccounts.length > 0) {
           console.log("Account changed:", newAccounts[0]);
@@ -1996,13 +1948,13 @@ async function connectWallet() {
 }
 
 async function handleWalletOptionClick(providerType) {
-  hideModal(elements.walletModal); // Hides the wallet selection modal
+  hideModal(elements.walletModal); // Esconde o modal de seleção de carteira
   showNotification("Connecting to wallet...", "info");
   try {
-    // NOVO: Clears provider cache before trying to connect
-    // This forces Web3Modal to show the selection screen
-    if (web3Modal.cachedProvider) { // Checks if there is a cached provider
-      await web3Modal.clearCachedProvider(); // Clears cache
+    // NOVO: Limpa o cache do provedor antes de tentar conectar
+    // Isso força o Web3Modal a mostrar a tela de seleção
+    if (web3Modal.cachedProvider) { // Verifica se há um provedor em cache
+      await web3Modal.clearCachedProvider(); // Limpa o cache
       console.log("Web3Modal cached provider cleared explicitly.");
     }
 
@@ -2024,7 +1976,7 @@ async function handleWalletOptionClick(providerType) {
     await authenticateWithBackend(currentConnectedWalletAddress);
 
     // Listen for account changes
-    if (instance.on) { // Ensures the provider has the 'on' method
+    if (instance.on) { // Garante que o provedor tem o método 'on'
       instance.on('accountsChanged', (newAccounts) => {
         if (newAccounts.length > 0) {
           console.log("Account changed:", newAccounts[0]);
@@ -2056,14 +2008,14 @@ async function handleWalletOptionClick(providerType) {
     console.error("Error connecting to wallet:", error);
     // The error message is now more generic but still useful.
     showNotification("Failed to connect wallet. " + (error.message || "Please ensure MetaMask/Rabby is installed and unlocked."), "error");
-    handleLogout(); // Ensures the state is cleared in case of initial connection error
+    handleLogout(); // Garante que o estado é limpo em caso de erro de conexão inicial
   }
 }
 
 
 // File: app.js
 async function authenticateWithBackend(walletAddress) {
-  hideWrongChainModal(); // ✨ NOVO: Hides the modal at the start of authentication
+  hideWrongChainModal(); // ✨ NOVO: Esconde o modal no início da autenticação
   try {
     const data = await apiRequest(`${BACKEND_URL}/auth/wallet-login`, {
       method: "POST",
@@ -2075,20 +2027,20 @@ async function authenticateWithBackend(walletAddress) {
     if (data.message === "User found and logged in" || data.message === "User created and logged in") {
       currentUser = data.user;
       sessionStorage.setItem("current_user_wallet", JSON.stringify(currentUser));
-      updateUserUI(); // This updates the point counter and wallet address
+      updateUserUI(); // Isso atualiza o contador de pontos e o endereço da carteira
 
-      // ✨ PROBLEM: checkNftOwnership might not be generating the notification or the expected flow for F5
-      userHasNft = await checkNftOwnership(); // ✅ This line needs to ensure the UI is updated based on the result
+      // ✨ PROBLEMA: checkNftOwnership pode não estar gerando a notificação ou o fluxo esperado para F5
+      userHasNft = await checkNftOwnership(); // ✅ Esta linha precisa garantir que a UI é atualizada com base no resultado
 
-      // ✨ ADDITION/CORRECTION HERE: Ensure the UI is re-evaluated with the new userHasNft status
-      // handleTabContent (called by activateTab) already performs this check.
-      // So, just call activateTab again for the current tab or "home".
-      // Get the currently active tab.
+      // ✨ ADIÇÃO/CORREÇÃO AQUI: Garanta que a UI seja re-avaliada com o novo status de userHasNft
+      // handleTabContent (chamado por activateTab) já faz essa verificação.
+      // Então, apenas chame activateTab novamente para a aba atual ou "home".
+      // Obtenha a aba ativa no momento.
       const activeTabElement = document.querySelector('.tab-content.active');
-      const currentActiveTabId = activeTabElement ? activeTabElement.id : 'home'; // Fallback to 'home'
+      const currentActiveTabId = activeTabElement ? activeTabElement.id : 'home'; // Fallback para 'home'
 
-      // Call activateTab again to re-render the content based on userHasNft
-      activateTab(currentActiveTabId); // This will force re-evaluation of userHasNft for the tab
+      // Chame activateTab novamente para re-renderizar o conteúdo com base em userHasNft
+      activateTab(currentActiveTabId); // Isso forçará a reavaliação de userHasNft para a aba
 
       if (userHasNft) {
         showNotification("NFT found! Access granted to Holder Tools.", "success");
@@ -2107,30 +2059,30 @@ async function authenticateWithBackend(walletAddress) {
   }
 }
 
-// Updated logout function for Web3
-async function handleLogout() { // Ensure this function is 'async'
+// Função de logout atualizada para Web3
+async function handleLogout() { // Garanta que esta função é 'async'
   currentUser = null;
   sessionStorage.removeItem("current_user_wallet");
   currentConnectedWalletAddress = null;
   web3Provider = null;
   signer = null;
-  userHasNft = false; // NOVO: Resets NFT status on logout
+  userHasNft = false; // NOVO: Reseta o status da NFT ao deslogar
 
-  // Clears Web3Modal cache so that the next connection shows the selection modal
+  // Limpa o cache do Web3Modal para que a próxima conexão mostre o modal de seleção
   if (web3Modal) {
     await web3Modal.clearCachedProvider();
     console.log("Web3Modal cached provider cleared on logout.");
   }
 
-  updateUserUI(); // Updates UI to reflect disconnected state
+  updateUserUI(); // Atualiza a UI para refletir o estado desconectado
   showNotification("Wallet disconnected successfully.", "success");
-  activateTab("home"); // Returns to 'home' tab or other default tab
+  activateTab("home"); // Volta para a aba 'home' ou outra aba padrão
 
-  // NOVO: Closes "My Account" modal after disconnecting
-  if (elements.myAccountModal) { // Checks if modal element exists
+  // NOVO: Fecha o modal "My Account" após desconectar
+  if (elements.myAccountModal) { // Verifica se o elemento do modal existe
     hideModal(elements.myAccountModal);
   }
-  hideWrongChainModal(); // ✨ NOVO: Hides wrong network modal on logout
+  hideWrongChainModal(); // ✨ NOVO: Esconde o modal de rede errada ao deslogar
 }
 
 
@@ -2282,7 +2234,8 @@ function showMyAccountModal() {
   // Update username display to show wallet address or a placeholder if username is not available
   if (accountUsername) accountUsername.textContent = currentUser.username;
   if (accountCredits) accountCredits.textContent = `${currentUser.credits.toLocaleString()} $BB`
-  if (accountWalletAddress) accountWalletAddress.textContent = currentUser.walletAddress; // NOVO: Shows full address
+  if (accountWalletAddress) accountWalletAddress.textContent = currentUser.walletAddress; // NOVO: Mostra o endereço completo
+  if (elements.editUsernameInput) elements.editUsernameInput.value = currentUser.username; // Preenche o input de edição
 
 
   // Referral logic removed from here
@@ -2298,7 +2251,7 @@ async function handleSaveUsername() {
     return;
   }
 
-  // Optional: Add username format and length validation here on the frontend as well
+  // Opcional: Adicionar validação de formato e comprimento do username aqui no front-end também
   if (newUsername.length < 3 || newUsername.length > 20) {
     showNotification("Username must be between 3 and 20 characters.", "error");
     return;
@@ -2310,7 +2263,7 @@ async function handleSaveUsername() {
 
   if (newUsername.toLowerCase() === currentUser.username.toLowerCase()) {
     showNotification("Username is already set to this value.", "info");
-    elements.cancelUsernameBtn.click(); // Closes edit mode
+    elements.cancelUsernameBtn.click(); // Fecha o modo de edição
     return;
   }
 
@@ -2323,16 +2276,16 @@ async function handleSaveUsername() {
     });
 
     showNotification(data.message, "success");
-    currentUser = data.user; // Updates user in session
+    currentUser = data.user; // Atualiza o usuário na sessão
     sessionStorage.setItem("current_user_wallet", JSON.stringify(currentUser));
-    updateUserUI(); // Updates UI
+    updateUserUI(); // Atualiza a UI
 
-    // Hides edit field and shows updated username
+    // Esconde o campo de edição e mostra o username atualizado
     elements.accountUsername.textContent = currentUser.username;
-    elements.cancelUsernameBtn.click(); // Returns to view mode
+    elements.cancelUsernameBtn.click(); // Volta para o modo de visualização
   } catch (error) {
     console.error("Error saving username:", error);
-    // Displays specific backend error message if available
+    // Exibe a mensagem de erro específica do backend se disponível
     showNotification(error.message || "Failed to update username.", "error");
   }
 }
@@ -2365,36 +2318,36 @@ document.addEventListener("DOMContentLoaded", async () => {
   // Setup event listeners
   setupEventListeners()
 
-  initWeb3Modal(); // Initializes web3Modal
+  initWeb3Modal(); // Inicializa o web3Modal
 
-  // ✨ CRUCIAL MODIFICATION HERE: Tries to automatically reconnect wallet if there's a cached provider
+  // ✨ MODIFICAÇÃO CRUCIAL AQUI: Tenta reconectar a carteira automaticamente se houver um provedor em cache
   if (web3Modal.cachedProvider) {
     console.log("Found cached Web3 provider. Attempting automatic wallet connection...");
     try {
-      await connectWallet(); // Tries to reconnect wallet
+      await connectWallet(); // Tenta reconectar a carteira
       console.log("Automatic wallet connection successful.");
-      // If automatic connection is successful, then we can authenticate with the backend
+      // Se a conexão automática for bem-sucedida, então podemos autenticar com o backend
       if (currentUser && currentUser.walletAddress) {
         console.log("Found cached user. Re-authenticating with backend and checking NFT ownership...");
         await authenticateWithBackend(currentUser.walletAddress);
       } else {
-        // If wallet reconnected but there is no currentUser (which is unlikely here), just update the UI
+        // Se a carteira reconectou mas não há currentUser (o que é improvável aqui), apenas atualiza a UI
         updateUserUI();
       }
     } catch (error) {
       console.error("Error during automatic wallet connection:", error);
       showNotification("Failed to automatically connect wallet. Please connect manually.", "error");
-      // If reconnection fails, clear the cache to prevent future failed attempts
+      // Se a reconexão falhar, limpa o cache para evitar tentativas futuras que falham
       web3Modal.clearCachedProvider();
-      handleLogout(); // Ensures user state is cleared
+      handleLogout(); // Garante que o estado do usuário seja limpo
     }
   } else if (currentUser && currentUser.walletAddress) {
-    // If no cachedProvider, but there is currentUser (which would be an inconsistent state),
-    // just log out to force a manual connection.
+    // Se não há cachedProvider, mas há currentUser (o que seria um estado inconsistente),
+    // apenas loga e desloga para forçar uma conexão manual.
     console.warn("Cached user found but no cached Web3 provider. Logging out to force manual connection.");
     handleLogout();
   } else {
-    // If no cachedProvider and no currentUser, just update the UI to the disconnected state
+    // Se não há cachedProvider e nem currentUser, apenas atualiza a UI para o estado desconectado
     updateUserUI();
   }
 
@@ -2417,7 +2370,7 @@ function setupAdditionalEventListeners() {
   // Logout button
   const logoutBtn = document.getElementById("logout-btn-modal")
   if (logoutBtn) {
-    logoutBtn.addEventListener("click", handleLogout) // Uses the new logout function
+    logoutBtn.addEventListener("click", handleLogout) // Usa a nova função de logout
   }
 
   // Update info modal
@@ -2482,7 +2435,7 @@ function setupAdditionalEventListeners() {
       elements.accountUsername.style.display = "block";
       elements.editUsernameBtn.style.display = "block";
       elements.usernameEditContainer.style.display = "none";
-      elements.editUsernameInput.value = currentUser.username; // Returns to current username
+      elements.editUsernameInput.value = currentUser.username; // Volta ao username atual
     });
   }
   if (elements.saveUsernameBtn) {
@@ -2491,18 +2444,18 @@ function setupAdditionalEventListeners() {
 }
 
 function setupAdminPanelEvents() {
-  // const adminLoginBtn = document.getElementById("admin-login"); // ✨ REMOVE OR COMMENT OUT THIS LINE
-  // const closeAdminBtn = document.getElementById("close-admin"); // Already ok
+  // const adminLoginBtn = document.getElementById("admin-login"); // ✨ REMOVA OU COMENTE ESTA LINHA
+  // const closeAdminBtn = document.getElementById("close-admin"); // Já está ok
 
-  // ✨ NOVO: Listener for "Admin" item in utilities menu
+  // ✨ NOVO: Listener para o item "Admin" no menu de utilitários
   const utilAdminItem = document.getElementById("util-admin-item");
   if (utilAdminItem) {
     utilAdminItem.addEventListener("click", () => {
       if (currentUser && currentUser.isAdmin) {
         showModal(elements.adminPanel);
-        // Makes admin content visible
+        // Torna o conteúdo do admin visível
         document.getElementById("admin-content").classList.remove("hidden");
-        // Loads specific admin data
+        // Carrega os dados específicos do admin
         loadWLPurchases();
         loadRaffleSelectOptions();
       } else {
@@ -2511,17 +2464,17 @@ function setupAdminPanelEvents() {
     });
   }
 
-  // There is already a closeAdminBtn that works to close the modal
+  // Já existe um closeAdminBtn que funciona para fechar o modal
   const closeAdminBtn = document.getElementById("close-admin");
   if (closeAdminBtn) {
     closeAdminBtn.addEventListener("click", () => {
       hideModal(elements.adminPanel);
-      // Optional: Hide content again when closing to re-display on next opening
+      // Opcional: Esconder o conteúdo novamente ao fechar para reexibir na próxima abertura
       document.getElementById("admin-content").classList.add("hidden");
     });
   }
 
-  // Rest of admin panel listeners (post tweet, create raffle) remain unchanged
+  // Restante dos listeners do admin panel (postar tweet, criar raffle) permanecem inalterados
   const postTweetBtn = document.getElementById("post-tweet-mission-btn");
   const createRaffleBtn = document.getElementById("create-raffle-btn");
 
@@ -2534,7 +2487,7 @@ function setupAdminPanelEvents() {
   }
 }
 
-// ✨ REMOVE THIS FUNCTION COMPLETELY! WE NO LONGER NEED IT.
+// ✨ REMOVA ESTA FUNÇÃO COMPLETAMENTE! NÃO PRECISAMOS MAIS DELA.
 /*
 async function handleAdminLogin() {
   const password = document.getElementById("admin-password").value;
@@ -2793,8 +2746,8 @@ async function handleRaffleWinnerView() {
   }
 }
 
-// ✨ NOVO: Hides the password input section in the HTML itself if it still exists
-// (Recommended to completely remove the password input HTML, but this is a quick JS solution)
+// ✨ NOVO: Oculta a seção de input de senha no próprio HTML se ela ainda existir
+// (Recomendado para remover completamente o HTML do input de senha, mas essa é uma solução rápida no JS)
 document.addEventListener("DOMContentLoaded", () => {
   const adminPasswordInput = document.getElementById("admin-password");
   if (adminPasswordInput) {

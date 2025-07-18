@@ -10,7 +10,7 @@ let web3Modal;
 let web3Provider; // Para ethers.js Provider
 let signer;
 let currentConnectedWalletAddress;
-let userHasNft = false;// NOVO: Adicione esta variável no topo do arquivo junto com `currentUser`
+let userHasNft = false; // NOVO: Adicione esta variável no topo do arquivo junto com `currentUser`
 
 // Constants
 // const ADMIN_PASSWORD = "admin" // ✨ REMOVA ESTA LINHA - NÃO PRECISAMOS MAIS DE SENHA FIXA NO FRONTEND!
@@ -48,6 +48,7 @@ function initializeElements() {
     adminPanel: document.getElementById("admin-panel"),
     updateInfoModal: document.getElementById("update-info-modal"),
     walletModal: document.getElementById("wallet-modal"), // NOVO
+    wrongChainMessage: document.getElementById("wrong-chain-message"), // ✨ NOVO ELEMENTO
 
     // Buttons
     // authButton: document.getElementById("auth-button"), // REMOVIDO
@@ -160,6 +161,18 @@ function hideModal(modalElement) {
       modalElement.style.display = "none"; // Oculta o elemento após a transição
       document.body.classList.remove("modal-open"); // Remove a classe do body
     }, 200); // Tempo correspondente à transição CSS
+  }
+}
+
+function showWrongChainMessage() {
+  if (elements.wrongChainMessage) {
+    elements.wrongChainMessage.classList.remove('hidden');
+  }
+}
+
+function hideWrongChainMessage() {
+  if (elements.wrongChainMessage) {
+    elements.wrongChainMessage.classList.add('hidden');
   }
 }
 
@@ -296,60 +309,64 @@ async function loadRecentJackpotWins() {
 // A API balanceOf() verifica APENAS a quantidade total de NFTs para um endereço.
 // Para listar os IDs (tokenIds) específicos que o usuário possui, você precisaria de uma API ou subgraph.
 async function getUserNftsInWallet(walletAddress) {
-    if (!walletAddress) { // Removi a verificação de web3Provider e ABI aqui, pois a Alchemy não precisa deles para esta chamada específica.
-        console.warn("Wallet address missing for fetching NFTs.");
-        return [];
+  if (!walletAddress) { // Removi a verificação de web3Provider e ABI aqui, pois a Alchemy não precisa deles para esta chamada específica.
+    console.warn("Wallet address missing for fetching NFTs.");
+    return [];
+  }
+
+  try {
+    // ✨ NOVO: Validação do Chain ID antes de tentar buscar NFTs com Alchemy
+    const network = await web3Provider.getNetwork();
+    const chainId = network.chainId;
+
+    if (chainId !== REQUIRED_CHAIN_ID) {
+      showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) for NFT operations.`, "error");
+      return [];
     }
 
-    try {
-        // ✨ NOVO: Validação do Chain ID antes de tentar buscar NFTs com Alchemy
-        const network = await web3Provider.getNetwork();
-        const chainId = network.chainId;
+    // ✨ CHAMADA À API DA ALCHEMY
+    // Construímos a URL para o endpoint getNFTsForOwner
+    // Inclua o contractAddresses[] para filtrar apenas pela sua NFT.
+    const url = `${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTsForOwner/?owner=${walletAddress}&contractAddresses[]=${NFT_CONTRACT_ADDRESS}`;
 
-        if (chainId !== REQUIRED_CHAIN_ID) {
-            showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) for NFT operations.`, "error");
-            return [];
-        }
+    console.log("Fetching NFTs from Alchemy URL:", url);
 
-        // ✨ CHAMADA À API DA ALCHEMY
-        // Construímos a URL para o endpoint getNFTsForOwner
-        // Inclua o contractAddresses[] para filtrar apenas pela sua NFT.
-        const url = `${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTsForOwner/?owner=${walletAddress}&contractAddresses[]=${NFT_CONTRACT_ADDRESS}`;
-        
-        console.log("Fetching NFTs from Alchemy URL:", url);
-
-        const response = await fetch(url, { method: "GET" });
-        if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-            throw new Error(`Alchemy API error! status: ${response.status}, message: ${errorData.message || response.statusText}`);
-        }
-
-        const data = await response.json();
-        console.log("NFTs from Alchemy:", data);
-
-        const userNfts = data.ownedNfts.map(nft => {
-            // A Alchemy retorna o tokenId em formato hexadecimal, precisamos convertê-lo para decimal
-            const tokenId = parseInt(nft.id.tokenId, 16).toString(); // Converte hex para decimal
-
-            // A Alchemy também retorna a URL da imagem da NFT, que é muito útil!
-            // nft.media[0].gateway geralmente é a URL HTTP(s) direta para a imagem.
-            const imageUrl = nft.media.length > 0 && nft.media[0].gateway ? nft.media[0].gateway : "nft-placeholder.png";
-
-            return {
-                tokenId: tokenId,
-                isStaked: false, // O status de stake ainda será gerenciado pelo seu backend
-                imageUrl: imageUrl // Usamos a URL da imagem fornecida pela Alchemy
-            };
-        });
-        
-        return userNfts;
-
-   } catch (error) {
-        console.error("DETAILED ERROR fetching user NFTs with Alchemy:", error);
-        // Garanta que a notificação ao usuário seja clara
-        showNotification("Error loading your NFTs. Please ensure your wallet is on the correct network and try again.", "error");
-        return [];
+    const response = await fetch(url, {
+      method: "GET"
+    });
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({
+        message: 'Unknown error'
+      }));
+      throw new Error(`Alchemy API error! status: ${response.status}, message: ${errorData.message || response.statusText}`);
     }
+
+    const data = await response.json();
+    console.log("NFTs from Alchemy:", data);
+
+    const userNfts = data.ownedNfts.map(nft => {
+      // A Alchemy retorna o tokenId em formato hexadecimal, precisamos convertê-lo para decimal
+      const tokenId = parseInt(nft.id.tokenId, 16).toString(); // Converte hex para decimal
+
+      // A Alchemy também retorna a URL da imagem da NFT, que é muito útil!
+      // nft.media[0].gateway geralmente é a URL HTTP(s) direta para a imagem.
+      const imageUrl = nft.media.length > 0 && nft.media[0].gateway ? nft.media[0].gateway : "nft-placeholder.png";
+
+      return {
+        tokenId: tokenId,
+        isStaked: false, // O status de stake ainda será gerenciado pelo seu backend
+        imageUrl: imageUrl // Usamos a URL da imagem fornecida pela Alchemy
+      };
+    });
+
+    return userNfts;
+
+  } catch (error) {
+    console.error("DETAILED ERROR fetching user NFTs with Alchemy:", error);
+    // Garanta que a notificação ao usuário seja clara
+    showNotification("Error loading your NFTs. Please ensure your wallet is on the correct network and try again.", "error");
+    return [];
+  }
 }
 
 // ✅ NOVA: Renderizar jackpot wins para homepage
@@ -613,10 +630,9 @@ function updateUserUI() {
 
 // NOVO: Função para verificar se a carteira possui a NFT
 async function checkNftOwnership() {
-  // Assume que `web3Provider` e `currentConnectedWalletAddress` estão definidos
-  // após a conexão bem-sucedida da carteira.
   if (!web3Provider || !currentConnectedWalletAddress) {
     console.warn("Wallet not connected or address missing for NFT check.");
+    hideWrongChainMessage(); // Garante que a mensagem esteja oculta se não houver conexão
     return false;
   }
 
@@ -626,8 +642,11 @@ async function checkNftOwnership() {
 
     // Verifica se o usuário está na Chain ID correta
     if (chainId !== REQUIRED_CHAIN_ID) {
-      showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error");
+      showWrongChainMessage(); // ✨ MOSTRA A MENSAGEM FIXA
+      // showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error"); // ✨ REMOVER ESTA NOTIFICAÇÃO TEMPORÁRIA
       return false; // Não possui NFT na rede errada
+    } else {
+      hideWrongChainMessage(); // ✨ ESCONDE A MENSAGEM FIXA se a rede estiver correta
     }
 
     // Cria uma instância do contrato NFT
@@ -640,15 +659,14 @@ async function checkNftOwnership() {
     console.log(`NFT Balance for ${currentConnectedWalletAddress}: ${nftCount}`);
 
     if (nftCount > 0) {
-      // showNotification("NFT found! Access granted to Holder Tools.", "success"); // Move notification to authenticateWithBackend
       return true;
     } else {
-      // showNotification("No BlackByte NFT found in your connected wallet. Access denied.", "error"); // Move notification to authenticateWithBackend
       return false;
     }
   } catch (error) {
     console.error("Error checking NFT ownership:", error);
-    showNotification("Error verifying NFT ownership. Please try again.", "error");
+    hideWrongChainMessage(); // Esconde a mensagem se houver outro tipo de erro na checagem
+    showNotification("Error verifying NFT ownership. Please try again.", "error"); // Mantém a notificação para outros erros
     return false;
   }
 }
@@ -1032,11 +1050,11 @@ function createRaffleCard(raffle, userTickets, percentageChance, timeLeft, raffl
             BUY TICKET (${raffle.ticketPrice} $BB)
         </button>
     `
- const walletInput = raffleCard.querySelector(`#raffle-wallet-input-${raffle._id}`);
+  const walletInput = raffleCard.querySelector(`#raffle-wallet-input-${raffle._id}`);
   if (walletInput && currentConnectedWalletAddress) {
-      walletInput.value = currentConnectedWalletAddress;
-      walletInput.readOnly = true; // Opcional: torna o campo somente leitura para evitar que o usuário mude
-      walletInput.classList.add('opacity-75', 'cursor-not-allowed'); // Opcional: Adiciona estilos para indicar que é somente leitura
+    walletInput.value = currentConnectedWalletAddress;
+    walletInput.readOnly = true; // Opcional: torna o campo somente leitura para evitar que o usuário mude
+    walletInput.classList.add('opacity-75', 'cursor-not-allowed'); // Opcional: Adiciona estilos para indicar que é somente leitura
   }
   // Add event listener for buy button
   const buyButton = raffleCard.querySelector(`#buy-raffle-ticket-${raffle._id}`)
@@ -1234,33 +1252,33 @@ async function renderStakingDashboard() {
 
     // ✨ NOVO: Itera sobre os registros de staking retornados pelo backend
     for (const record of stakedRecords) {
-        // Tenta verificar a posse on-chain para cada NFT stakada
-        let isOwnerOnChain = false;
-        try {
-            // Reutiliza a lógica de isUserOwnerOfNft (que está no backend, mas precisamos de algo parecido no front)
-            // Ou, para o frontend, podemos confiar na lista da Alchemy para ver se ainda está na carteira
-            // Se o NFT está na lista de nftsInWallet, ele ainda está na carteira conectada.
-            isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
-            
-            // Alternativa para checagem on-chain no frontend (mais lenta, mas mais precisa se a NFT sumiu por venda/transferência)
-            // const nftContractInstance = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
-            // const ownerAddress = await nftContractInstance.ownerOf(record.tokenId);
-            // isOwnerOnChain = (ownerAddress.toLowerCase() === currentUser.walletAddress.toLowerCase());
+      // Tenta verificar a posse on-chain para cada NFT stakada
+      let isOwnerOnChain = false;
+      try {
+        // Reutiliza a lógica de isUserOwnerOfNft (que está no backend, mas precisamos de algo parecido no front)
+        // Ou, para o frontend, podemos confiar na lista da Alchemy para ver se ainda está na carteira
+        // Se o NFT está na lista de nftsInWallet, ele ainda está na carteira conectada.
+        isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
 
-        } catch (checkError) {
-            console.warn(`Could not verify on-chain ownership for staked NFT ${record.tokenId}:`, checkError.message);
-            isOwnerOnChain = false; // Se não conseguir verificar, assuma que não é o proprietário.
-        }
+        // Alternativa para checagem on-chain no frontend (more slower, but more accurate if the NFT disappeared due to sale/transfer)
+        // const nftContractInstance = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
+        // const ownerAddress = await nftContractInstance.ownerOf(record.tokenId);
+        // isOwnerOnChain = (ownerAddress.toLowerCase() === currentUser.walletAddress.toLowerCase());
 
-        if (isOwnerOnChain) {
-            confirmedStakedNfts.push(record);
-            totalAccumulatedRewards += record.accumulatedRewards;
-        } else {
-            // Se a NFT stakada não está mais na carteira do usuário, mark para desativar no backend
-            // Isso evita que ela apareça na UI e também notifica o backend para atualizar o status
-            recordsToDeactivate.push(record._id);
-            console.log(`Staked NFT #${record.tokenId} found in backend but not in wallet. Will deactivate.`);
-        }
+      } catch (checkError) {
+        console.warn(`Could not verify on-chain ownership for staked NFT ${record.tokenId}:`, checkError.message);
+        isOwnerOnChain = false; // Se não conseguir verificar, assuma que não é o proprietário.
+      }
+
+      if (isOwnerOnChain) {
+        confirmedStakedNfts.push(record);
+        totalAccumulatedRewards += record.accumulatedRewards;
+      } else {
+        // Se a NFT stakada não está mais na carteira do usuário, mark para desativar no backend
+        // Isso evita que ela apareça na UI e também notifica o backend para atualizar o status
+        recordsToDeactivate.push(record._id);
+        console.log(`Staked NFT #${record.tokenId} found in backend but not in wallet. Will deactivate.`);
+      }
     }
 
     // ✨ RENDERIZAÇÃO DAS NFTs STAKADAS (apenas as CONFIRMADAS)
@@ -1269,13 +1287,13 @@ async function renderStakingDashboard() {
       stakedNftsContainer.innerHTML = '<p class="text-gray-400">No NFTs currently staked or found in your wallet.</p>';
     } else {
       confirmedStakedNfts.forEach(record => {
-          let stakedImageUrl = "nft-placeholder.png";
-          // Tenta obter a imagem da NFT que foi stakada, usando a informação que veio da Alchemy
-          if (nftsInWalletMap.has(record.tokenId)) {
-              stakedImageUrl = nftsInWalletMap.get(record.tokenId).imageUrl;
-          }
-          const card = createStakingNftCard(record.tokenId, true, record.accumulatedRewards, stakedImageUrl);
-          stakedNftsContainer.appendChild(card);
+        let stakedImageUrl = "nft-placeholder.png";
+        // Tenta obter a imagem da NFT que foi stakada, usando a informação que veio da Alchemy
+        if (nftsInWalletMap.has(record.tokenId)) {
+          stakedImageUrl = nftsInWalletMap.get(record.tokenId).imageUrl;
+        }
+        const card = createStakingNftCard(record.tokenId, true, record.accumulatedRewards, stakedImageUrl);
+        stakedNftsContainer.appendChild(card);
       });
     }
 
@@ -1289,8 +1307,8 @@ async function renderStakingDashboard() {
       walletNftsContainer.innerHTML = '<p class="text-gray-400">All your NFTs are currently staked!</p>';
     } else {
       unstakedNfts.forEach(nft => {
-          const card = createStakingNftCard(nft.tokenId, false, 0, nft.imageUrl || "nft-placeholder.png");
-          walletNftsContainer.appendChild(card);
+        const card = createStakingNftCard(nft.tokenId, false, 0, nft.imageUrl || "nft-placeholder.png");
+        walletNftsContainer.appendChild(card);
       });
     }
 
@@ -1298,7 +1316,7 @@ async function renderStakingDashboard() {
     accumulatedRewardsDisplay.textContent = `${totalAccumulatedRewards.toLocaleString()} $BB`;
     if (totalAccumulatedRewards > 0) {
       claimAllRewardsBtn.disabled = false;
-      claimAllRewardsBtn.removeEventListener('click', handleClaimRewards); 
+      claimAllRewardsBtn.removeEventListener('click', handleClaimRewards);
       claimAllRewardsBtn.addEventListener('click', () => handleClaimRewards());
     } else {
       claimAllRewardsBtn.disabled = true;
@@ -1306,27 +1324,29 @@ async function renderStakingDashboard() {
 
     // ✨ NOVO: Envia requisições ao backend para desativar os registros que não são mais do usuário
     if (recordsToDeactivate.length > 0) {
-        console.log("Sending requests to deactivate stale staking records:", recordsToDeactivate);
-        // Você precisará de um novo endpoint no backend para lidar com isso, ou usar o unstake para cada um.
-        // O unstake já verifica posse. Então podemos iterar.
-        for (const recordId of recordsToDeactivate) {
-            const record = stakedRecords.find(r => r._id === recordId);
-            if (record) {
-                try {
-                    // Chama o unstake, que já lida com a checagem de posse e desativação
-                    await apiRequest(`${BACKEND_URL}/staking/unstake`, {
-                        method: 'POST',
-                        body: JSON.stringify({ tokenId: record.tokenId })
-                    });
-                    console.log(`Successfully deactivated stale record for NFT #${record.tokenId}.`);
-                } catch (deactivateError) {
-                    console.error(`Failed to deactivate stale record for NFT #${record.tokenId}:`, deactivateError.message);
-                }
-            }
+      console.log("Sending requests to deactivate stale staking records:", recordsToDeactivate);
+      // Você precisará de um novo endpoint no backend para lidar com isso, ou usar o unstake para cada um.
+      // O unstake já verifica posse. Então podemos iterar.
+      for (const recordId of recordsToDeactivate) {
+        const record = stakedRecords.find(r => r._id === recordId);
+        if (record) {
+          try {
+            // Chama o unstake, que já lida com a checagem de posse e desativação
+            await apiRequest(`${BACKEND_URL}/staking/unstake`, {
+              method: 'POST',
+              body: JSON.stringify({
+                tokenId: record.tokenId
+              })
+            });
+            console.log(`Successfully deactivated stale record for NFT #${record.tokenId}.`);
+          } catch (deactivateError) {
+            console.error(`Failed to deactivate stale record for NFT #${record.tokenId}:`, deactivateError.message);
+          }
         }
-        // Após tentar desativar, re-renderiza para garantir que a UI esteja atualizada
-        // (Isso pode causar um loop se o backend não desativar, então tenha certeza da lógica do backend)
-        // setTimeout(() => renderStakingDashboard(), 1000); // Dar um pequeno tempo para o backend processar
+      }
+      // Após tentar desativar, re-renderiza para garantir que a UI esteja atualizada
+      // (Isso pode causar um loop se o backend não desativar, então tenha certeza da lógica do backend)
+      // setTimeout(() => renderStakingDashboard(), 1000); // Dar um pequeno tempo para o backend processar
     }
 
 
@@ -1339,10 +1359,10 @@ async function renderStakingDashboard() {
 }
 // NOVO: Função para criar o card de NFT (stake/unstake)
 // ✨ Mantenha esta função como está, ela agora receberá a imageUrl corretamente.
-function createStakingNftCard(tokenId, isStaked, accumulatedRewards = 0, imageUrl = "nft-placeholder.png") { 
-    const card = document.createElement("div");
-    card.className = "bb-card p-4 text-center";
-    card.innerHTML = `
+function createStakingNftCard(tokenId, isStaked, accumulatedRewards = 0, imageUrl = "nft-placeholder.png") {
+  const card = document.createElement("div");
+  card.className = "bb-card p-4 text-center";
+  card.innerHTML = `
         <img src="${imageUrl}" alt="BlackByte ${tokenId}" class="w-full h-auto mb-3 rounded-md">
         <h4 class="font-semibold text-white text-lg">BlackByte #${tokenId}</h4>
         ${isStaked ? `<p class="text-sm text-gray-400">Accumulated: <span class="font-bold text-yellow-400">${accumulatedRewards.toLocaleString()} $BB</span></p>` : ''}
@@ -1353,16 +1373,16 @@ function createStakingNftCard(tokenId, isStaked, accumulatedRewards = 0, imageUr
 
 
   const actionBtn = card.querySelector('.stake-btn, .unstake-btn');
-    if (actionBtn) {
-        actionBtn.addEventListener('click', () => {
-            if (isStaked) {
-                handleUnstakeNft(tokenId, accumulatedRewards);
-            } else {
-                handleStakeNft(tokenId);
-            }
-        });
-    }
-    return card;
+  if (actionBtn) {
+    actionBtn.addEventListener('click', () => {
+      if (isStaked) {
+        handleUnstakeNft(tokenId, accumulatedRewards);
+      } else {
+        handleStakeNft(tokenId);
+      }
+    });
+  }
+  return card;
 }
 
 // NOVO: Função para lidar com o staking de uma NFT
@@ -1440,13 +1460,13 @@ async function handleUnstakeNft(tokenId, accumulatedRewards) {
   }
 }
 // NOVO: Função para lidar com o claim de todas as recompensas
-async function handleClaimRewards(tokenId = null) {// Permite clamar todas ou de um tokenId específico
+async function handleClaimRewards(tokenId = null) { // Permite clamar todas ou de um tokenId específico
   if (!currentUser) {
     showModal(elements.walletModal);
     return;
   }
 
-const button = document.getElementById("claim-all-rewards-btn"); // Ou o botão específico da NFT
+  const button = document.getElementById("claim-all-rewards-btn"); // Ou o botão específico da NFT
   const originalText = button.textContent;
   button.disabled = true;
   button.textContent = 'Claiming...';
@@ -1615,16 +1635,16 @@ function setupUtilitiesNavigation() {
           if (targetModal === "my-account") {
             showMyAccountModal()
           } else if (targetModal === "admin") {
-          // ✨ MODIFICAÇÃO AQUI: Lógica para abrir o painel Admin
+            // ✨ MODIFICAÇÃO AQUI: Lógica para abrir o painel Admin
             if (currentUser && currentUser.isAdmin) { // Dupla verificação (já feita no updateUtilityItemsVisibility, mas boa para clareza)
-                showModal(elements.adminPanel);
-                // Torna o conteúdo do admin visível
-                document.getElementById("admin-content").classList.remove("hidden");
-                // Carrega os dados específicos do admin
-                loadWLPurchases();
-                loadRaffleSelectOptions();
+              showModal(elements.adminPanel);
+              // Torna o conteúdo do admin visível
+              document.getElementById("admin-content").classList.remove("hidden");
+              // Carrega os dados específicos do admin
+              loadWLPurchases();
+              loadRaffleSelectOptions();
             } else {
-                showNotification("Admin access denied.", "error");
+              showNotification("Admin access denied.", "error");
             }
           }
           elements.utilitiesSidebar.classList.remove("open")
@@ -1949,6 +1969,7 @@ async function handleWalletOptionClick(providerType) {
 
 // File: app.js
 async function authenticateWithBackend(walletAddress) {
+  hideWrongChainMessage(); // ✨ NOVO: Esconde a mensagem no início da autenticação
   try {
     const data = await apiRequest(`${BACKEND_URL}/auth/wallet-login`, {
       method: "POST",
@@ -2015,6 +2036,7 @@ async function handleLogout() { // Garanta que esta função é 'async'
   if (elements.myAccountModal) { // Verifica se o elemento do modal existe
     hideModal(elements.myAccountModal);
   }
+  hideWrongChainMessage(); // ✨ NOVO: Esconde a mensagem de rede errada ao deslogar
 }
 
 
@@ -2252,7 +2274,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   initWeb3Modal(); // Inicializa o web3Modal
 
- // ✨ MODIFICAÇÃO CRUCIAL AQUI: Tenta reconectar a carteira automaticamente se houver um provedor em cache
+  // ✨ MODIFICAÇÃO CRUCIAL AQUI: Tenta reconectar a carteira automaticamente se houver um provedor em cache
   if (web3Modal.cachedProvider) {
     console.log("Found cached Web3 provider. Attempting automatic wallet connection...");
     try {
@@ -2283,7 +2305,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     updateUserUI();
   }
 
- // Load initial data
+  // Load initial data
   updateJackpotPot();
   updateUserJackpotEntries();
 
@@ -2382,18 +2404,18 @@ function setupAdminPanelEvents() {
   // ✨ NOVO: Listener para o item "Admin" no menu de utilitários
   const utilAdminItem = document.getElementById("util-admin-item");
   if (utilAdminItem) {
-      utilAdminItem.addEventListener("click", () => {
-          if (currentUser && currentUser.isAdmin) {
-              showModal(elements.adminPanel);
-              // Torna o conteúdo do admin visível
-              document.getElementById("admin-content").classList.remove("hidden");
-              // Carrega os dados específicos do admin
-              loadWLPurchases();
-              loadRaffleSelectOptions();
-          } else {
-              showNotification("Admin access denied.", "error");
-          }
-      });
+    utilAdminItem.addEventListener("click", () => {
+      if (currentUser && currentUser.isAdmin) {
+        showModal(elements.adminPanel);
+        // Torna o conteúdo do admin visível
+        document.getElementById("admin-content").classList.remove("hidden");
+        // Carrega os dados específicos do admin
+        loadWLPurchases();
+        loadRaffleSelectOptions();
+      } else {
+        showNotification("Admin access denied.", "error");
+      }
+    });
   }
 
   // Já existe um closeAdminBtn que funciona para fechar o modal
@@ -2681,15 +2703,15 @@ async function handleRaffleWinnerView() {
 // ✨ NOVO: Oculta a seção de input de senha no próprio HTML se ela ainda existir
 // (Recomendado para remover completamente o HTML do input de senha, mas essa é uma solução rápida no JS)
 document.addEventListener("DOMContentLoaded", () => {
-    const adminPasswordInput = document.getElementById("admin-password");
-    if (adminPasswordInput) {
-        const adminPasswordSection = adminPasswordInput.closest("div");
-        if (adminPasswordSection) {
-            adminPasswordSection.style.display = 'none';
-        }
+  const adminPasswordInput = document.getElementById("admin-password");
+  if (adminPasswordInput) {
+    const adminPasswordSection = adminPasswordInput.closest("div");
+    if (adminPasswordSection) {
+      adminPasswordSection.style.display = 'none';
     }
-    const adminLoginButton = document.getElementById("admin-login");
-    if (adminLoginButton) {
-        adminLoginButton.style.display = 'none';
-    }
+  }
+  const adminLoginButton = document.getElementById("admin-login");
+  if (adminLoginButton) {
+    adminLoginButton.style.display = 'none';
+  }
 });

@@ -11,7 +11,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+        @import url('https://fonts2?family=Orbitron:wght@400;700&display=swap');
 
         :root {
             --blackbyte-red: #D32F2F;
@@ -547,6 +547,58 @@
         #home.active section.mb-16:has(#homepage-recent-jackpot-wins) { /* Oculta a seção de últimos ganhadores na home */
             display: none;
         }
+
+        /* ✨ NOVO: Estilos para o modal de rede errada */
+        .wrong-chain-modal {
+            display: none; /* Começa oculto */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85); /* Fundo escuro transparente */
+            z-index: 9999; /* Garante que fique acima de tudo */
+            backdrop-filter: blur(5px); /* Efeito de desfoque */
+            opacity: 0;
+            transition: opacity 0.2s ease;
+            display: flex; /* Para centralizar o conteúdo */
+            align-items: center; /* Centraliza verticalmente */
+            justify-content: center; /* Centraliza horizontalmente */
+        }
+
+        .wrong-chain-modal-content {
+            position: relative; /* Para o botão de fechar */
+            width: 90%;
+            max-width: 500px; /* Tamanho máximo do modal */
+            text-align: center;
+            background-color: var(--blackbyte-gray);
+            border: 2px solid var(--blackbyte-red); /* Borda vermelha chamativa */
+            border-radius: 0.75rem; /* Bordas mais arredondadas */
+            padding: 2.5rem; /* Padding maior */
+            box-shadow: 0 0 30px rgba(211, 47, 47, 0.6), 0 0 15px rgba(0,0,0,0.5); /* Sombra neon */
+            animation: pulse-border 1.5s infinite alternate; /* Animação sutil de pulsação */
+        }
+
+        /* Opcional: Animação de pulsação para a borda */
+        @keyframes pulse-border {
+            0% { border-color: var(--blackbyte-red); box-shadow: 0 0 20px rgba(211, 47, 47, 0.6); }
+            100% { border-color: rgba(211, 47, 47, 0.8); box-shadow: 0 0 25px rgba(211, 47, 47, 0.8); }
+        }
+
+        /* Estilo para o botão de fechar dentro do modal (se quiser um) */
+        .wrong-chain-modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1.5rem;
+            color: #a0aec0;
+            font-size: 2rem; /* Ícone maior */
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .wrong-chain-modal-close:hover {
+            color: white;
+            transform: scale(1.1);
+        }
     </style>
 </head>
 <body class="min-h-screen" id="main-body">
@@ -771,6 +823,20 @@
         </div>
     </div>
 
+    <div id="wrong-chain-modal" class="wrong-chain-modal">
+        <div class="wrong-chain-modal-content bb-card">
+            <span class="wrong-chain-modal-close" id="close-wrong-chain-modal">&times;</span>
+            <i class="fas fa-exclamation-triangle text-white text-5xl mb-4 neon-text"></i>
+            <h2 class="text-3xl font-orbitron text-blackbyte-red mb-3">WRONG CHAIN ALERT!</h2>
+            <p class="text-white text-lg mb-6">
+                Please switch your wallet to the **ApeChain** network to access BlackByte's Holder Tools.
+            </p>
+            <button id="wrong-chain-modal-button" class="bb-btn bb-btn-primary px-8 py-3 w-full">
+                SWITCH TO APECHAIN
+            </button>
+        </div>
+    </div>
+
     <header class="py-4 px-6 border-b border-gray-800">
         <div class="container mx-auto flex justify-between items-center">
            <div class="flex items-center space-x-2 header-logo-title">
@@ -778,6 +844,7 @@
         <img src="Logo.jpg" alt="BlackByte Logo" class="h-12 w-auto">
     </a>
 </div>
+
             <div class="flex items-center space-x-4">
                 <div id="wallet-info" class="flex items-center space-x-4 hidden">
                     <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-4 py-2 rounded-md">
@@ -800,11 +867,6 @@
             </div>
         </div>
     </header>
-
-    <div id="wrong-chain-message" class="fixed top-0 left-0 w-full bg-blackbyte-red text-white text-center py-3 z-5000 hidden">
-        <p class="font-bold text-lg md:text-xl">YOU ARE ON THE WRONG CHAIN!</p>
-        <p class="text-sm md:text-base mt-1">Please switch to 'ApeChain' in your wallet to access Holder Tools.</p>
-    </div>
 
     <main class="container mx-auto px-4 py-8">
         <div class="flex border-b border-gray-700 mb-8" style="display:none;">
@@ -1139,7 +1201,7 @@
             <div id="leaderboard-login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
                 <i class="fas fa-trophy text-5xl text-yellow-400 mb-6"></i>
                 <h2 class="text-3xl font-orbitron text-white mb-4">LEADERBOARD LOCKED</h2>
-                <p class="text-gray-400 mb-8">Connect your wallet to see who's dominating the BlackByte Casino!</p> <button id="leaderboard-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
+                <p class="text-gray-400 mb-8">Connect your wallet and see who's dominating the BlackByte Casino!</p> <button id="leaderboard-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
                     CONNECT WALLET
                 </button>
             </div>

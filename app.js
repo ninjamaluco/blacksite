@@ -48,8 +48,7 @@ function initializeElements() {
     adminPanel: document.getElementById("admin-panel"),
     updateInfoModal: document.getElementById("update-info-modal"),
     walletModal: document.getElementById("wallet-modal"), // NOVO
-    wrongChainMessage: document.getElementById("wrong-chain-message"), // ✨ NOVO ELEMENTO
-
+    wrongChainModal: document.getElementById("wrong-chain-modal"), // ✨ NOVO ELEMENTO
     // Buttons
     // authButton: document.getElementById("auth-button"), // REMOVIDO
     connectWalletButton: document.getElementById("connect-wallet-button"), // NOVO
@@ -160,19 +159,29 @@ function hideModal(modalElement) {
     setTimeout(() => {
       modalElement.style.display = "none"; // Oculta o elemento após a transição
       document.body.classList.remove("modal-open"); // Remove a classe do body
+      // Remova backdrop-filter do body se ele foi aplicado globalmente, ou se estiver causando problemas.
+      // Se o backdrop-filter está apenas no próprio modal, não precisa disso.
     }, 200); // Tempo correspondente à transição CSS
   }
 }
 
-function showWrongChainMessage() {
-  if (elements.wrongChainMessage) {
-    elements.wrongChainMessage.classList.remove('hidden');
+function showWrongChainModal() {
+  if (elements.wrongChainModal) {
+    elements.wrongChainModal.style.display = "flex"; // Usa flex para centralizar
+    document.body.classList.add("modal-open");
+    setTimeout(() => {
+      elements.wrongChainModal.style.opacity = "1";
+    }, 10);
   }
 }
 
-function hideWrongChainMessage() {
-  if (elements.wrongChainMessage) {
-    elements.wrongChainMessage.classList.add('hidden');
+function hideWrongChainModal() {
+  if (elements.wrongChainModal) {
+    elements.wrongChainModal.style.opacity = "0";
+    setTimeout(() => {
+      elements.wrongChainModal.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }, 200);
   }
 }
 
@@ -632,7 +641,7 @@ function updateUserUI() {
 async function checkNftOwnership() {
   if (!web3Provider || !currentConnectedWalletAddress) {
     console.warn("Wallet not connected or address missing for NFT check.");
-    hideWrongChainMessage(); // Garante que a mensagem esteja oculta se não houver conexão
+    hideWrongChainModal(); // Garante que o modal esteja oculto se não houver conexão
     return false;
   }
 
@@ -642,11 +651,11 @@ async function checkNftOwnership() {
 
     // Verifica se o usuário está na Chain ID correta
     if (chainId !== REQUIRED_CHAIN_ID) {
-      showWrongChainMessage(); // ✨ MOSTRA A MENSAGEM FIXA
-      // showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error"); // ✨ REMOVER ESTA NOTIFICAÇÃO TEMPORÁRIA
-      return false; // Não possui NFT na rede errada
+      showWrongChainModal(); // ✨ MOSTRA O NOVO MODAL
+      // showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error"); // REMOVER ESTA NOTIFICAÇÃO
+      return false;
     } else {
-      hideWrongChainMessage(); // ✨ ESCONDE A MENSAGEM FIXA se a rede estiver correta
+      hideWrongChainModal(); // ✨ ESCONDE O MODAL se a rede estiver correta
     }
 
     // Cria uma instância do contrato NFT
@@ -665,8 +674,8 @@ async function checkNftOwnership() {
     }
   } catch (error) {
     console.error("Error checking NFT ownership:", error);
-    hideWrongChainMessage(); // Esconde a mensagem se houver outro tipo de erro na checagem
-    showNotification("Error verifying NFT ownership. Please try again.", "error"); // Mantém a notificação para outros erros
+    hideWrongChainModal(); // Esconde o modal se houver outro tipo de erro na checagem
+    showNotification("Error verifying NFT ownership. Please try again.", "error");
     return false;
   }
 }
@@ -1260,7 +1269,7 @@ async function renderStakingDashboard() {
         // Se o NFT está na lista de nftsInWallet, ele ainda está na carteira conectada.
         isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
 
-        // Alternativa para checagem on-chain no frontend (more slower, but more accurate if the NFT disappeared due to sale/transfer)
+        // Alternativa para checagem on-chain no frontend (mais lenta, mas mais precisa se a NFT sumiu por venda/transferência)
         // const nftContractInstance = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
         // const ownerAddress = await nftContractInstance.ownerOf(record.tokenId);
         // isOwnerOnChain = (ownerAddress.toLowerCase() === currentUser.walletAddress.toLowerCase());
@@ -1505,7 +1514,7 @@ function setupEventListeners() {
       // AQUI está o ajuste. Use os IDs ou classes específicas para garantir que ele encontre o modal correto.
       // O `my-account-modal` tem o ID `my-account-modal` e a classe `auth-modal`.
       // Vamos usar uma combinação que abranja todos os seus modais com `close-modal`.
-      const modal = e.target.closest("#my-account-modal, #purchase-modal, #admin-panel, #update-info-modal, #wallet-modal");
+      const modal = e.target.closest("#my-account-modal, #purchase-modal, #admin-panel, #update-info-modal, #wallet-modal, #wrong-chain-modal"); //
 
       if (modal) {
         hideModal(modal);
@@ -1610,7 +1619,44 @@ function setupEventListeners() {
   window.addEventListener("click", (e) => {
     if (e.target === elements.myAccountModal) hideModal(elements.myAccountModal)
     if (e.target === elements.updateInfoModal) hideModal(elements.updateInfoModal)
+    if (e.target === elements.wrongChainModal) hideModal(elements.wrongChainModal); //
   })
+
+  // Event listener para o botão "SWITCH TO APECHAIN" no modal de erro de rede
+  const wrongChainModalButton = document.getElementById("wrong-chain-modal-button");
+  if (wrongChainModalButton) {
+    wrongChainModalButton.addEventListener("click", async () => {
+      try {
+        // Tenta trocar para a rede correta
+        await web3Provider.send("wallet_switchEthereumChain", [{
+          chainId: `0x${REQUIRED_CHAIN_ID.toString(16)}`
+        }]);
+      } catch (switchError) {
+        // Se a rede não estiver adicionada, tenta adicioná-la
+        if (switchError.code === 4902) { // 4902: Chain not added to MetaMask
+          try {
+            await web3Provider.send("wallet_addEthereumChain", [{
+              chainId: `0x${REQUIRED_CHAIN_ID.toString(16)}`,
+              chainName: "ApeChain", // Nome da rede (pode ser "ApeChain Mainnet")
+              nativeCurrency: {
+                name: "ApeCoin", // Símbolo da moeda nativa, ex: APE ou ETH se for compatível
+                symbol: "ETH", // Ou APE, dependendo
+                decimals: 18
+              },
+              rpcUrls: ["https://rpc.apechain.com"], // Sua URL RPC
+              blockExplorerUrls: ["https://apechain.apecoin.com/"] // Opcional, explorer da ApeChain
+            }]);
+          } catch (addError) {
+            console.error("Failed to add ApeChain:", addError);
+            showNotification("Could not add ApeChain to your wallet. Please add it manually.", "error");
+          }
+        } else {
+          console.error("Failed to switch chain:", switchError);
+          showNotification("Failed to switch chain in your wallet. Please switch manually.", "error");
+        }
+      }
+    });
+  }
 }
 
 function setupUtilitiesNavigation() {
@@ -1969,7 +2015,7 @@ async function handleWalletOptionClick(providerType) {
 
 // File: app.js
 async function authenticateWithBackend(walletAddress) {
-  hideWrongChainMessage(); // ✨ NOVO: Esconde a mensagem no início da autenticação
+  hideWrongChainModal(); // ✨ NOVO: Esconde o modal no início da autenticação
   try {
     const data = await apiRequest(`${BACKEND_URL}/auth/wallet-login`, {
       method: "POST",
@@ -2036,7 +2082,7 @@ async function handleLogout() { // Garanta que esta função é 'async'
   if (elements.myAccountModal) { // Verifica se o elemento do modal existe
     hideModal(elements.myAccountModal);
   }
-  hideWrongChainMessage(); // ✨ NOVO: Esconde a mensagem de rede errada ao deslogar
+  hideWrongChainModal(); // ✨ NOVO: Esconde o modal de rede errada ao deslogar
 }
 
 

@@ -24,7 +24,7 @@ const NFT_CONTRACT_ADDRESS = "0x669c46bdf06e111685fd58b271fb3a6a02423274"; // SE
 const REQUIRED_CHAIN_ID = 33139; // ✨ Placeholder: Substitua pelo Chain ID REAL da ApeChain Mainnet. Ex: 1 para Ethereum Mainnet, 137 para Polygon, etc.
 
 // ✨ NOVO: Chave da API da Alchemy e URL Base
-const ALCHEMY_API_KEY = "GecgOCM9PL3EQHXNxmWMg"; // Sua chave da API da Alchemy
+const ALCHEMY_API_KEY = "GecgOCM9PL3EQHXNxnWMg"; // Sua chave da API da Alchemy
 const ALCHEMY_BASE_URL = "https://apechain-mainnet.g.alchemy.com/v2/";
 
 const NFT_CONTRACT_ABI = [

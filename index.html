@@ -132,7 +132,7 @@
         }
 
         .tab-btn {
-            display: none;
+            display: none; /* These tabs are controlled by JS and hidden by default, visible via sidebar */
         }
 
         .wallet-modal {
@@ -151,7 +151,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
+            width: 90%; /* Responsive width */
             max-width: 400px;
         }
         .wallet-option {
@@ -243,7 +243,29 @@
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--blackbyte-border-gray);
+            flex-wrap: wrap; /* Allow wrapping on small screens */
         }
+        /* Adjust admin header elements for smaller screens */
+        .admin-header h2 {
+            font-size: 1.75rem; /* Smaller font for mobile */
+            margin-bottom: 1rem; /* Add some space if it wraps */
+            width: 100%; /* Take full width on small screens */
+            text-align: center;
+        }
+        .admin-header button {
+            width: 100%; /* Full width button on small screens */
+        }
+        @media (min-width: 640px) { /* Tailwind's 'sm' breakpoint */
+            .admin-header h2 {
+                font-size: 2.25rem;
+                margin-bottom: 0;
+                width: auto;
+            }
+            .admin-header button {
+                width: auto;
+            }
+        }
+
 
         .purchase-modal {
             display: none;
@@ -261,7 +283,7 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
+            width: 90%; /* Responsive width */
             max-width: 500px;
             text-align: center;
         }
@@ -282,10 +304,16 @@
         #shop-overlay h1 {
             font-family: 'Orbitron', sans-serif;
             color: #fff;
-            font-size: 2rem;
+            font-size: 2rem; /* Adjusted for better mobile scaling */
             text-transform: uppercase;
             letter-spacing: 0.1em;
         }
+        @media (min-width: 640px) {
+            #shop-overlay h1 {
+                font-size: 3rem; /* Larger on desktop */
+            }
+        }
+
 
         .jackpot-pot, #bonus-timer {
             font-family: 'Orbitron', sans-serif;
@@ -381,7 +409,7 @@
             position: fixed;
             top: 0; 
             right: 0;
-            width: 0; 
+            width: 0; /* Hidden by default */
             height: 100%;
             overflow: hidden;
             display: flex;
@@ -399,7 +427,7 @@
         }
         .utilities-nav {
             position: relative;
-            width: 260px;
+            width: 260px; /* Fixed width for the sidebar menu */
             background: var(--blackbyte-gray);
             border-left: 2px solid var(--blackbyte-red);
             padding: 2rem 1rem;
@@ -410,7 +438,7 @@
             transform: perspective(600px) rotateY(-15deg);
         }
         .utilities-sidebar.open {
-            width: 100%;
+            width: 100%; /* When open, cover the whole screen to show overlay */
         }
         .utilities-sidebar.open .utilities-overlay {
             opacity: 1;
@@ -628,7 +656,7 @@
                         <p>Connect using Rabby wallet</p>
                     </div>
                 </div>
-                </div>
+            </div>
             
             <div class="mt-6 text-center">
                 <p class="text-xs text-gray-500">
@@ -662,19 +690,19 @@
             <div class="mt-12">
                 <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">TWEET MISSION MANAGEMENT</h3>
                 <div class="bb-card p-6">
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="admin-tweet-url">TWEET URL</label>
                         <input type="text" id="admin-tweet-url" placeholder="e.g., https://twitter.com/username/status/1234567890" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="admin-mission-text">MISSION (e.g., Like & RT)</label>
                         <input type="text" id="admin-mission-text" placeholder="e.g., Like & Retweet to earn" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="admin-reward-points">REWARD POINTS</label>
                         <input type="number" id="admin-reward-points" placeholder="e.g., 500" value="500" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="admin-total-stock">TOTAL STOCK (0 or empty for unlimited)</label>
                         <input type="number" id="admin-total-stock" placeholder="e.g., 100" value="0" class="bb-input">
                     </div>
@@ -692,30 +720,30 @@
                 <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">RAFFLE MANAGEMENT</h3>
                 <div class="bb-card p-6">
                     <h4 class="text-xl font-orbitron text-white mb-4">CREATE NEW RAFFLE</h4>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-name">RAFFLE NAME</label>
                         <input type="text" id="raffle-name" placeholder="e.g., Mega NFT Drop" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-description">DESCRIPTION</label>
                         <textarea id="raffle-description" placeholder="A short description of the prize..." class="bb-input h-24"></textarea>
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-tickets-available">TOTAL TICKETS AVAILABLE</label>
                         <input type="number" id="raffle-tickets-available" placeholder="e.g., 1000" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-ticket-price">TICKET PRICE ($BB)</label> <input type="number" id="raffle-ticket-price" placeholder="e.g., 50" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-draw-time">DRAW DATE & TIME</label>
                         <input type="datetime-local" id="raffle-draw-time" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-image-url">IMAGE URL (for prize)</label>
                         <input type="text" id="raffle-image-url" placeholder="e.g., https://example.com/nft.png" class="bb-input">
                     </div>
-                    <div class="input-group">
+                    <div class="input-group mb-4">
                         <label for="raffle-winner-wallet">WINNER WALLET ADDRESS (Optional, for manual input)</label>
                         <input type="text" id="raffle-winner-wallet" placeholder="e.g., 0x..." class="bb-input">
                     </div>
@@ -764,9 +792,7 @@
             <p class="text-xl mb-6 text-white">Share your triumph!</p>
 
             <div id="shareable-card" class="relative w-full h-auto bg-cover bg-center rounded-lg overflow-hidden border border-gray-700" style="background-image: url('image_c99478.jpg');">
-                <div class="relative p-6 flex items-center">
-                    <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-blackbyte-red mr-6 flex-shrink-0">
-                        <img id="user-uploaded-photo" src="/placeholder.svg" alt="Your Photo" class="w-full h-full object-cover hidden">
+                <div class="relative p-6 flex items-center flex-col sm:flex-row"> <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-blackbyte-red mr-0 sm:mr-6 mb-4 sm:mb-0 flex-shrink-0"> <img id="user-uploaded-photo" src="/placeholder.svg" alt="Your Photo" class="w-full h-full object-cover hidden">
                         <div id="upload-placeholder" class="w-full h-full bg-blackbyte-gray flex items-center justify-center text-gray-400 text-sm flex-col cursor-pointer">
                             <i class="fas fa-cloud-upload-alt text-2xl mb-1"></i>
                             Upload
@@ -781,8 +807,7 @@
 
             <input type="file" id="upload-photo-input" accept="image/*" class="hidden">
 
-            <div class="flex justify-center space-x-4 mt-6">
-                <button id="tweet-share-btn" class="bb-btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-6">
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-6"> <button id="tweet-share-btn" class="bb-btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-6">
                     <i class="fab fa-twitter mr-2"></i> SHARE ON TWITTER
                 </button>
                 <button id="download-image-btn" class="bb-btn bg-purple-500 hover:bg-purple-600 text-white py-3 px-6">
@@ -792,21 +817,21 @@
         </div>
     </div>
 
-  <div id="my-account-modal" class="auth-modal hidden modal-backdrop">
+    <div id="my-account-modal" class="auth-modal hidden modal-backdrop">
         <div class="auth-container bb-card modal-content">
             <span class="close-modal" id="close-my-account">&times;</span>
             <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">MY ACCOUNT</h2>
 
             <div class="mb-4">
-    <p class="text-sm text-gray-400">USERNAME:</p>
-    <p id="account-username" class="text-xl font-semibold text-white"></p>
-    <div id="username-edit-container" class="flex items-center space-x-2 mt-2" style="display: none;">
-        <input type="text" id="edit-username-input" class="bb-input bg-blackbyte-dark text-sm flex-grow" placeholder="Enter new username">
-        <button id="save-username-btn" class="bb-btn bb-btn-primary text-xs px-3 py-1">SAVE</button>
-        <button id="cancel-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1">CANCEL</button>
-    </div>
-    <button id="edit-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1 mt-2">EDIT USERNAME</button>
-</div>
+                <p class="text-sm text-gray-400">USERNAME:</p>
+                <p id="account-username" class="text-xl font-semibold text-white"></p>
+                <div id="username-edit-container" class="flex items-center space-x-2 mt-2" style="display: none;">
+                    <input type="text" id="edit-username-input" class="bb-input bg-blackbyte-dark text-sm flex-grow" placeholder="Enter new username">
+                    <button id="save-username-btn" class="bb-btn bb-btn-primary text-xs px-3 py-1">SAVE</button>
+                    <button id="cancel-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1">CANCEL</button>
+                </div>
+                <button id="edit-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1 mt-2">EDIT USERNAME</button>
+            </div>
 
             <div class="mb-4">
                 <p class="text-sm text-gray-400">WALLET ADDRESS:</p>
@@ -839,30 +864,24 @@
 
     <header class="py-4 px-6 border-b border-gray-800">
         <div class="container mx-auto flex justify-between items-center">
-           <div class="flex items-center space-x-2 header-logo-title">
-    <a href="#" onclick="activateTab('home'); return false;">
-        <img src="Logo.jpg" alt="BlackByte Logo" class="h-12 w-auto">
-    </a>
-</div>
+            <div class="flex items-center space-x-2 header-logo-title">
+                <a href="#" onclick="activateTab('home'); return false;">
+                    <img src="Logo.jpg" alt="BlackByte Logo" class="h-12 w-auto">
+                </a>
+            </div>
 
-            <div class="flex items-center space-x-4">
-                <div id="wallet-info" class="flex items-center space-x-4 hidden">
-                    <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-4 py-2 rounded-md">
-                        <i class="fas fa-wallet text-blue-400"></i>
-                        <span id="connected-wallet-address" class="font-bold text-white text-sm">0x...</span>
+            <div class="flex items-center space-x-2 sm:space-x-4"> <div id="wallet-info" class="flex items-center space-x-2 sm:space-x-4 hidden flex-wrap justify-end"> <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-4 sm:py-2 rounded-md mb-2 sm:mb-0"> <i class="fas fa-wallet text-blue-400 text-sm sm:text-base"></i>
+                        <span id="connected-wallet-address" class="font-bold text-white text-xs sm:text-sm">0x...</span>
                     </div>
-                   <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-6 py-4 rounded-md">
-    <i class="fas fa-coins text-yellow-400"></i>
-    <span id="points-counter" class="font-bold text-white"></span> </div>
-                    <div id="user-avatar" class="w-10 h-10 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition">
-                        <span class="font-bold text-white text-lg">W</span>
+                    <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-6 sm:py-4 rounded-md mb-2 sm:mb-0"> <i class="fas fa-coins text-yellow-400 text-sm sm:text-base"></i>
+                        <span id="points-counter" class="font-bold text-white text-xs sm:text-base"></span> 
+                    </div>
+                    <div id="user-avatar" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition"> <span class="font-bold text-white text-md sm:text-lg">W</span>
                     </div>
                 </div>
-                <button id="connect-wallet-button" class="bb-btn bb-btn-primary">
-                    <i class="fas fa-wallet mr-2"></i> CONNECT WALLET
+                <button id="connect-wallet-button" class="bb-btn bb-btn-primary text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> <i class="fas fa-wallet mr-1 sm:mr-2"></i> CONNECT
                 </button>
-                <button id="utilities-btn" class="bb-btn bb-btn-secondary ml-2">
-                    <i class="fas fa-th-large mr-1"></i> UTILITIES
+                <button id="utilities-btn" class="bb-btn bb-btn-secondary ml-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> <i class="fas fa-th-large mr-1"></i> UTILITIES
                 </button>
             </div>
         </div>
@@ -872,7 +891,8 @@
         <div class="flex border-b border-gray-700 mb-8" style="display:none;">
             <button class="tab-btn active" data-tab="home">HOME</button>
             <button class="tab-btn" data-tab="casino">GAMES</button>
-            <button class="tab-btn" data-tab="shop">$BB SHOP</button> <button class="tab-btn" data-tab="earn-twitter">EARN TWITTER</button>
+            <button class="tab-btn" data-tab="shop">$BB SHOP</button> 
+            <button class="tab-btn" data-tab="earn-twitter">EARN TWITTER</button>
             <button class="tab-btn" data-tab="raffles">RAFFLES | BETA</button>
             <button class="tab-btn" data-tab="leaderboard">LEADERBOARD</button>
         </div>
@@ -881,31 +901,23 @@
             <section class="mb-8 text-center relative overflow-hidden rounded-lg">
                 <div class="absolute inset-0 bg-gradient-to-r from-blackbyte-dark to-transparent z-10"></div>
                 <div class="absolute inset-0 bg-[url('Background.jpg')] bg-cover bg-center opacity-30"></div>
-                <div class="relative z-20 py-12 px-4">
-                    <h2 class="text-4xl md:text-5xl font-bold mb-4">HOLDER TOOLS</h2>
-                    <p class="text-gray-400 max-w-2xl mx-auto">
-                        Welcome to the utility page for BlackByte holders, stay tuned for news, play, win and exchange for rewards
+                <div class="relative z-20 py-8 px-2 sm:py-12 sm:px-4"> <h2 class="text-3xl md:text-5xl font-bold mb-4">HOLDER TOOLS</h2> <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base"> Welcome to the utility page for BlackByte holders, stay tuned for news, play, win and exchange for rewards
                     </p>
                 </div>
             </section>
 
             <section class="mb-16 mt-12">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-semibold flex items-center">
-                        <span class="w-3 h-3 bg-blackbyte-red rounded-full mr-2"></span> CHECK ALSO
+                    <h3 class="text-xl sm:text-2xl font-semibold flex items-center"> <span class="w-3 h-3 bg-blackbyte-red rounded-full mr-2"></span> CHECK ALSO
                     </h3>
                 </div>
                 
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-blackbyte-gray rounded-lg overflow-hidden border border-gray-800 card-hover">
-                        <div class="h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
+                        <div class="h-40 sm:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
                             <img src="1.png" alt="BlackByte Slots" class="w-full h-full object-cover" />
                         </div>
-                        <div class="p-6">
-                            <h4 class="text-xl font-semibold mb-2">BlackByte Slots</h4>
-                            <p class="text-gray-400 text-sm mb-4">Spin the reels for a chance to win big</p>
-                            <div class="flex justify-between text-sm mb-6">
-                                <div>
+                        <div class="p-4 sm:p-6"> <h4 class="text-lg sm:text-xl font-semibold mb-2">BlackByte Slots</h4> <p class="text-gray-400 text-xs sm:text-sm mb-4">Spin the reels for a chance to win big</p> <div class="flex justify-between text-xs sm:text-sm mb-6"> <div>
                                     <p class="text-gray-400">Max Payout</p>
                                     <p>100x</p>
                                 </div>
@@ -924,14 +936,13 @@
                     </div>
 
                     <div class="bg-blackbyte-gray rounded-lg overflow-hidden border border-gray-800 card-hover">
-                        <div class="h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
+                        <div class="h-40 sm:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
                             <img src="2.png" alt="Whitelist Shop" class="w-full h-full object-cover" />
                         </div>
-                        <div class="p-6">
-                            <h4 class="text-xl font-semibold mb-2">Stake Your Bytes</h4>
-                            <p class="text-gray-400 text-sm mb-4">Stake and earn $bb!</p>
+                        <div class="p-4 sm:p-6"> <h4 class="text-lg sm:text-xl font-semibold mb-2">Stake Your Bytes</h4>
+                            <p class="text-gray-400 text-xs sm:text-sm mb-4">Stake and earn $bb!</p>
                             
-                            <div class="flex justify-between text-sm mb-6">
+                            <div class="flex justify-between text-xs sm:text-sm mb-6">
                                 <div>
                                     <p class="text-gray-400">Type</p>
                                     <p>Stake</p>
@@ -949,11 +960,12 @@
                     </div>
 
                     <div class="bg-blackbyte-gray rounded-lg overflow-hidden border border-gray-800 card-hover">
-                        <div class="h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
+                        <div class="h-40 sm:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
                             <img src="3.png" alt="Earn Twitter $BB" class="w-full h-full object-cover" />
                         </div>
-                        <div class="p-6">
-                            <h4 class="text-xl font-semibold mb-2">Earn Twitter $BB</h4> <p class="text-gray-400 text-sm mb-4">Complete Twitter missions and earn free $BB!</p> <div class="flex justify-between text-sm mb-6">
+                        <div class="p-4 sm:p-6"> <h4 class="text-lg sm:text-xl font-semibold mb-2">Earn Twitter $BB</h4> 
+                            <p class="text-gray-400 text-xs sm:text-sm mb-4">Complete Twitter missions and earn free $BB!</p> 
+                            <div class="flex justify-between text-xs sm:text-sm mb-6">
                                 <div>
                                     <p class="text-gray-400">Rewards</p>
                                     <p>Up to 1,000 $BB</p> </div>
@@ -977,13 +989,13 @@
 
             <section class="mb-16">
                 <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-semibold flex items-center">
+                    <h3 class="text-xl sm:text-2xl font-semibold flex items-center">
                         <span class="w-3 h-3 bg-gray-500 rounded-full mr-2 blinking-dot"></span> LAST WINNERS
                     </h3>
                 </div>
                 
                 <div id="homepage-recent-jackpot-wins" class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    </div>
+                </div>
             </section>
         </div>
 
@@ -991,50 +1003,44 @@
             <div id="game-content" class="hidden">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
                     <div class="md:col-span-2">
-                        <div class="slot-machine bb-card p-6">
-                            <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">CYBER SLOTS</h2>
+                        <div class="slot-machine bb-card p-4 sm:p-6"> <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">CYBER SLOTS</h2>
                             <div class="flex justify-center space-x-2 sm:space-x-4 mb-8">
-                                <div class="slot-reel-container w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-                                    <div class="slot-reel text-3xl sm:text-4xl" id="reel1">7</div>
+                                <div class="slot-reel-container w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center"> <div class="slot-reel text-2xl sm:text-4xl" id="reel1">7</div> </div>
+                                <div class="slot-reel-container w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center">
+                                    <div class="slot-reel text-2xl sm:text-4xl" id="reel2">7</div>
                                 </div>
-                                <div class="slot-reel-container w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-                                    <div class="slot-reel text-3xl sm:text-4xl" id="reel2">7</div>
-                                </div>
-                                <div class="slot-reel-container w-20 h-20 sm:w-24 sm:h-24 flex items-center justify-center">
-                                    <div class="slot-reel text-3xl sm:text-4xl" id="reel3">7</div>
+                                <div class="slot-reel-container w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center">
+                                    <div class="slot-reel text-2xl sm:text-4xl" id="reel3">7</div>
                                 </div>
                             </div>
                             <div class="flex justify-center">
-                                <button id="spin-btn" class="bb-btn bb-btn-primary px-8 py-3">
-                                    SPIN (50 $BB) </button>
+                                <button id="spin-btn" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg"> SPIN (50 $BB) </button>
                             </div>
                         </div>
 
                         <div class="mt-8">
-                            <h3 class="text-xl font-orbitron text-blackbyte-red mb-4">RECENT JACKPOT WINS</h3>
+                            <h3 class="text-lg sm:text-xl font-orbitron text-blackbyte-red mb-4">RECENT JACKPOT WINS</h3>
                             <div id="recent-jackpot-wins" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="bb-card p-6">
-                            <h2 class="text-xl font-orbitron text-blackbyte-red mb-6">YOUR STATS</h2>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center text-sm">
+                        <div class="bb-card p-4 sm:p-6"> <h2 class="text-xl font-orbitron text-blackbyte-red mb-6">YOUR STATS</h2>
+                            <div class="space-y-3 text-sm"> <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-2 text-gray-300">
                                         <i class="fas fa-trophy text-yellow-400"></i>
                                         <span>Total Wins</span>
                                     </div>
                                     <span id="total-wins" class="font-bold text-white">0</span>
                                 </div>
-                                <div class="flex justify-between items-center text-sm">
+                                <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-2 text-gray-300">
                                         <i class="fas fa-coins text-green-400"></i>
                                         <span>Total Earned</span>
                                     </div>
                                     <span id="total-earned" class="font-bold text-white">0 $BB</span> </div>
-                                <div class="flex justify-between items-center text-sm">
+                                <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-2 text-gray-300">
                                         <i class="fas fa-fire text-orange-400"></i>
                                         <span>Hot Streak</span>
@@ -1051,10 +1057,8 @@
                             </div>
                         </div>
 
-                        <div class="bb-card p-6 mt-6 jackpot-highlight">
-                            <h2 class="text-xl font-orbitron text-blackbyte-red mb-4">JACKPOT</h2>
-                            <div id="jackpot-pot" class="text-3xl font-orbitron text-center mb-2">Loading...</div>
-                            <div class="text-sm text-gray-400 mb-3 text-center">DRAW EVERYDAY 17:00 UTC</div>
+                        <div class="bb-card p-4 sm:p-6 mt-6 jackpot-highlight"> <h2 class="text-xl font-orbitron text-blackbyte-red mb-4">JACKPOT</h2>
+                            <div id="jackpot-pot" class="text-2xl sm:text-3xl font-orbitron text-center mb-2">Loading...</div> <div class="text-sm text-gray-400 mb-3 text-center">DRAW EVERYDAY 17:00 UTC</div>
                             <div id="user-jackpot-entries" class="text-sm text-gray-300 mb-3 text-center">Loading...</div>
                             <button id="jackpot-buy-btn" class="bb-btn bb-btn-primary w-full py-2">
                                 BUY TICKET (200 $BB) </button>
@@ -1063,12 +1067,7 @@
                 </div>
             </div>
 
-            <div id="login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-lock text-5xl text-blackbyte-red mb-6"></i>
-                <h2 class="text-3xl font-orbitron text-white mb-4">TERMINAL LOCKED</h2>
-                <p class="text-gray-400 mb-8">Access to the BlackByte Casino requires authentication. Please connect your wallet to continue.</p>
-                <button id="prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
-                    CONNECT WALLET
+            <div id="login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto"> <i class="fas fa-lock text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i> <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">TERMINAL LOCKED</h2> <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Access to the BlackByte Casino requires authentication. Please connect your wallet to continue.</p> <button id="prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3"> CONNECT WALLET
                 </button>
             </div>
         </div>
@@ -1079,8 +1078,9 @@
             </div>
             <div id="shop-content" class="hidden">
                 <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">WHITELIST SHOP</h2>
-                <p class="text-gray-400 mb-8">Exchange your $BB for guaranteed WL spots. Each user can purchase only one of each type.</p> <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    <div class="bb-card p-6 flex flex-col justify-between">
+                <p class="text-gray-400 mb-8">Exchange your $BB for guaranteed WL spots. Each user can purchase only one of each type.</p> 
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bb-card p-4 sm:p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
                                 <h3 class="text-xl font-orbitron text-white">GUARANTEED WL</h3>
@@ -1088,7 +1088,8 @@
                             </div>
                             <p class="text-sm text-gray-400 mb-4">100% guaranteed spot in the next drop</p>
                             <div class="flex justify-between items-center mb-4">
-                                <div class="text-2xl font-orbitron text-blackbyte-red">10,000 $BB</div> <span id="gtd-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">LIMITED: ...</span>
+                                <div class="text-2xl font-orbitron text-blackbyte-red">10,000 $BB</div> 
+                                <span id="gtd-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">LIMITED: ...</span>
                             </div>
                         </div>
                         <button id="gtd-wl-btn" class="bb-btn bb-btn-primary w-full py-2 mt-auto">
@@ -1096,7 +1097,7 @@
                         </button>
                     </div>
 
-                    <div class="bb-card p-6 flex flex-col justify-between">
+                    <div class="bb-card p-4 sm:p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
                                 <h3 class="text-xl font-orbitron text-white">FCFS WL</h3>
@@ -1104,7 +1105,8 @@
                             </div>
                             <p class="text-sm text-gray-400 mb-4">First come first serve access to next drop</p>
                             <div class="flex justify-between items-center mb-4">
-                                <div class="text-2xl font-orbitron text-blackbyte-red">5,000 $BB</div> <span id="fcfs-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">LIMITED: ...</span>
+                                <div class="text-2xl font-orbitron text-blackbyte-red">5,000 $BB</div> 
+                                <span id="fcfs-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">LIMITED: ...</span>
                             </div>
                         </div>
                         <button id="fcfs-wl-btn" class="bb-btn bb-btn-primary w-full py-2 mt-auto">
@@ -1112,7 +1114,7 @@
                         </button>
                     </div>
 
-                    <div class="bb-card p-6 flex flex-col justify-between">
+                    <div class="bb-card p-4 sm:p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
                                 <h3 class="text-xl font-orbitron text-white">BLACKBYTE AIRDROP</h3>
@@ -1120,7 +1122,8 @@
                             </div>
                             <p class="text-sm text-gray-400 mb-4">Airdropped after mint</p>
                             <div class="flex justify-between items-center mb-4">
-                                <div class="text-2xl font-orbitron text-blackbyte-red">100,000 $BB</div> <span id="blackbyte-free-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">UNLIMITED</span>
+                                <div class="text-2xl font-orbitron text-blackbyte-red">100,000 $BB</div> 
+                                <span id="blackbyte-free-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">UNLIMITED</span>
                             </div>
                         </div>
                         <button id="blackbyte-free-btn" class="bb-btn bb-btn-primary w-full py-2 mt-auto">
@@ -1130,10 +1133,11 @@
                 </div>
             </div>
 
-            <div id="shop-login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-shopping-cart text-5xl text-blackbyte-red mb-6"></i>
-                <h2 class="text-3xl font-orbitron text-white mb-4">SHOP ACCESS DENIED</h2>
-                <p class="text-gray-400 mb-8">You need to connect your wallet to access the BlackByte $BB Shop.</p> <button id="shop-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
+            <div id="shop-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-shopping-cart text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">SHOP ACCESS DENIED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You need to connect your wallet to access the BlackByte $BB Shop.</p> 
+                <button id="shop-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1141,15 +1145,18 @@
 
         <div id="earn-twitter" class="tab-content">
             <div id="earn-twitter-content" class="hidden">
-                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">EARN $BB VIA TWITTER</h2> <p class="text-gray-400 mb-8">Complete Twitter missions posted by the admin to earn free $BB!</p> <div id="tweet-missions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">EARN $BB VIA TWITTER</h2> 
+                <p class="text-gray-400 mb-8">Complete Twitter missions posted by the admin to earn free $BB!</p> 
+                <div id="tweet-missions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <p class="text-gray-400">Loading tweet missions...</p>
                 </div>
             </div>
 
-            <div id="earn-twitter-login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
-                <i class="fab fa-twitter text-5xl text-blue-400 mb-6"></i>
-                <h2 class="text-3xl font-orbitron text-white mb-4">TWITTER EARN LOCKED</h2>
-                <p class="text-gray-400 mb-8">You must connect your wallet to participate in Twitter missions.</p> <button id="earn-twitter-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
+            <div id="earn-twitter-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fab fa-twitter text-4xl sm:text-5xl text-blue-400 mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">TWITTER EARN LOCKED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You must connect your wallet to participate in Twitter missions.</p> 
+                <button id="earn-twitter-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1168,10 +1175,11 @@
                 </div>
             </div>
 
-            <div id="raffle-login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-ticket-alt text-5xl text-blackbyte-red mb-6"></i>
-                <h2 class="text-3xl font-orbitron text-white mb-4">RAFFLE ACCESS DENIED</h2>
-                <p class="text-gray-400 mb-8">You need to connect your wallet to view and participate in raffles.</p> <button id="raffle-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
+            <div id="raffle-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-ticket-alt text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">RAFFLE ACCESS DENIED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You need to connect your wallet to view and participate in raffles.</p> 
+                <button id="raffle-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1180,28 +1188,27 @@
         <div id="leaderboard" class="tab-content">
             <div id="leaderboard-content" class="hidden">
                 <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">TOP PLAYERS</h2>
-                <div class="bb-card p-6 mb-8">
+                <div class="bb-card p-4 sm:p-6 mb-8">
                     <h3 class="text-xl font-orbitron text-white mb-4">SEARCH YOUR RANK</h3>
-                    <div class="flex items-center space-x-4">
-                        <input type="text" id="leaderboard-search-input" placeholder="Search by username..." class="bb-input flex-grow" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
-                        <button id="leaderboard-search-btn" class="bb-btn bb-btn-primary px-6 py-2">SEARCH</button>
-                    </div>
-                    <div id="leaderboard-search-result" class="mt-4 text-center">
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4"> <input type="text" id="leaderboard-search-input" placeholder="Search by username..." class="bb-input flex-grow" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
+                        <button id="leaderboard-search-btn" class="bb-btn bb-btn-primary px-6 py-2 w-full sm:w-auto">SEARCH</button> </div>
+                    <div id="leaderboard-search-result" class="mt-4 text-center text-sm sm:text-base">
                     </div>
                 </div>
 
-                <div class="bb-card p-6">
+                <div class="bb-card p-4 sm:p-6">
                     <h3 class="text-xl font-orbitron text-white mb-4">TOP 10 PLAYERS</h3>
-                    <div id="leaderboard-list" class="space-y-3">
+                    <div id="leaderboard-list" class="space-y-3 text-sm sm:text-base">
                         <p class="text-gray-400">Loading leaderboard...</p>
                     </div>
                 </div>
             </div>
 
-            <div id="leaderboard-login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-trophy text-5xl text-yellow-400 mb-6"></i>
-                <h2 class="text-3xl font-orbitron text-white mb-4">LEADERBOARD LOCKED</h2>
-                <p class="text-gray-400 mb-8">Connect your wallet and see who's dominating the BlackByte Casino!</p> <button id="leaderboard-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
+            <div id="leaderboard-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-trophy text-4xl sm:text-5xl text-yellow-400 mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">LEADERBOARD LOCKED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Connect your wallet and see who's dominating the BlackByte Casino!</p> 
+                <button id="leaderboard-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1237,11 +1244,11 @@
                 </div>
             </div>
 
-            <div id="staking-login-prompt" class="text-center py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-lock text-5xl text-blackbyte-red mb-6"></i>
-                <h2 class="text-3xl font-orbitron text-white mb-4">STAKING LOCKED</h2>
-                <p class="text-gray-400 mb-8">Connect your wallet and hold a BlackByte NFT to access staking.</p>
-                <button id="staking-prompt-auth-button" class="bb-btn bb-btn-primary px-8 py-3">
+            <div id="staking-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-lock text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">STAKING LOCKED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Connect your wallet and hold a BlackByte NFT to access staking.</p>
+                <button id="staking-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1261,7 +1268,9 @@
             <div class="text-left space-y-3 px-2">
                 <p class="text-white text-base sm:text-lg"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>New design update</p>
                 <p class="text-white text-base sm:text-lg"><i class="fas fa-trophy text-blackbyte-red mr-2"></i>Now you can check the leaderboard and see which top rich rank you are in.</p>
-                <p class="text-white text-base sm:text-lg"><i class="fas fa-bug text-blackbyte-red mr-2"></i>Fixed crash error when trying to purchase items from the $BB store</p> <p class="text-gray-500 text-sm sm:text-base"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>NEW Get 1.000 $BB Daily Bonus for Free!</p> <p class="text-gray-500 text-sm sm:text-base"><i class="fas fa-ticket text-blackbyte-red mr-2"></i>New Raffle System (Beta)</p>
+                <p class="text-white text-base sm:text-lg"><i class="fas fa-bug text-blackbyte-red mr-2"></i>Fixed crash error when trying to purchase items from the $BB store</p> 
+                <p class="text-gray-500 text-sm sm:text-base"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>NEW Get 1.000 $BB Daily Bonus for Free!</p> 
+                <p class="text-gray-500 text-sm sm:text-base"><i class="fas fa-ticket text-blackbyte-red mr-2"></i>New Raffle System (Beta)</p>
             </div>
             
             <button id="confirm-update-info-modal-btn" class="bb-btn bb-btn-primary mt-8 py-2 px-8 text-lg">
@@ -1289,8 +1298,7 @@
                     </ul>
                 </li>
                 <li>
-                    
-                </li>
+                    </li>
                 <li data-target-tab="earn-twitter">
                     <span><i class="fab fa-twitter mr-2"></i> Twitter Missions</span>
                 </li>
@@ -1310,16 +1318,11 @@
         </nav>
     </div>
 
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
+    <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
-
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>
-
     <script src="https://unpkg.com/@walletconnect/web3-provider"></script>
-
     <script src="https://unpkg.com/web3modal@1.9.12/dist/index.js"></script>
-
     <script src="app.js"></script>
 </body>
 </html>

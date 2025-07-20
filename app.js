@@ -1657,54 +1657,6 @@ function setupEventListeners() {
       }
     });
   }
-
-  // Wallet events for account and chain changes
-  if (window.ethereum) {
-    // Evento para quando a conta da carteira muda
-    window.ethereum.on("accountsChanged", async (accounts) => {
-      if (accounts.length === 0) {
-        console.log("Wallet disconnected.");
-        handleLogout();
-      } else {
-        currentConnectedWalletAddress = accounts[0];
-        console.log("Account changed to:", currentConnectedWalletAddress);
-        await authenticateWithBackend(currentConnectedWalletAddress); // Re-autentica e verifica NFT
-      }
-    });
-
-    // Evento para quando a rede/chain ID da carteira muda
-    window.ethereum.on("chainChanged", async (chainId) => {
-      console.log("Chain changed to:", parseInt(chainId, 16));
-      // Força uma re-autenticação e re-verificação da NFT
-      // Isso também vai chamar checkNftOwnership() e atualizar a UI
-      if (currentConnectedWalletAddress) { // Apenas se já houver uma carteira conectada
-        await authenticateWithBackend(currentConnectedWalletAddress);
-      } else {
-        // Se não havia carteira conectada, mas a chain mudou,
-        // podemos querer forçar uma nova tentativa de conexão/verificação
-        // ou apenas esperar o usuário conectar. Por simplicidade, vamos re-checar se há um usuário.
-        if (currentUser && currentUser.walletAddress) {
-             await authenticateWithBackend(currentUser.walletAddress);
-        }
-      }
-    });
-
-    // Evento para quando a carteira se conecta
-    window.ethereum.on("connect", async (info) => {
-      console.log("Wallet connected:", info);
-      const accounts = await web3Provider.listAccounts();
-      if (accounts.length > 0) {
-        currentConnectedWalletAddress = accounts[0];
-        await authenticateWithBackend(currentConnectedWalletAddress);
-      }
-    });
-
-    // Evento para quando a carteira se desconecta
-    window.ethereum.on("disconnect", (error) => {
-      console.log("Wallet disconnected:", error);
-      handleLogout();
-    });
-  }
 }
 
 function setupUtilitiesNavigation() {

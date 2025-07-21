@@ -49,14 +49,6 @@
             cursor: pointer;
             border: none;
             outline: none;
-            font-size: 0.875rem;
-        }
-
-        /* Mobile-first button sizing */
-        @media (min-width: 640px) {
-            .bb-btn {
-                font-size: 1rem;
-            }
         }
 
         .bb-btn-primary {
@@ -98,15 +90,8 @@
             background-color: var(--blackbyte-gray);
             border: 1px solid var(--blackbyte-border-gray);
             border-radius: 0.5rem;
-            padding: 1rem;
+            padding: 1.5rem;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-        }
-
-        /* Responsive card padding */
-        @media (min-width: 640px) {
-            .bb-card {
-                padding: 1.5rem;
-            }
         }
 
         .bb-input {
@@ -117,15 +102,7 @@
             border-radius: 0.375rem;
             color: white;
             transition: all 0.3s ease;
-            font-size: 0.875rem;
         }
-
-        @media (min-width: 640px) {
-            .bb-input {
-                font-size: 1rem;
-            }
-        }
-
         .bb-input:focus {
             outline: none;
             border-color: var(--blackbyte-red);
@@ -155,10 +132,9 @@
         }
 
         .tab-btn {
-            display: none;
+            display: none; /* These tabs are controlled by JS and hidden by default, visible via sidebar */
         }
 
-        /* Enhanced modal styles for mobile */
         .wallet-modal {
             display: none;
             position: fixed;
@@ -169,20 +145,19 @@
             background-color: rgba(0, 0, 0, 0.85);
             z-index: 1000;
             backdrop-filter: blur(3px);
-            padding: 1rem;
         }
         .wallet-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
+            width: 90%; /* Responsive width */
             max-width: 400px;
         }
         .wallet-option {
             display: flex;
             align-items: center;
-            padding: 1rem;
+            padding: 1rem 1.5rem;
             margin-bottom: 1rem;
             background-color: var(--blackbyte-gray);
             border: 2px solid var(--blackbyte-border-gray);
@@ -190,61 +165,30 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
-        @media (min-width: 640px) {
-            .wallet-option {
-                padding: 1rem 1.5rem;
-            }
-        }
-
         .wallet-option:hover {
             border-color: var(--blackbyte-red);
             background-color: rgba(211, 47, 47, 0.1);
             transform: translateY(-2px);
         }
         .wallet-icon {
-            width: 40px;
-            height: 40px;
-            margin-right: 0.75rem;
+            width: 48px;
+            height: 48px;
+            margin-right: 1rem;
             border-radius: 0.5rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.25rem;
-            flex-shrink: 0;
+            font-size: 1.5rem;
         }
-
-        @media (min-width: 640px) {
-            .wallet-icon {
-                width: 48px;
-                height: 48px;
-                margin-right: 1rem;
-                font-size: 1.5rem;
-            }
-        }
-
         .wallet-info h3 {
             color: white;
-            font-size: 1rem;
+            font-size: 1.125rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
         }
-
-        @media (min-width: 640px) {
-            .wallet-info h3 {
-                font-size: 1.125rem;
-            }
-        }
-
         .wallet-info p {
             color: #a0aec0;
-            font-size: 0.75rem;
-        }
-
-        @media (min-width: 640px) {
-            .wallet-info p {
-                font-size: 0.875rem;
-            }
+            font-size: 0.875rem;
         }
 
         .input-group label {
@@ -261,23 +205,13 @@
         }
         .close-modal {
             position: absolute;
-            top: 0.75rem;
-            right: 0.75rem;
+            top: 1rem;
+            right: 1rem;
             color: #a0aec0;
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             cursor: pointer;
             transition: all 0.3s ease;
-            z-index: 10;
         }
-
-        @media (min-width: 640px) {
-            .close-modal {
-                top: 1rem;
-                right: 1rem;
-                font-size: 1.5rem;
-            }
-        }
-
         .close-modal:hover { 
             color: var(--blackbyte-red); 
         }
@@ -289,7 +223,6 @@
             color: #718096;
         }
 
-        /* Enhanced admin panel for mobile */
         .admin-panel {
             display: none;
             position: fixed;
@@ -299,47 +232,41 @@
             height: 100%;
             background-color: var(--blackbyte-dark);
             z-index: 2000;
-            padding: 1rem;
+            padding: 2rem;
             overflow-y: auto;
             border-left: 3px solid var(--blackbyte-red);
         }
-
-        @media (min-width: 640px) {
-            .admin-panel {
-                padding: 2rem;
-            }
-        }
-
         .admin-header {
             display: flex;
-            flex-direction: column;
-            gap: 1rem;
+            justify-content: space-between;
+            align-items: center;
             margin-bottom: 2rem;
             padding-bottom: 1rem;
             border-bottom: 1px solid var(--blackbyte-border-gray);
+            flex-wrap: wrap; /* Allow wrapping on small screens */
         }
-
-        @media (min-width: 640px) {
-            .admin-header {
-                flex-direction: row;
-                justify-content: space-between;
-                align-items: center;
-            }
-        }
-
+        /* Adjust admin header elements for smaller screens */
         .admin-header h2 {
-            font-size: 1.5rem;
+            font-size: 1.75rem; /* Smaller font for mobile */
+            margin-bottom: 1rem; /* Add some space if it wraps */
+            width: 100%; /* Take full width on small screens */
             text-align: center;
         }
-
-        @media (min-width: 640px) {
+        .admin-header button {
+            width: 100%; /* Full width button on small screens */
+        }
+        @media (min-width: 640px) { /* Tailwind's 'sm' breakpoint */
             .admin-header h2 {
                 font-size: 2.25rem;
-                text-align: left;
+                margin-bottom: 0;
+                width: auto;
+            }
+            .admin-header button {
+                width: auto;
             }
         }
 
-        /* Enhanced purchase modal for mobile */
+
         .purchase-modal {
             display: none;
             position: fixed;
@@ -350,14 +277,13 @@
             background-color: rgba(0, 0, 0, 0.85);
             z-index: 1500;
             backdrop-filter: blur(3px);
-            padding: 1rem;
         }
         .purchase-container {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 100%;
+            width: 90%; /* Responsive width */
             max-width: 500px;
             text-align: center;
         }
@@ -374,21 +300,20 @@
             align-items: center;
             justify-content: center;
             z-index: 2000;
-            padding: 1rem;
         }
         #shop-overlay h1 {
             font-family: 'Orbitron', sans-serif;
             color: #fff;
-            font-size: 1.5rem;
+            font-size: 2rem; /* Adjusted for better mobile scaling */
             text-transform: uppercase;
             letter-spacing: 0.1em;
-            text-align: center;
         }
         @media (min-width: 640px) {
             #shop-overlay h1 {
-                font-size: 3rem;
+                font-size: 3rem; /* Larger on desktop */
             }
         }
+
 
         .jackpot-pot, #bonus-timer {
             font-family: 'Orbitron', sans-serif;
@@ -427,36 +352,20 @@
             100% { transform: rotateX(360deg); }
         }
 
-        /* Enhanced header for mobile */
         .header-logo-title h1 {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: 700;
             letter-spacing: -0.025em;
         }
-
-        @media (min-width: 640px) {
-            .header-logo-title h1 {
-                font-size: 1.5rem;
-            }
-        }
-
         .header-logo-icon {
-            width: 1.75rem;
-            height: 1.75rem;
+            width: 2rem;
+            height: 2rem;
             background-color: var(--blackbyte-red);
             border-radius: 0.375rem;
             display: flex;
             align-items: center;
             justify-content: center;
         }
-
-        @media (min-width: 640px) {
-            .header-logo-icon {
-                width: 2rem;
-                height: 2rem;
-            }
-        }
-
         .header-logo-icon i {
             color: white;
         }
@@ -496,12 +405,11 @@
             background-color: rgba(210, 47, 47, 0.9);
         }
 
-        /* Enhanced utilities sidebar for mobile */
         .utilities-sidebar {
             position: fixed;
             top: 0; 
             right: 0;
-            width: 0;
+            width: 0; /* Hidden by default */
             height: 100%;
             overflow: hidden;
             display: flex;
@@ -519,27 +427,18 @@
         }
         .utilities-nav {
             position: relative;
-            width: 280px;
+            width: 260px; /* Fixed width for the sidebar menu */
             background: var(--blackbyte-gray);
             border-left: 2px solid var(--blackbyte-red);
-            padding: 1.5rem 1rem;
+            padding: 2rem 1rem;
             transform: translateX(100%);
             transition: transform 0.3s ease, opacity 0.3s ease;
             opacity: 0;
             transform-origin: right center;
             transform: perspective(600px) rotateY(-15deg);
-            overflow-y: auto;
         }
-
-        @media (min-width: 640px) {
-            .utilities-nav {
-                width: 260px;
-                padding: 2rem 1rem;
-            }
-        }
-
         .utilities-sidebar.open {
-            width: 100%;
+            width: 100%; /* When open, cover the whole screen to show overlay */
         }
         .utilities-sidebar.open .utilities-overlay {
             opacity: 1;
@@ -556,16 +455,9 @@
         }
         .utilities-nav ul li { 
             margin-bottom: 1.5rem; 
-            font-size: 1rem;
+            font-size: 1.125rem; 
             cursor: pointer; 
         }
-
-        @media (min-width: 640px) {
-            .utilities-nav ul li {
-                font-size: 1.125rem;
-            }
-        }
-
         .utilities-nav ul li > ul {
             display: none;
             margin-top: 0.5rem;
@@ -601,7 +493,6 @@
             font-weight: 500;
             z-index: 9999;
             animation: slide-in 0.3s ease-out;
-            font-size: 0.875rem;
         }
         .login-first-msg.fade-out {
             opacity: 0;
@@ -612,6 +503,7 @@
             to { transform: translateX(0); }
         }
 
+        /* Loading states */
         .loading {
             opacity: 0.6;
             pointer-events: none;
@@ -631,6 +523,7 @@
             to { transform: rotate(360deg); }
         }
 
+        /* Prevent text selection during animations */
         .no-select {
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -638,188 +531,101 @@
             user-select: none;
         }
 
-        /* Enhanced auth modal for mobile */
+        /* Estilos para o backdrop do modal (a camada escura por trás) */
         .auth-modal {
-            display: none;
-            position: fixed;
+            display: none; /* Começa oculto */
+            position: fixed; /* Fixa na viewport */
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            z-index: 1000;
-            backdrop-filter: blur(3px);
-            opacity: 0;
-            transition: opacity 0.2s ease;
-            padding: 1rem;
+            background-color: rgba(0, 0, 0, 0.85); /* Fundo escuro transparente */
+            z-index: 1000; /* Garante que ele fique acima de outros elementos */
+            backdrop-filter: blur(3px); /* Efeito de desfoque */
+            opacity: 0; /* Começa invisível para animação */
+            transition: opacity 0.2s ease; /* Transição suave */
         }
 
+        /* Estilos para o container interno do modal (o "card" visível) */
         .auth-container {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 100%;
-            max-width: 400px;
-            max-height: 90vh;
-            overflow-y: auto;
+            position: absolute; /* Posicionamento absoluto dentro do .auth-modal */
+            top: 50%; /* Centraliza verticalmente */
+            left: 50%; /* Centraliza horizontalmente */
+            transform: translate(-50%, -50%); /* Ajuste final para centralização perfeita */
+            width: 90%; /* Largura padrão */
+            max-width: 400px; /* Largura máxima */
+            /* Propriedades para o scroll interno do modal My Account (já tínhamos adicionado) */
+            max-height: 90vh; /* Limita a altura máxima do modal à 90% da altura da viewport */
+            overflow-y: auto; /* Adiciona scroll interno se o conteúdo exceder a altura */
+            /* Adicione ou garanta estas propriedades de box model/design */
             background-color: var(--blackbyte-gray);
             border: 1px solid var(--blackbyte-border-gray);
             border-radius: 0.5rem;
             padding: 1.5rem;
             box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
-            z-index: 1001;
+            
+            /* MUITO IMPORTANTE: Garante que o conteúdo do modal esteja visível sobre o backdrop */
+            z-index: 1001; 
         }
 
-        #home.active ~ footer {
+        /* REMOÇÃO ESPECÍFICA DO RODAPÉ E LAST WINNERS DA HOME */
+        #home.active ~ footer { /* Oculta o rodapé quando a aba home está ativa */
             display: none;
         }
-        #home.active section.mb-16:has(#homepage-recent-jackpot-wins) {
+        #home.active section.mb-16:has(#homepage-recent-jackpot-wins) { /* Oculta a seção de últimos ganhadores na home */
             display: none;
         }
 
-        /* Enhanced wrong chain modal for mobile */
+        /* ✨ NOVO: Estilos para o modal de rede errada */
         .wrong-chain-modal {
-            display: none;
+            display: none; /* Começa oculto */
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.85);
-            z-index: 9999;
-            backdrop-filter: blur(5px);
+            background-color: rgba(0, 0, 0, 0.85); /* Fundo escuro transparente */
+            z-index: 9999; /* Garante que fique acima de tudo */
+            backdrop-filter: blur(5px); /* Efeito de desfoque */
             opacity: 0;
             transition: opacity 0.2s ease;
-            padding: 1rem;
-            align-items: center;
-            justify-content: center;
+            display: flex; /* Para centralizar o conteúdo */
+            align-items: center; /* Centraliza verticalmente */
+            justify-content: center; /* Centraliza horizontalmente */
         }
 
         .wrong-chain-modal-content {
-            position: relative;
-            width: 100%;
-            max-width: 500px;
+            position: relative; /* Para o botão de fechar */
+            width: 90%;
+            max-width: 500px; /* Tamanho máximo do modal */
             text-align: center;
             background-color: var(--blackbyte-gray);
-            border: 2px solid var(--blackbyte-red);
-            border-radius: 0.75rem;
-            padding: 2rem;
-            box-shadow: 0 0 30px rgba(211, 47, 47, 0.6), 0 0 15px rgba(0,0,0,0.5);
-            animation: pulse-border 1.5s infinite alternate;
+            border: 2px solid var(--blackbyte-red); /* Borda vermelha chamativa */
+            border-radius: 0.75rem; /* Bordas mais arredondadas */
+            padding: 2.5rem; /* Padding maior */
+            box-shadow: 0 0 30px rgba(211, 47, 47, 0.6), 0 0 15px rgba(0,0,0,0.5); /* Sombra neon */
+            animation: pulse-border 1.5s infinite alternate; /* Animação sutil de pulsação */
         }
 
-        @media (min-width: 640px) {
-            .wrong-chain-modal-content {
-                padding: 2.5rem;
-            }
-        }
-
+        /* Opcional: Animação de pulsação para a borda */
         @keyframes pulse-border {
             0% { border-color: var(--blackbyte-red); box-shadow: 0 0 20px rgba(211, 47, 47, 0.6); }
             100% { border-color: rgba(211, 47, 47, 0.8); box-shadow: 0 0 25px rgba(211, 47, 47, 0.8); }
         }
 
+        /* Estilo para o botão de fechar dentro do modal (se quiser um) */
         .wrong-chain-modal-close {
             position: absolute;
-            top: 0.75rem;
-            right: 1rem;
+            top: 1rem;
+            right: 1.5rem;
             color: #a0aec0;
-            font-size: 1.5rem;
+            font-size: 2rem; /* Ícone maior */
             cursor: pointer;
             transition: all 0.3s ease;
         }
-
-        @media (min-width: 640px) {
-            .wrong-chain-modal-close {
-                top: 1rem;
-                right: 1.5rem;
-                font-size: 2rem;
-            }
-        }
-
         .wrong-chain-modal-close:hover {
             color: white;
             transform: scale(1.1);
-        }
-
-        /* Mobile-specific improvements */
-        @media (max-width: 639px) {
-            .container {
-                padding-left: 1rem;
-                padding-right: 1rem;
-            }
-            
-            .grid {
-                gap: 1rem;
-            }
-            
-            .text-3xl {
-                font-size: 1.5rem;
-            }
-            
-            .text-2xl {
-                font-size: 1.25rem;
-            }
-            
-            .text-xl {
-                font-size: 1.125rem;
-            }
-            
-            .py-8 {
-                padding-top: 2rem;
-                padding-bottom: 2rem;
-            }
-            
-            .py-12 {
-                padding-top: 3rem;
-                padding-bottom: 3rem;
-            }
-            
-            .mb-8 {
-                margin-bottom: 2rem;
-            }
-            
-            .mb-16 {
-                margin-bottom: 3rem;
-            }
-        }
-
-        /* Touch-friendly buttons on mobile */
-        @media (max-width: 639px) {
-            .bb-btn {
-                min-height: 44px;
-                padding: 0.75rem 1rem;
-            }
-            
-            .wallet-option {
-                min-height: 60px;
-            }
-            
-            .utilities-nav ul li {
-                padding: 0.75rem 0;
-                border-bottom: 1px solid rgba(55, 65, 81, 0.3);
-            }
-        }
-
-        /* Improved scrolling on mobile */
-        .auth-container,
-        .admin-panel,
-        .utilities-nav {
-            -webkit-overflow-scrolling: touch;
-        }
-
-        /* Better text readability on small screens */
-        @media (max-width: 639px) {
-            .text-gray-400 {
-                font-size: 0.875rem;
-                line-height: 1.4;
-            }
-            
-            .bb-card p {
-                font-size: 0.875rem;
-                line-height: 1.4;
-            }
         }
     </style>
 </head>
@@ -827,10 +633,10 @@
     <div id="wallet-modal" class="wallet-modal modal-backdrop">
         <div class="wallet-container bb-card modal-content">
             <span class="close-modal" id="close-wallet-modal">&times;</span>
-            <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-4 sm:mb-6 text-center">CONNECT WALLET</h2>
-            <p class="text-gray-400 text-center mb-4 sm:mb-6 text-sm sm:text-base">Choose your preferred wallet to connect</p>
+            <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6 text-center">CONNECT WALLET</h2>
+            <p class="text-gray-400 text-center mb-6">Choose your preferred wallet to connect</p>
             
-            <div class="space-y-3 sm:space-y-4">
+            <div class="space-y-4">
                 <div class="wallet-option" id="connect-metamask">
                     <div class="wallet-icon" style="background: linear-gradient(135deg, #1a0d00, #1a0d00);">
                         <img src="Metalogo.png" alt="MetaMask Icon" class="w-full h-full object-contain p-2">
@@ -852,7 +658,7 @@
                 </div>
             </div>
             
-            <div class="mt-4 sm:mt-6 text-center">
+            <div class="mt-6 text-center">
                 <p class="text-xs text-gray-500">
                     By connecting a wallet, you agree to our Terms of Service
                 </p>
@@ -862,13 +668,13 @@
 
     <div id="admin-panel" class="admin-panel">
         <div class="admin-header">
-            <h2 class="font-orbitron text-blackbyte-red">BlackByte ADMIN PANEL</h2>
+            <h2 class="text-3xl font-orbitron text-blackbyte-red">BlackByte ADMIN PANEL</h2>
             <button id="close-admin" class="bb-btn bb-btn-primary">
                 CLOSE ADMIN
             </button>
         </div>
-        <div class="mb-6 sm:mb-8">
-            <h3 class="text-lg sm:text-xl font-orbitron text-blackbyte-red mb-4">SECRET ADMIN ACCESS</h3>
+        <div class="mb-8">
+            <h3 class="text-xl font-orbitron text-blackbyte-red mb-4">SECRET ADMIN ACCESS</h3>
             <input type="password" id="admin-password" placeholder="Enter admin password" class="w-full max-w-md p-3 bb-input">
             <button id="admin-login" class="bb-btn bb-btn-primary mt-4">
                 ACCESS
@@ -876,14 +682,14 @@
         </div>
 
         <div id="admin-content" class="hidden">
-            <h3 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">WL PURCHASES OVERVIEW</h3>
-            <div id="wl-purchases" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">WL PURCHASES OVERVIEW</h3>
+            <div id="wl-purchases" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <p class="text-gray-400">Loading wallets...</p>
             </div>
 
-            <div class="mt-8 sm:mt-12">
-                <h3 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">TWEET MISSION MANAGEMENT</h3>
-                <div class="bb-card">
+            <div class="mt-12">
+                <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">TWEET MISSION MANAGEMENT</h3>
+                <div class="bb-card p-6">
                     <div class="input-group mb-4">
                         <label for="admin-tweet-url">TWEET URL</label>
                         <input type="text" id="admin-tweet-url" placeholder="e.g., https://twitter.com/username/status/1234567890" class="bb-input">
@@ -910,10 +716,10 @@
                 </div>
             </div>
 
-            <div class="mt-8 sm:mt-12">
-                <h3 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">RAFFLE MANAGEMENT</h3>
-                <div class="bb-card">
-                    <h4 class="text-lg sm:text-xl font-orbitron text-white mb-4">CREATE NEW RAFFLE</h4>
+            <div class="mt-12">
+                <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">RAFFLE MANAGEMENT</h3>
+                <div class="bb-card p-6">
+                    <h4 class="text-xl font-orbitron text-white mb-4">CREATE NEW RAFFLE</h4>
                     <div class="input-group mb-4">
                         <label for="raffle-name">RAFFLE NAME</label>
                         <input type="text" id="raffle-name" placeholder="e.g., Mega NFT Drop" class="bb-input">
@@ -927,8 +733,7 @@
                         <input type="number" id="raffle-tickets-available" placeholder="e.g., 1000" class="bb-input">
                     </div>
                     <div class="input-group mb-4">
-                        <label for="raffle-ticket-price">TICKET PRICE ($BB)</label>
-                        <input type="number" id="raffle-ticket-price" placeholder="e.g., 50" class="bb-input">
+                        <label for="raffle-ticket-price">TICKET PRICE ($BB)</label> <input type="number" id="raffle-ticket-price" placeholder="e.g., 50" class="bb-input">
                     </div>
                     <div class="input-group mb-4">
                         <label for="raffle-draw-time">DRAW DATE & TIME</label>
@@ -947,8 +752,8 @@
                     </button>
                 </div>
 
-                <div class="bb-card mt-6">
-                    <h4 class="text-lg sm:text-xl font-orbitron text-white mb-4">VIEW RAFFLE WINNERS</h4>
+                <div class="bb-card p-6 mt-6">
+                    <h4 class="text-xl font-orbitron text-white mb-4">VIEW RAFFLE WINNERS</h4>
                     <div class="input-group mb-4">
                         <label for="raffle-select-winners">SELECT RAFFLE</label>
                         <select id="raffle-select-winners" class="bb-input">
@@ -966,12 +771,12 @@
     <div id="purchase-modal" class="purchase-modal modal-backdrop">
         <div class="purchase-container bb-card modal-content">
             <span class="close-modal" id="close-purchase-modal-icon">&times;</span>
-            <i class="fas fa-check-circle text-4xl sm:text-6xl text-green-500 mb-4"></i>
-            <h2 class="text-2xl sm:text-3xl font-orbitron text-blackbyte-red mb-2">YOU BOUGHT!</h2>
-            <p class="text-lg sm:text-xl mb-6 text-white">WELCOME TO THE BlackByte WL</p>
+            <i class="fas fa-check-circle text-6xl text-green-500 mb-4"></i>
+            <h2 class="text-3xl font-orbitron text-blackbyte-red mb-2">YOU BOUGHT!</h2>
+            <p class="text-xl mb-6 text-white">WELCOME TO THE BlackByte WL</p>
 
             <div class="wallet-form">
-                <p class="mb-4 text-gray-300 text-sm sm:text-base">Please enter your wallet address to secure your WL spot:</p>
+                <p class="mb-4 text-gray-300">Please enter your wallet address to secure your WL spot:</p>
                 <input type="text" id="wallet-address" placeholder="0x..." class="w-full p-3 bb-input mb-4">
                 <button id="submit-wallet" class="bb-btn bb-btn-primary w-full py-3">
                     SUBMIT WALLET
@@ -983,29 +788,26 @@
     <div id="share-modal" class="purchase-modal modal-backdrop">
         <div class="purchase-container bb-card modal-content">
             <span class="close-modal" id="close-share-modal">&times;</span>
-            <h2 class="text-2xl sm:text-3xl font-orbitron text-blackbyte-red mb-4">ACCESS GRANTED!</h2>
-            <p class="text-lg sm:text-xl mb-6 text-white">Share your triumph!</p>
+            <h2 class="text-3xl font-orbitron text-blackbyte-red mb-4">ACCESS GRANTED!</h2>
+            <p class="text-xl mb-6 text-white">Share your triumph!</p>
 
             <div id="shareable-card" class="relative w-full h-auto bg-cover bg-center rounded-lg overflow-hidden border border-gray-700" style="background-image: url('image_c99478.jpg');">
-                <div class="relative p-4 sm:p-6 flex items-center flex-col sm:flex-row">
-                    <div class="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-2 border-blackbyte-red mr-0 sm:mr-6 mb-4 sm:mb-0 flex-shrink-0">
-                        <img id="user-uploaded-photo" src="/placeholder.svg" alt="Your Photo" class="w-full h-full object-cover hidden">
-                        <div id="upload-placeholder" class="w-full h-full bg-blackbyte-gray flex items-center justify-center text-gray-400 text-xs sm:text-sm flex-col cursor-pointer">
-                            <i class="fas fa-cloud-upload-alt text-lg sm:text-2xl mb-1"></i>
+                <div class="relative p-6 flex items-center flex-col sm:flex-row"> <div class="w-32 h-32 rounded-full overflow-hidden border-2 border-blackbyte-red mr-0 sm:mr-6 mb-4 sm:mb-0 flex-shrink-0"> <img id="user-uploaded-photo" src="/placeholder.svg" alt="Your Photo" class="w-full h-full object-cover hidden">
+                        <div id="upload-placeholder" class="w-full h-full bg-blackbyte-gray flex items-center justify-center text-gray-400 text-sm flex-col cursor-pointer">
+                            <i class="fas fa-cloud-upload-alt text-2xl mb-1"></i>
                             Upload
                         </div>
                     </div>
                     <div class="text-center flex-grow">
-                        <p class="text-3xl sm:text-5xl font-orbitron text-blackbyte-red break-words" id="share-username">USER765</p>
-                        <p class="text-xl sm:text-3xl font-orbitron text-white mt-2">GTD ACCESS ENABLED</p>
+                        <p class="text-5xl font-orbitron text-blackbyte-red break-words" id="share-username">USER765</p>
+                        <p class="text-3xl font-orbitron text-white mt-2">GTD ACCESS ENABLED</p>
                     </div>
                 </div>
             </div>
 
             <input type="file" id="upload-photo-input" accept="image/*" class="hidden">
 
-            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-6">
-                <button id="tweet-share-btn" class="bb-btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-6">
+            <div class="flex flex-col sm:flex-row justify-center space-y-4 sm:space-y-0 sm:space-x-4 mt-6"> <button id="tweet-share-btn" class="bb-btn bg-blue-500 hover:bg-blue-600 text-white py-3 px-6">
                     <i class="fab fa-twitter mr-2"></i> SHARE ON TWITTER
                 </button>
                 <button id="download-image-btn" class="bb-btn bg-purple-500 hover:bg-purple-600 text-white py-3 px-6">
@@ -1018,28 +820,26 @@
     <div id="my-account-modal" class="auth-modal hidden modal-backdrop">
         <div class="auth-container bb-card modal-content">
             <span class="close-modal" id="close-my-account">&times;</span>
-            <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">MY ACCOUNT</h2>
+            <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">MY ACCOUNT</h2>
 
             <div class="mb-4">
                 <p class="text-sm text-gray-400">USERNAME:</p>
-                <p id="account-username" class="text-lg sm:text-xl font-semibold text-white"></p>
-                <div id="username-edit-container" class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-2 sm:space-y-0 sm:space-x-2 mt-2" style="display: none;">
+                <p id="account-username" class="text-xl font-semibold text-white"></p>
+                <div id="username-edit-container" class="flex items-center space-x-2 mt-2" style="display: none;">
                     <input type="text" id="edit-username-input" class="bb-input bg-blackbyte-dark text-sm flex-grow" placeholder="Enter new username">
-                    <div class="flex space-x-2">
-                        <button id="save-username-btn" class="bb-btn bb-btn-primary text-xs px-3 py-1 flex-1 sm:flex-none">SAVE</button>
-                        <button id="cancel-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1 flex-1 sm:flex-none">CANCEL</button>
-                    </div>
+                    <button id="save-username-btn" class="bb-btn bb-btn-primary text-xs px-3 py-1">SAVE</button>
+                    <button id="cancel-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1">CANCEL</button>
                 </div>
                 <button id="edit-username-btn" class="bb-btn bb-btn-secondary text-xs px-3 py-1 mt-2">EDIT USERNAME</button>
             </div>
 
             <div class="mb-4">
                 <p class="text-sm text-gray-400">WALLET ADDRESS:</p>
-                <p id="account-wallet-address" class="text-sm sm:text-base font-semibold text-white break-all"></p>
+                <p id="account-wallet-address" class="text-base font-semibold text-white break-all"></p>
             </div>
             <div class="mb-4">
                 <p class="text-sm text-gray-400">CREDITS:</p>
-                <p id="account-credits" class="text-lg sm:text-xl font-semibold text-green-400">...</p>
+                <p id="account-credits" class="text-xl font-semibold text-green-400">...</p>
             </div>
 
             <button id="logout-btn-modal" class="bb-btn bb-btn-primary w-full mt-6 py-3">
@@ -1051,9 +851,9 @@
     <div id="wrong-chain-modal" class="wrong-chain-modal">
         <div class="wrong-chain-modal-content bb-card">
             <span class="wrong-chain-modal-close" id="close-wrong-chain-modal">&times;</span>
-            <i class="fas fa-exclamation-triangle text-white text-3xl sm:text-5xl mb-4 neon-text"></i>
-            <h2 class="text-2xl sm:text-3xl font-orbitron text-blackbyte-red mb-3">WRONG CHAIN ALERT!</h2>
-            <p class="text-white text-base sm:text-lg mb-6">
+            <i class="fas fa-exclamation-triangle text-white text-5xl mb-4 neon-text"></i>
+            <h2 class="text-3xl font-orbitron text-blackbyte-red mb-3">WRONG CHAIN ALERT!</h2>
+            <p class="text-white text-lg mb-6">
                 Please switch your wallet to the **ApeChain** network to access BlackByte's Holder Tools.
             </p>
             <button id="wrong-chain-modal-button" class="bb-btn bb-btn-primary px-8 py-3 w-full">
@@ -1062,88 +862,71 @@
         </div>
     </div>
 
-    <header class="py-3 sm:py-4 px-4 sm:px-6 border-b border-gray-800">
+    <header class="py-4 px-6 border-b border-gray-800">
         <div class="container mx-auto flex justify-between items-center">
             <div class="flex items-center space-x-2 header-logo-title">
                 <a href="#" onclick="activateTab('home'); return false;">
-                    <img src="Logo.jpg" alt="BlackByte Logo" class="h-10 sm:h-12 w-auto">
+                    <img src="Logo.jpg" alt="BlackByte Logo" class="h-12 w-auto">
                 </a>
             </div>
 
-            <div class="flex items-center space-x-2 sm:space-x-4">
-                <div id="wallet-info" class="flex items-center space-x-2 sm:space-x-4 hidden flex-wrap justify-end">
-                    <div class="flex items-center space-x-1 sm:space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-4 sm:py-2 rounded-md mb-2 sm:mb-0">
-                        <i class="fas fa-wallet text-blue-400 text-xs sm:text-base"></i>
+            <div class="flex items-center space-x-2 sm:space-x-4"> <div id="wallet-info" class="flex items-center space-x-2 sm:space-x-4 hidden flex-wrap justify-end"> <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-4 sm:py-2 rounded-md mb-2 sm:mb-0"> <i class="fas fa-wallet text-blue-400 text-sm sm:text-base"></i>
                         <span id="connected-wallet-address" class="font-bold text-white text-xs sm:text-sm">0x...</span>
                     </div>
-                    <div class="flex items-center space-x-1 sm:space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-6 sm:py-4 rounded-md mb-2 sm:mb-0">
-                        <i class="fas fa-coins text-yellow-400 text-xs sm:text-base"></i>
-                        <span id="points-counter" class="font-bold text-white text-xs sm:text-base"></span>
+                    <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-6 sm:py-4 rounded-md mb-2 sm:mb-0"> <i class="fas fa-coins text-yellow-400 text-sm sm:text-base"></i>
+                        <span id="points-counter" class="font-bold text-white text-xs sm:text-base"></span> 
                     </div>
-                    <div id="user-avatar" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition">
-                        <span class="font-bold text-white text-sm sm:text-lg">W</span>
+                    <div id="user-avatar" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition"> <span class="font-bold text-white text-md sm:text-lg">W</span>
                     </div>
                 </div>
-                <button id="connect-wallet-button" class="bb-btn bb-btn-primary text-xs sm:text-base px-2 py-2 sm:px-4 sm:py-2">
-                    <i class="fas fa-wallet mr-1 sm:mr-2"></i> CONNECT
+                <button id="connect-wallet-button" class="bb-btn bb-btn-primary text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> <i class="fas fa-wallet mr-1 sm:mr-2"></i> CONNECT
                 </button>
-                <button id="utilities-btn" class="bb-btn bb-btn-secondary ml-2 text-xs sm:text-base px-2 py-2 sm:px-4 sm:py-2">
-                    <i class="fas fa-th-large mr-1"></i> UTILITIES
+                <button id="utilities-btn" class="bb-btn bb-btn-secondary ml-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> <i class="fas fa-th-large mr-1"></i> UTILITIES
                 </button>
             </div>
         </div>
     </header>
 
-    <main class="container mx-auto px-4 py-6 sm:py-8">
+    <main class="container mx-auto px-4 py-8">
         <div class="flex border-b border-gray-700 mb-8" style="display:none;">
             <button class="tab-btn active" data-tab="home">HOME</button>
             <button class="tab-btn" data-tab="casino">GAMES</button>
-            <button class="tab-btn" data-tab="shop">$BB SHOP</button>
+            <button class="tab-btn" data-tab="shop">$BB SHOP</button> 
             <button class="tab-btn" data-tab="earn-twitter">EARN TWITTER</button>
             <button class="tab-btn" data-tab="raffles">RAFFLES | BETA</button>
             <button class="tab-btn" data-tab="leaderboard">LEADERBOARD</button>
         </div>
 
         <div id="home" class="tab-content active">
-            <section class="mb-6 sm:mb-8 text-center relative overflow-hidden rounded-lg">
+            <section class="mb-8 text-center relative overflow-hidden rounded-lg">
                 <div class="absolute inset-0 bg-gradient-to-r from-blackbyte-dark to-transparent z-10"></div>
                 <div class="absolute inset-0 bg-[url('Background.jpg')] bg-cover bg-center opacity-30"></div>
-                <div class="relative z-20 py-6 px-2 sm:py-12 sm:px-4">
-                    <h2 class="text-2xl sm:text-3xl md:text-5xl font-bold mb-3 sm:mb-4">HOLDER TOOLS</h2>
-                    <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base">
-                        Welcome to the utility page for BlackByte holders, stay tuned for news, play, win and exchange for rewards
+                <div class="relative z-20 py-8 px-2 sm:py-12 sm:px-4"> <h2 class="text-3xl md:text-5xl font-bold mb-4">HOLDER TOOLS</h2> <p class="text-gray-400 max-w-2xl mx-auto text-sm sm:text-base"> Welcome to the utility page for BlackByte holders, stay tuned for news, play, win and exchange for rewards
                     </p>
                 </div>
             </section>
 
-            <section class="mb-12 sm:mb-16 mt-8 sm:mt-12">
-                <div class="flex justify-between items-center mb-4 sm:mb-6">
-                    <h3 class="text-lg sm:text-xl md:text-2xl font-semibold flex items-center">
-                        <span class="w-3 h-3 bg-blackbyte-red rounded-full mr-2"></span> CHECK ALSO
+            <section class="mb-16 mt-12">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl sm:text-2xl font-semibold flex items-center"> <span class="w-3 h-3 bg-blackbyte-red rounded-full mr-2"></span> CHECK ALSO
                     </h3>
                 </div>
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-blackbyte-gray rounded-lg overflow-hidden border border-gray-800 card-hover">
-                        <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
+                        <div class="h-40 sm:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
                             <img src="1.png" alt="BlackByte Slots" class="w-full h-full object-cover" />
                         </div>
-                        <div class="p-4 sm:p-6">
-                            <h4 class="text-base sm:text-lg md:text-xl font-semibold mb-2">BlackByte Slots</h4>
-                            <p class="text-gray-400 text-xs sm:text-sm mb-4">Spin the reels for a chance to win big</p>
-                            <div class="flex justify-between text-xs sm:text-sm mb-4 sm:mb-6">
-                                <div>
+                        <div class="p-4 sm:p-6"> <h4 class="text-lg sm:text-xl font-semibold mb-2">BlackByte Slots</h4> <p class="text-gray-400 text-xs sm:text-sm mb-4">Spin the reels for a chance to win big</p> <div class="flex justify-between text-xs sm:text-sm mb-6"> <div>
                                     <p class="text-gray-400">Max Payout</p>
                                     <p>100x</p>
                                 </div>
                                 <div>
                                     <p class="text-gray-400">Min Bet</p>
-                                    <p>50 $BB</p>
-                                </div>
+                                    <p>50 $BB</p> </div>
                                 <div>
                                     <p class="text-gray-400">Max Bet</p>
-                                    <p>50 $BB</p>
-                                </div>
+                                    <p>50 $BB</p> </div>
                             </div>
                             
                             <button class="w-full bg-blackbyte-red text-white py-2 rounded-md btn-hover play-existing-game" data-target-tab="casino">
@@ -1153,22 +936,21 @@
                     </div>
 
                     <div class="bg-blackbyte-gray rounded-lg overflow-hidden border border-gray-800 card-hover">
-                        <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
+                        <div class="h-40 sm:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
                             <img src="2.png" alt="Whitelist Shop" class="w-full h-full object-cover" />
                         </div>
-                        <div class="p-4 sm:p-6">
-                            <h4 class="text-base sm:text-lg md:text-xl font-semibold mb-2">Stake Your Bytes</h4>
+                        <div class="p-4 sm:p-6"> <h4 class="text-lg sm:text-xl font-semibold mb-2">Stake Your Bytes</h4>
                             <p class="text-gray-400 text-xs sm:text-sm mb-4">Stake and earn $bb!</p>
                             
-                            <div class="flex justify-between text-xs sm:text-sm mb-4 sm:mb-6">
+                            <div class="flex justify-between text-xs sm:text-sm mb-6">
                                 <div>
                                     <p class="text-gray-400">Type</p>
                                     <p>Stake</p>
                                 </div>
                                 <div>
                                     <p class="text-gray-400">Revenue</p>
-                                    <p class="text-xs">100 at 5,000 $BBd per day</p>
-                                </div>
+                                    <p>100 at 5,000 $BBd per day</p> </div>
+                              
                             </div>
                             
                             <button class="w-full bg-blackbyte-red text-white py-2 rounded-md btn-hover play-existing-game" data-target-tab="staking">
@@ -1178,23 +960,21 @@
                     </div>
 
                     <div class="bg-blackbyte-gray rounded-lg overflow-hidden border border-gray-800 card-hover">
-                        <div class="h-32 sm:h-40 md:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
+                        <div class="h-40 sm:h-48 bg-gradient-to-r from-gray-900 to-gray-800 flex items-center justify-center overflow-hidden">
                             <img src="3.png" alt="Earn Twitter $BB" class="w-full h-full object-cover" />
                         </div>
-                        <div class="p-4 sm:p-6">
-                            <h4 class="text-base sm:text-lg md:text-xl font-semibold mb-2">Earn Twitter $BB</h4>
-                            <p class="text-gray-400 text-xs sm:text-sm mb-4">Complete Twitter missions and earn free $BB!</p>
-                            <div class="flex justify-between text-xs sm:text-sm mb-4 sm:mb-6">
+                        <div class="p-4 sm:p-6"> <h4 class="text-lg sm:text-xl font-semibold mb-2">Earn Twitter $BB</h4> 
+                            <p class="text-gray-400 text-xs sm:text-sm mb-4">Complete Twitter missions and earn free $BB!</p> 
+                            <div class="flex justify-between text-xs sm:text-sm mb-6">
                                 <div>
                                     <p class="text-gray-400">Rewards</p>
-                                    <p>Up to 1,000 $BB</p>
-                                </div>
+                                    <p>Up to 1,000 $BB</p> </div>
                                 <div>
                                     <p class="text-gray-400">Effort</p>
                                     <p>Easy</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-400">Frequency</p>
+                                    <p class="text-400">Frequency</p>
                                     <p>Daily/Weekly</p>
                                 </div>
                             </div>
@@ -1207,54 +987,47 @@
                 </div>
             </section>
 
-            <section class="mb-12 sm:mb-16">
-                <div class="flex justify-between items-center mb-4 sm:mb-6">
-                    <h3 class="text-lg sm:text-xl md:text-2xl font-semibold flex items-center">
+            <section class="mb-16">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl sm:text-2xl font-semibold flex items-center">
                         <span class="w-3 h-3 bg-gray-500 rounded-full mr-2 blinking-dot"></span> LAST WINNERS
                     </h3>
                 </div>
                 
-                <div id="homepage-recent-jackpot-wins" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <div id="homepage-recent-jackpot-wins" class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 </div>
             </section>
         </div>
 
         <div id="casino" class="tab-content">
             <div id="game-content" class="hidden">
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
-                    <div class="lg:col-span-2">
-                        <div class="slot-machine bb-card">
-                            <h2 class="text-lg sm:text-xl md:text-2xl font-orbitron text-blackbyte-red mb-4 sm:mb-6">CYBER SLOTS</h2>
-                            <div class="flex justify-center space-x-2 sm:space-x-4 mb-6 sm:mb-8">
-                                <div class="slot-reel-container w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 flex items-center justify-center">
-                                    <div class="slot-reel text-lg sm:text-2xl md:text-4xl" id="reel1">7</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="md:col-span-2">
+                        <div class="slot-machine bb-card p-4 sm:p-6"> <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">CYBER SLOTS</h2>
+                            <div class="flex justify-center space-x-2 sm:space-x-4 mb-8">
+                                <div class="slot-reel-container w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center"> <div class="slot-reel text-2xl sm:text-4xl" id="reel1">7</div> </div>
+                                <div class="slot-reel-container w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center">
+                                    <div class="slot-reel text-2xl sm:text-4xl" id="reel2">7</div>
                                 </div>
-                                <div class="slot-reel-container w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 flex items-center justify-center">
-                                    <div class="slot-reel text-lg sm:text-2xl md:text-4xl" id="reel2">7</div>
-                                </div>
-                                <div class="slot-reel-container w-12 h-12 sm:w-16 sm:h-16 md:w-24 md:h-24 flex items-center justify-center">
-                                    <div class="slot-reel text-lg sm:text-2xl md:text-4xl" id="reel3">7</div>
+                                <div class="slot-reel-container w-16 h-16 sm:w-24 sm:h-24 flex items-center justify-center">
+                                    <div class="slot-reel text-2xl sm:text-4xl" id="reel3">7</div>
                                 </div>
                             </div>
                             <div class="flex justify-center">
-                                <button id="spin-btn" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3 text-sm sm:text-base md:text-lg">
-                                    SPIN (50 $BB)
-                                </button>
+                                <button id="spin-btn" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3 text-base sm:text-lg"> SPIN (50 $BB) </button>
                             </div>
                         </div>
 
-                        <div class="mt-6 sm:mt-8">
-                            <h3 class="text-base sm:text-lg md:text-xl font-orbitron text-blackbyte-red mb-4">RECENT JACKPOT WINS</h3>
-                            <div id="recent-jackpot-wins" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+                        <div class="mt-8">
+                            <h3 class="text-lg sm:text-xl font-orbitron text-blackbyte-red mb-4">RECENT JACKPOT WINS</h3>
+                            <div id="recent-jackpot-wins" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                             </div>
                         </div>
                     </div>
 
                     <div>
-                        <div class="bb-card">
-                            <h2 class="text-lg sm:text-xl font-orbitron text-blackbyte-red mb-4 sm:mb-6">YOUR STATS</h2>
-                            <div class="space-y-3 text-sm">
-                                <div class="flex justify-between items-center">
+                        <div class="bb-card p-4 sm:p-6"> <h2 class="text-xl font-orbitron text-blackbyte-red mb-6">YOUR STATS</h2>
+                            <div class="space-y-3 text-sm"> <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-2 text-gray-300">
                                         <i class="fas fa-trophy text-yellow-400"></i>
                                         <span>Total Wins</span>
@@ -1266,8 +1039,7 @@
                                         <i class="fas fa-coins text-green-400"></i>
                                         <span>Total Earned</span>
                                     </div>
-                                    <span id="total-earned" class="font-bold text-white">0 $BB</span>
-                                </div>
+                                    <span id="total-earned" class="font-bold text-white">0 $BB</span> </div>
                                 <div class="flex justify-between items-center">
                                     <div class="flex items-center space-x-2 text-gray-300">
                                         <i class="fas fa-fire text-orange-400"></i>
@@ -1278,33 +1050,24 @@
                             </div>
 
                             <div class="mt-6 pt-4 border-t border-gray-700">
-                                <h3 class="text-base sm:text-lg font-orbitron text-blackbyte-red mb-3">DAILY BONUS</h3>
+                                <h3 class="text-lg font-orbitron text-blackbyte-red mb-3">DAILY BONUS</h3>
                                 <button id="daily-bonus-btn" class="bb-btn bb-btn-primary w-full py-2">
-                                    CLAIM 1.000 $BB
-                                </button>
+                                    CLAIM 1.000 $BB </button>
                                 <div class="text-xs text-gray-400 mt-2 text-center">Next bonus in: <span id="bonus-timer" class="font-orbitron">LOADING...</span></div>
                             </div>
                         </div>
 
-                        <div class="bb-card mt-4 sm:mt-6 jackpot-highlight">
-                            <h2 class="text-base sm:text-xl font-orbitron text-blackbyte-red mb-4">JACKPOT</h2>
-                            <div id="jackpot-pot" class="text-xl sm:text-2xl md:text-3xl font-orbitron text-center mb-2">Loading...</div>
-                            <div class="text-xs sm:text-sm text-gray-400 mb-3 text-center">DRAW EVERYDAY 17:00 UTC</div>
-                            <div id="user-jackpot-entries" class="text-xs sm:text-sm text-gray-300 mb-3 text-center">Loading...</div>
+                        <div class="bb-card p-4 sm:p-6 mt-6 jackpot-highlight"> <h2 class="text-xl font-orbitron text-blackbyte-red mb-4">JACKPOT</h2>
+                            <div id="jackpot-pot" class="text-2xl sm:text-3xl font-orbitron text-center mb-2">Loading...</div> <div class="text-sm text-gray-400 mb-3 text-center">DRAW EVERYDAY 17:00 UTC</div>
+                            <div id="user-jackpot-entries" class="text-sm text-gray-300 mb-3 text-center">Loading...</div>
                             <button id="jackpot-buy-btn" class="bb-btn bb-btn-primary w-full py-2">
-                                BUY TICKET (200 $BB)
-                            </button>
+                                BUY TICKET (200 $BB) </button>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="login-prompt" class="text-center py-8 sm:py-10 md:py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-lock text-3xl sm:text-4xl md:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-3 sm:mb-4">TERMINAL LOCKED</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Access to the BlackByte Casino requires authentication. Please connect your wallet to continue.</p>
-                <button id="prompt-auth-button" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3">
-                    CONNECT WALLET
+            <div id="login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto"> <i class="fas fa-lock text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i> <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">TERMINAL LOCKED</h2> <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Access to the BlackByte Casino requires authentication. Please connect your wallet to continue.</p> <button id="prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3"> CONNECT WALLET
                 </button>
             </div>
         </div>
@@ -1314,18 +1077,18 @@
                 <h1>SHOP WILL BACK SOON</h1>
             </div>
             <div id="shop-content" class="hidden">
-                <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">WHITELIST SHOP</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Exchange your $BB for guaranteed WL spots. Each user can purchase only one of each type.</p>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    <div class="bb-card flex flex-col justify-between">
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">WHITELIST SHOP</h2>
+                <p class="text-gray-400 mb-8">Exchange your $BB for guaranteed WL spots. Each user can purchase only one of each type.</p> 
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div class="bb-card p-4 sm:p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
-                                <h3 class="text-lg sm:text-xl font-orbitron text-white">GUARANTEED WL</h3>
+                                <h3 class="text-xl font-orbitron text-white">GUARANTEED WL</h3>
                                 <div class="bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded">GTD</div>
                             </div>
-                            <p class="text-xs sm:text-sm text-gray-400 mb-4">100% guaranteed spot in the next drop</p>
+                            <p class="text-sm text-gray-400 mb-4">100% guaranteed spot in the next drop</p>
                             <div class="flex justify-between items-center mb-4">
-                                <div class="text-lg sm:text-2xl font-orbitron text-blackbyte-red">10,000 $BB</div>
+                                <div class="text-2xl font-orbitron text-blackbyte-red">10,000 $BB</div> 
                                 <span id="gtd-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">LIMITED: ...</span>
                             </div>
                         </div>
@@ -1334,15 +1097,15 @@
                         </button>
                     </div>
 
-                    <div class="bb-card flex flex-col justify-between">
+                    <div class="bb-card p-4 sm:p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
-                                <h3 class="text-lg sm:text-xl font-orbitron text-white">FCFS WL</h3>
+                                <h3 class="text-xl font-orbitron text-white">FCFS WL</h3>
                                 <div class="bg-orange-500 text-white text-xs font-semibold px-2 py-1 rounded">FCFS</div>
                             </div>
-                            <p class="text-xs sm:text-sm text-gray-400 mb-4">First come first serve access to next drop</p>
+                            <p class="text-sm text-gray-400 mb-4">First come first serve access to next drop</p>
                             <div class="flex justify-between items-center mb-4">
-                                <div class="text-lg sm:text-2xl font-orbitron text-blackbyte-red">5,000 $BB</div>
+                                <div class="text-2xl font-orbitron text-blackbyte-red">5,000 $BB</div> 
                                 <span id="fcfs-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">LIMITED: ...</span>
                             </div>
                         </div>
@@ -1351,15 +1114,15 @@
                         </button>
                     </div>
 
-                    <div class="bb-card flex flex-col justify-between">
+                    <div class="bb-card p-4 sm:p-6 flex flex-col justify-between">
                         <div>
                             <div class="flex justify-between items-start mb-3">
-                                <h3 class="text-lg sm:text-xl font-orbitron text-white">BLACKBYTE AIRDROP</h3>
+                                <h3 class="text-xl font-orbitron text-white">BLACKBYTE AIRDROP</h3>
                                 <div class="bg-blue-500 text-white text-xs font-semibold px-2 py-1 rounded">AIRDROP</div>
                             </div>
-                            <p class="text-xs sm:text-sm text-gray-400 mb-4">Airdropped after mint</p>
+                            <p class="text-sm text-gray-400 mb-4">Airdropped after mint</p>
                             <div class="flex justify-between items-center mb-4">
-                                <div class="text-lg sm:text-2xl font-orbitron text-blackbyte-red">100,000 $BB</div>
+                                <div class="text-2xl font-orbitron text-blackbyte-red">100,000 $BB</div> 
                                 <span id="blackbyte-free-spot-count" class="text-xs text-gray-300 bg-blackbyte-dark px-2 py-1 rounded">UNLIMITED</span>
                             </div>
                         </div>
@@ -1370,11 +1133,11 @@
                 </div>
             </div>
 
-            <div id="shop-login-prompt" class="text-center py-8 sm:py-10 md:py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-shopping-cart text-3xl sm:text-4xl md:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-3 sm:mb-4">SHOP ACCESS DENIED</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You need to connect your wallet to access the BlackByte $BB Shop.</p>
-                <button id="shop-prompt-auth-button" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3">
+            <div id="shop-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-shopping-cart text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">SHOP ACCESS DENIED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You need to connect your wallet to access the BlackByte $BB Shop.</p> 
+                <button id="shop-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1382,18 +1145,18 @@
 
         <div id="earn-twitter" class="tab-content">
             <div id="earn-twitter-content" class="hidden">
-                <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">EARN $BB VIA TWITTER</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Complete Twitter missions posted by the admin to earn free $BB!</p>
-                <div id="tweet-missions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">EARN $BB VIA TWITTER</h2> 
+                <p class="text-gray-400 mb-8">Complete Twitter missions posted by the admin to earn free $BB!</p> 
+                <div id="tweet-missions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <p class="text-gray-400">Loading tweet missions...</p>
                 </div>
             </div>
 
-            <div id="earn-twitter-login-prompt" class="text-center py-8 sm:py-10 md:py-20 bb-card max-w-lg mx-auto">
-                <i class="fab fa-twitter text-3xl sm:text-4xl md:text-5xl text-blue-400 mb-4 sm:mb-6"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-3 sm:mb-4">TWITTER EARN LOCKED</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You must connect your wallet to participate in Twitter missions.</p>
-                <button id="earn-twitter-prompt-auth-button" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3">
+            <div id="earn-twitter-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fab fa-twitter text-4xl sm:text-5xl text-blue-400 mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">TWITTER EARN LOCKED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You must connect your wallet to participate in Twitter missions.</p> 
+                <button id="earn-twitter-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1401,22 +1164,22 @@
 
         <div id="raffles" class="tab-content">
             <div id="raffle-content" class="hidden">
-                <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">ACTIVE RAFFLES</h2>
-                <div id="active-raffles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">ACTIVE RAFFLES</h2>
+                <div id="active-raffles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <p class="text-gray-400">Loading active raffles...</p>
                 </div>
 
-                <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6 mt-8 sm:mt-12">FINISHED RAFFLES</h2>
-                <div id="finished-raffles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6 mt-12">FINISHED RAFFLES</h2>
+                <div id="finished-raffles-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     <p class="text-gray-400">Loading finished raffles...</p>
                 </div>
             </div>
 
-            <div id="raffle-login-prompt" class="text-center py-8 sm:py-10 md:py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-ticket-alt text-3xl sm:text-4xl md:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-3 sm:mb-4">RAFFLE ACCESS DENIED</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You need to connect your wallet to view and participate in raffles.</p>
-                <button id="raffle-prompt-auth-button" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3">
+            <div id="raffle-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-ticket-alt text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">RAFFLE ACCESS DENIED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">You need to connect your wallet to view and participate in raffles.</p> 
+                <button id="raffle-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1424,30 +1187,28 @@
 
         <div id="leaderboard" class="tab-content">
             <div id="leaderboard-content" class="hidden">
-                <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">TOP PLAYERS</h2>
-                <div class="bb-card mb-6 sm:mb-8">
-                    <h3 class="text-lg sm:text-xl font-orbitron text-white mb-4">SEARCH YOUR RANK</h3>
-                    <div class="flex flex-col sm:flex-row items-stretch sm:items-center space-y-4 sm:space-y-0 sm:space-x-4">
-                        <input type="text" id="leaderboard-search-input" placeholder="Search by username..." class="bb-input flex-grow" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
-                        <button id="leaderboard-search-btn" class="bb-btn bb-btn-primary px-6 py-2">SEARCH</button>
-                    </div>
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">TOP PLAYERS</h2>
+                <div class="bb-card p-4 sm:p-6 mb-8">
+                    <h3 class="text-xl font-orbitron text-white mb-4">SEARCH YOUR RANK</h3>
+                    <div class="flex flex-col sm:flex-row items-center space-y-4 sm:space-y-0 sm:space-x-4"> <input type="text" id="leaderboard-search-input" placeholder="Search by username..." class="bb-input flex-grow" oninput="this.value = this.value.toLowerCase().replace(/[^a-z0-9]/g, '')">
+                        <button id="leaderboard-search-btn" class="bb-btn bb-btn-primary px-6 py-2 w-full sm:w-auto">SEARCH</button> </div>
                     <div id="leaderboard-search-result" class="mt-4 text-center text-sm sm:text-base">
                     </div>
                 </div>
 
-                <div class="bb-card">
-                    <h3 class="text-lg sm:text-xl font-orbitron text-white mb-4">TOP 10 PLAYERS</h3>
+                <div class="bb-card p-4 sm:p-6">
+                    <h3 class="text-xl font-orbitron text-white mb-4">TOP 10 PLAYERS</h3>
                     <div id="leaderboard-list" class="space-y-3 text-sm sm:text-base">
                         <p class="text-gray-400">Loading leaderboard...</p>
                     </div>
                 </div>
             </div>
 
-            <div id="leaderboard-login-prompt" class="text-center py-8 sm:py-10 md:py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-trophy text-3xl sm:text-4xl md:text-5xl text-yellow-400 mb-4 sm:mb-6"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-3 sm:mb-4">LEADERBOARD LOCKED</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Connect your wallet and see who's dominating the BlackByte Casino!</p>
-                <button id="leaderboard-prompt-auth-button" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3">
+            <div id="leaderboard-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-trophy text-4xl sm:text-5xl text-yellow-400 mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">LEADERBOARD LOCKED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Connect your wallet and see who's dominating the BlackByte Casino!</p> 
+                <button id="leaderboard-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1455,39 +1216,39 @@
 
         <div id="staking" class="tab-content">
             <div id="staking-content" class="hidden">
-                <h2 class="text-xl sm:text-2xl font-orbitron text-blackbyte-red mb-6">NFT STAKING</h2>
-                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Stake your BlackByte NFTs to earn daily $BB rewards!</p>
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">NFT STAKING</h2>
+                <p class="text-gray-400 mb-8">Stake your BlackByte NFTs to earn daily $BB rewards!</p>
 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <h3 class="text-lg sm:text-xl font-orbitron text-white mb-4">YOUR WALLET NFTs</h3>
-                        <div id="wallet-nfts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <h3 class="text-xl font-orbitron text-white mb-4">YOUR WALLET NFTs</h3>
+                        <div id="wallet-nfts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <p class="text-gray-400">Loading your NFTs...</p>
                         </div>
                     </div>
 
                     <div>
-                        <h3 class="text-lg sm:text-xl font-orbitron text-white mb-4">YOUR STAKED NFTs</h3>
-                        <div id="staked-nfts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                        <h3 class="text-xl font-orbitron text-white mb-4">YOUR STAKED NFTs</h3>
+                        <div id="staked-nfts-container" class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <p class="text-gray-400">Loading staked NFTs...</p>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-6 sm:mt-8 text-center">
-                    <h3 class="text-lg sm:text-xl font-orbitron text-white mb-4">STAKING REWARDS</h3>
-                    <p class="text-gray-400 text-base sm:text-lg mb-2">Accumulated $BB: <span id="accumulated-rewards-display" class="font-bold text-green-400">0 $BB</span></p>
-                    <button id="claim-all-rewards-btn" class="bb-btn bb-btn-primary px-6 sm:px-8 py-3" disabled>
+                <div class="mt-8 text-center">
+                    <h3 class="text-xl font-orbitron text-white mb-4">STAKING REWARDS</h3>
+                    <p class="text-gray-400 text-lg mb-2">Accumulated $BB: <span id="accumulated-rewards-display" class="font-bold text-green-400">0 $BB</span></p>
+                    <button id="claim-all-rewards-btn" class="bb-btn bb-btn-primary px-8 py-3" disabled>
                         CLAIM ALL REWARDS
                     </button>
                 </div>
             </div>
 
-            <div id="staking-login-prompt" class="text-center py-8 sm:py-10 md:py-20 bb-card max-w-lg mx-auto">
-                <i class="fas fa-lock text-3xl sm:text-4xl md:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-3 sm:mb-4">STAKING LOCKED</h2>
+            <div id="staking-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-lock text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">STAKING LOCKED</h2>
                 <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Connect your wallet and hold a BlackByte NFT to access staking.</p>
-                <button id="staking-prompt-auth-button" class="bb-btn bb-btn-primary px-4 py-2 sm:px-6 sm:py-2 md:px-8 md:py-3">
+                <button id="staking-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
                     CONNECT WALLET
                 </button>
             </div>
@@ -1496,23 +1257,23 @@
 
     <div id="update-info-modal" class="fixed inset-0 z-[1050] flex items-center justify-center bg-black bg-opacity-75 p-4 hidden modal-backdrop">
         <div class="bb-card max-w-lg w-full mx-auto text-center relative shadow-2xl modal-content">
-            <button id="close-update-info-modal-btn" class="absolute top-3 right-4 text-gray-400 hover:text-white text-2xl sm:text-3xl font-bold leading-none">&times;</button>
+            <button id="close-update-info-modal-btn" class="absolute top-3 right-4 text-gray-400 hover:text-white text-3xl font-bold leading-none">&times;</button>
             
             <div class="mb-4">
-                <i class="fas fa-sync-alt text-blackbyte-red text-2xl sm:text-3xl mb-3"></i>
-                <h2 class="text-xl sm:text-2xl md:text-3xl font-orbitron text-white mb-2">New Update!</h2>
+                <i class="fas fa-sync-alt text-blackbyte-red text-3xl mb-3"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-2">New Update!</h2>
                 <p class="text-sm text-gray-500 mb-4">Version 1.0.6 | 06/14</p>
             </div>
             
             <div class="text-left space-y-3 px-2">
-                <p class="text-white text-sm sm:text-base md:text-lg"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>New design update</p>
-                <p class="text-white text-sm sm:text-base md:text-lg"><i class="fas fa-trophy text-blackbyte-red mr-2"></i>Now you can check the leaderboard and see which top rich rank you are in.</p>
-                <p class="text-white text-sm sm:text-base md:text-lg"><i class="fas fa-bug text-blackbyte-red mr-2"></i>Fixed crash error when trying to purchase items from the $BB store</p>
-                <p class="text-gray-500 text-xs sm:text-sm md:text-base"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>NEW Get 1.000 $BB Daily Bonus for Free!</p>
-                <p class="text-gray-500 text-xs sm:text-sm md:text-base"><i class="fas fa-ticket text-blackbyte-red mr-2"></i>New Raffle System (Beta)</p>
+                <p class="text-white text-base sm:text-lg"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>New design update</p>
+                <p class="text-white text-base sm:text-lg"><i class="fas fa-trophy text-blackbyte-red mr-2"></i>Now you can check the leaderboard and see which top rich rank you are in.</p>
+                <p class="text-white text-base sm:text-lg"><i class="fas fa-bug text-blackbyte-red mr-2"></i>Fixed crash error when trying to purchase items from the $BB store</p> 
+                <p class="text-gray-500 text-sm sm:text-base"><i class="fas fa-diamond text-blackbyte-red mr-2"></i>NEW Get 1.000 $BB Daily Bonus for Free!</p> 
+                <p class="text-gray-500 text-sm sm:text-base"><i class="fas fa-ticket text-blackbyte-red mr-2"></i>New Raffle System (Beta)</p>
             </div>
             
-            <button id="confirm-update-info-modal-btn" class="bb-btn bb-btn-primary mt-6 sm:mt-8 py-2 px-6 sm:px-8 text-base sm:text-lg">
+            <button id="confirm-update-info-modal-btn" class="bb-btn bb-btn-primary mt-8 py-2 px-8 text-lg">
                 OK
             </button>
         </div>
@@ -1536,6 +1297,8 @@
                         <li class="pl-4"><i class="fas fa-hand-rock mr-2"></i> RPS</li>
                     </ul>
                 </li>
+                <li>
+                    </li>
                 <li data-target-tab="earn-twitter">
                     <span><i class="fab fa-twitter mr-2"></i> Twitter Missions</span>
                 </li>

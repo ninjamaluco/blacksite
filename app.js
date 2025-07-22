@@ -1698,9 +1698,10 @@ function startAuctionCountdown(endTime, timerElement, auctionId) {
     }, 1000); // Roda a cada segundo
 }
 // ✨ NOVA FUNÇÃO: Para atualizar um único card de leilão
+// ✨ NOVA FUNÇÃO: Para atualizar um único card de leilão
 // Esta função será chamada pelo timer para atualizar apenas o card relevante.
 function updateSingleAuctionCard(auctionId, updatedAuctionData) {
-    const cardElement = document.querySelector(`#auctions-content .bb-card[data-auction-id="${auctionId}"]`);
+    const cardElement = document.querySelector(`.bb-card[data-auction-id="${auctionId}"]`); // Se você adicionou data-auction-id ao card
     if (!cardElement) {
         // Se o card não for encontrado, significa que ele não está mais na tela ou foi removido.
         // Não há necessidade de atualizar.
@@ -1708,10 +1709,20 @@ function updateSingleAuctionCard(auctionId, updatedAuctionData) {
     }
 
     // Encontre os elementos específicos dentro do card que precisam ser atualizados
-    const currentBidSpan = cardElement.querySelector('.text-blackbyte-red:last-of-type'); // Assumindo que é o último text-blackbyte-red
-    const highestBidderSpan = cardElement.querySelector('.text-xs.text-gray-500'); // Elemento que contém a info do maior licitante
+    const currentBidSpan = cardElement.querySelector('.text-blackbyte-red:last-of-type');
+    const highestBidderSpan = cardElement.querySelector('.text-xs.text-gray-500');
     const bidInput = cardElement.querySelector(`#auction-bid-input-${auctionId}`);
     const placeBidButton = cardElement.querySelector(`#place-bid-btn-${auctionId}`);
+    const nftImage = cardElement.querySelector('.raffle-image-wrapper img'); // Seleciona a imagem dentro do wrapper 
+    // Atualiza a imagem da NFT
+    if (nftImage && updatedAuctionData.imageUrl) { // Verifica se o elemento da imagem e a URL existem
+        nftImage.src = updatedAuctionData.imageUrl;
+        nftImage.alt = updatedAuctionData.name || `NFT #${updatedAuctionData.tokenId}`;
+    } else if (nftImage) {
+        // Fallback caso a imagem não venha por algum motivo, para evitar que fique vazia
+        nftImage.src = "nft-placeholder.png";
+        nftImage.alt = updatedAuctionData.name || `NFT #${updatedAuctionData.tokenId}`;
+    }
 
     if (currentBidSpan) {
         currentBidSpan.textContent = `${updatedAuctionData.currentBid.toLocaleString()} $BB`;
@@ -1725,11 +1736,11 @@ function updateSingleAuctionCard(auctionId, updatedAuctionData) {
     }
     if (bidInput) {
         bidInput.min = updatedAuctionData.currentBid + 1;
-        bidInput.value = updatedAuctionData.currentBid + 1; // Reseta o valor do input
+        bidInput.value = updatedAuctionData.currentBid + 1;
     }
 
-    // Lógica para habilitar/desabilitar o botão
-    let placeBidButtonDisabled = updatedAuctionData.status !== 'active' || new Date(updatedAuctionData.endTime) < new Date();
+    // Lógica para habilitar/desabilitar o botão (já deve estar correta)
+    let placeBidButtonDisabled = updatedAuctionData.status !== 'active' || updatedAuctionData.endTime < new Date();
     let placeBidButtonText = "PLACE BID";
 
     if (currentUser && updatedAuctionData.highestBidder && updatedAuctionData.highestBidder.toLowerCase() === currentUser.walletAddress.toLowerCase()) {

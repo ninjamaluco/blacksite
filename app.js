@@ -1533,20 +1533,43 @@ async function loadAuctions() {
 
     try {
         const [activeResp, allResp] = await Promise.all([
-            fetch(`${BACKEND_URL}/auctions/active`), // Only active auctions
-            fetch(`${BACKEND_URL}/auctions/all`) // If you want to list ALL auctions in admin/another view
+            fetch(`${BACKEND_URL}/auctions/active`),
+            // fetch(`${BACKEND_URL}/auctions/all`) // Manter ou remover, dependendo do uso
         ]);
 
         if (!activeResp.ok) {
             throw new Error(`HTTP error! status: ${activeResp.status}`);
         }
 
-        const activeAuctions = await activeResp.json();
+        let activeAuctions = await activeResp.json();
+
+        // ✨ NOVO CÓDIGO AQUI: Buscar detalhes da NFT para cada leilão
+        for (let i = 0; i < activeAuctions.length; i++) {
+            const auction = activeAuctions[i];
+            try {
+                // Reutilize a função getUserNftsInWallet para buscar detalhes da NFT,
+                // mas adapte-a para buscar um único NFT por tokenId e contractAddress
+                // Ou crie uma nova função auxiliar 'getNftDetailsFromAlchemy(contractAddress, tokenId)'
+                const nftDetails = await fetch(`${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTMetadata/?contractAddress=${auction.nftContractAddress}&tokenId=${parseInt(auction.tokenId).toString(16)}`);
+                const nftData = await nftDetails.json();
+
+                if (nftData && nftData.media && nftData.media.length > 0 && nftData.media[0].gateway) {
+                    auction.imageUrl = nftData.media[0].gateway;
+                    auction.name = nftData.title || `NFT #${auction.tokenId}`; // Usa o título da NFT, ou fallback
+                } else {
+                    auction.imageUrl = "nft-placeholder.png"; // Fallback
+                }
+            } catch (nftFetchError) {
+                console.error(`Error fetching NFT details for auction ${auction._id} (Token ID: ${auction.tokenId}):`, nftFetchError);
+                auction.imageUrl = "nft-placeholder.png"; // Garante fallback em caso de erro
+            }
+        }
+
+        renderActiveAuctions(activeAuctions);
         // For ended auctions, you'd need another endpoint or filter from 'all'
         // For now, let's just display active ones, and ended ones will update via cron on backend
         // We assume 'auctions/active' only returns active. Ended ones are handled by cron.
 
-        renderActiveAuctions(activeAuctions);
         // renderEndedAuctions(); // Implement this if you create a separate endpoint for ended auctions
     } catch (error) {
         console.error("Error loading auctions:", error);

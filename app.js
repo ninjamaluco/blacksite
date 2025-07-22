@@ -68,6 +68,17 @@ function initializeElements() {
     finishedRafflesContainer: document.getElementById("finished-raffles-container"),
     leaderboardList: document.getElementById("leaderboard-list"),
 
+    // Containers for Auctions
+    activeAuctionsContainer: document.getElementById("active-auctions-container"), // NEW
+    endedAuctionsContainer: document.getElementById("ended-auctions-container"), // NEW
+
+    // Admin Auction inputs
+    auctionNftAddress: document.getElementById("auction-nft-address"), // NEW
+    auctionTokenId: document.getElementById("auction-token-id"), // NEW
+    auctionDuration: document.getElementById("auction-duration"), // NEW
+    auctionMinBid: document.getElementById("auction-min-bid"), // NEW
+    createAuctionBtn: document.getElementById("create-auction-btn"), // NEW
+
     // Tab contents
     tabContents: document.querySelectorAll(".tab-content"),
 
@@ -226,6 +237,10 @@ function handleTabContent(tabId) {
       content: "staking-content",
       prompt: "staking-login-prompt"
     }, // NOVO
+    auctions: { // NEW: Auctions Tab
+      content: "auctions-content",
+      prompt: "auctions-login-prompt"
+    },
   }
 
   const mapping = contentMappings[tabId]
@@ -253,6 +268,9 @@ function handleTabContent(tabId) {
       case "staking":
         renderStakingDashboard();
         break; // NOVO: Renderiza o dashboard de staking
+      case "auctions": // NEW: Load Auctions
+        loadAuctions();
+        break;
     }
   } else { // Se não está logado OU não tem NFT
     if (contentEl) contentEl.classList.add("hidden")
@@ -1269,7 +1287,7 @@ async function renderStakingDashboard() {
         // Se o NFT está na lista de nftsInWallet, ele ainda está na carteira conectada.
         isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
 
-        // Alternativa para checagem on-chain no frontend (mais lenta, mas mais precisa se a NFT sumiu por venda/transferência)
+        // Alternativa para checagem on-chain no frontend (more slow, but more accurate if NFT is gone by sale/transfer)
         // const nftContractInstance = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
         // const ownerAddress = await nftContractInstance.ownerOf(record.tokenId);
         // isOwnerOnChain = (ownerAddress.toLowerCase() === currentUser.walletAddress.toLowerCase());
@@ -1504,6 +1522,171 @@ async function handleClaimRewards(tokenId = null) { // Permite clamar todas ou d
     button.textContent = originalText;
     button.classList.remove('loading');
   }
+}
+
+// --- AUCTIONS FUNCTIONS ---
+async function loadAuctions() {
+    if (!currentUser || !elements.activeAuctionsContainer || !elements.endedAuctionsContainer) return;
+
+    elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading active auctions...</p>';
+    elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading ended auctions...</p>';
+
+    try {
+        const [activeResp, allResp] = await Promise.all([
+            fetch(`${BACKEND_URL}/auctions/active`), // Only active auctions
+            fetch(`${BACKEND_URL}/auctions/all`) // If you want to list ALL auctions in admin/another view
+        ]);
+
+        if (!activeResp.ok) {
+            throw new Error(`HTTP error! status: ${activeResp.status}`);
+        }
+
+        const activeAuctions = await activeResp.json();
+        // For ended auctions, you'd need another endpoint or filter from 'all'
+        // For now, let's just display active ones, and ended ones will update via cron on backend
+        // We assume 'auctions/active' only returns active. Ended ones are handled by cron.
+
+        renderActiveAuctions(activeAuctions);
+        // renderEndedAuctions(); // Implement this if you create a separate endpoint for ended auctions
+    } catch (error) {
+        console.error("Error loading auctions:", error);
+        elements.activeAuctionsContainer.innerHTML = '<p class="text-red-400">Error loading auctions. Please try again later.</p>';
+        elements.endedAuctionsContainer.innerHTML = ''; // Clear ended auctions on error
+    }
+}
+
+function renderActiveAuctions(auctions) {
+    elements.activeAuctionsContainer.innerHTML = '';
+
+    if (auctions.length === 0) {
+        elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No active auctions at the moment. Check back later!</p>';
+        return;
+    }
+
+    auctions.forEach(auction => {
+        const timeLeft = new Date(auction.endTime).getTime() - Date.now();
+        const auctionEnded = timeLeft <= 0;
+
+        const auctionCard = createAuctionCard(auction, auctionEnded);
+        elements.activeAuctionsContainer.appendChild(auctionCard);
+
+        if (!auctionEnded) {
+            const timerElement = document.getElementById(`auction-timer-${auction._id}`);
+            startAuctionCountdown(auction.endTime, timerElement, auction._id);
+        }
+    });
+}
+
+function createAuctionCard(auction, auctionEnded) {
+    const timeDisplay = auctionEnded ? '<span class="text-blackbyte-red">AUCTION ENDED</span>' : '';
+    const highestBidderDisplay = auction.highestBidder
+        ? `Highest Bidder: <span class="font-bold text-yellow-400">${auction.highestBidder.substring(0, 6)}...${auction.highestBidder.substring(auction.highestBidder.length - 4)}</span>`
+        : 'No bids yet.';
+
+    const card = document.createElement("div");
+    card.className = "bb-card p-6 flex flex-col";
+    card.innerHTML = `
+        <div class="raffle-image-wrapper">
+            <img src="nft-placeholder.png" alt="NFT #${auction.tokenId}" class="w-full h-full object-cover">
+        </div>
+        <h3 class="text-xl font-orbitron text-white mb-2">NFT #${auction.tokenId}</h3>
+        <p class="text-sm text-gray-400 mb-3">Starting bid: <span class="font-bold text-green-400">${auction.minBid.toLocaleString()} $BB</span></p>
+        
+        <div class="flex justify-between items-center text-sm mb-2">
+            <span>Current Bid:</span>
+            <span class="font-bold text-blackbyte-red">${auction.currentBid.toLocaleString()} $BB</span>
+        </div>
+        <div class="text-xs text-gray-500 mb-3">
+            ${highestBidderDisplay}
+        </div>
+        
+        <div class="text-xs text-gray-500 mt-2 text-center mb-4">
+            Ends in: <span class="font-orbitron text-blackbyte-red" id="auction-timer-${auction._id}">${timeDisplay}</span>
+        </div>
+        
+        <input type="number" id="auction-bid-input-${auction._id}" placeholder="Your bid ($BB)" class="bb-input mt-3 mb-2" min="${auction.currentBid + 1}" value="${auction.currentBid + 1}">
+        <button id="place-bid-btn-${auction._id}" class="bb-btn bb-btn-primary w-full py-2 mt-auto" ${auctionEnded ? "disabled" : ""}>
+            PLACE BID
+        </button>
+    `;
+
+    // Populate bid input with current bid + 1
+    const bidInput = card.querySelector(`#auction-bid-input-${auction._id}`);
+    if (bidInput) {
+        bidInput.value = auction.currentBid + 1; // Set default bid to current bid + 1
+    }
+
+    const placeBidButton = card.querySelector(`#place-bid-btn-${auction._id}`);
+    if (placeBidButton) {
+        placeBidButton.addEventListener('click', () => handlePlaceBid(auction._id, bidInput.value, placeBidButton));
+    }
+
+    return card;
+}
+
+function startAuctionCountdown(endTime, timerElement, auctionId) {
+    const interval = setInterval(() => {
+        const now = new Date().getTime();
+        const distance = new Date(endTime).getTime() - now;
+
+        if (distance < 0) {
+            clearInterval(interval);
+            if (timerElement) timerElement.innerHTML = '<span class="text-blackbyte-red">AUCTION ENDED</span>';
+            const bidButton = document.getElementById(`place-bid-btn-${auctionId}`);
+            if (bidButton) {
+                bidButton.disabled = true;
+                bidButton.textContent = "AUCTION ENDED";
+            }
+            loadAuctions(); // Refresh to update status
+            return;
+        }
+
+        const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        if (timerElement) timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    }, 1000);
+}
+
+async function handlePlaceBid(auctionId, bidAmount, buttonElement) {
+    if (!currentUser) {
+        showModal(elements.walletModal);
+        return;
+    }
+
+    const parsedBidAmount = Number(bidAmount);
+
+    if (isNaN(parsedBidAmount) || parsedBidAmount <= 0) {
+        showNotification("Please enter a valid bid amount.", "error");
+        return;
+    }
+
+    const originalButtonText = buttonElement.textContent;
+    buttonElement.disabled = true;
+    buttonElement.textContent = "PLACING BID...";
+    buttonElement.classList.add("loading");
+
+    try {
+        const data = await apiRequest(`${BACKEND_URL}/auctions/${auctionId}/bid`, {
+            method: "POST",
+            body: JSON.stringify({ bidAmount: parsedBidAmount }),
+        });
+
+        showNotification(data.message, "success");
+        currentUser = data.user;
+        sessionStorage.setItem("current_user_wallet", JSON.stringify(currentUser));
+        updateUserUI();
+        loadAuctions(); // Refresh auctions to show new highest bid
+    } catch (error) {
+        console.error("Error placing bid:", error);
+        showNotification(error.message || "Failed to place bid.", "error");
+    } finally {
+        buttonElement.textContent = originalButtonText;
+        buttonElement.disabled = false;
+        buttonElement.classList.remove("loading");
+    }
 }
 
 // Event Listeners Setup
@@ -2477,6 +2660,7 @@ function setupAdminPanelEvents() {
   // Restante dos listeners do admin panel (postar tweet, criar raffle) permanecem inalterados
   const postTweetBtn = document.getElementById("post-tweet-mission-btn");
   const createRaffleBtn = document.getElementById("create-raffle-btn");
+  const createAuctionBtn = document.getElementById("create-auction-btn"); // NEW
 
   if (postTweetBtn) {
     postTweetBtn.addEventListener("click", handlePostTweetMission);
@@ -2485,6 +2669,10 @@ function setupAdminPanelEvents() {
   if (createRaffleBtn) {
     createRaffleBtn.addEventListener("click", handleCreateRaffle);
   }
+
+  if (createAuctionBtn) { // NEW
+        createAuctionBtn.addEventListener("click", handleCreateAuction);
+    }
 }
 
 // ✨ REMOVA ESTA FUNÇÃO COMPLETAMENTE! NÃO PRECISAMOS MAIS DELA.
@@ -2687,6 +2875,53 @@ async function handleCreateRaffle() {
     console.error("Error creating raffle:", error)
     showNotification("Error creating raffle.", "error")
   }
+}
+
+// NEW: Handle Create Auction
+async function handleCreateAuction() {
+    const nftContractAddress = elements.auctionNftAddress.value.trim();
+    const tokenId = Number.parseInt(elements.auctionTokenId.value);
+    const duration = Number.parseInt(elements.auctionDuration.value);
+    const minBid = Number.parseInt(elements.auctionMinBid.value);
+
+    if (!nftContractAddress || !tokenId || isNaN(tokenId) || !duration || isNaN(duration) || !minBid || isNaN(minBid)) {
+        showNotification("Please fill in all required fields for auction creation.", "error");
+        return;
+    }
+    if (duration <= 0) {
+        showNotification("Auction duration must be at least 1 minute.", "error");
+        return;
+    }
+    if (minBid < 0) {
+        showNotification("Minimum bid cannot be negative.", "error");
+        return;
+    }
+
+    try {
+        await apiRequest(`${BACKEND_URL}/auctions/create`, {
+            method: "POST",
+            body: JSON.stringify({
+                nftContractAddress,
+                tokenId,
+                duration,
+                minBid,
+            }),
+        });
+
+        showNotification("Auction created successfully!", "success");
+
+        // Clear form
+        elements.auctionNftAddress.value = "0x669c46bdf06e111685fd58b271fb3a6a02423274"; // Reset to default NFT address
+        elements.auctionTokenId.value = "";
+        elements.auctionDuration.value = "";
+        elements.auctionMinBid.value = "";
+
+        // Optionally refresh auction list on user side
+        // loadAuctions(); // If admin is expected to see immediate effect
+    } catch (error) {
+        console.error("Error creating auction:", error);
+        showNotification(error.message || "Error creating auction.", "error");
+    }
 }
 
 async function loadRaffleSelectOptions() {

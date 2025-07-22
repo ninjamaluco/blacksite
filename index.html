@@ -765,6 +765,33 @@
                     </div>
                 </div>
             </div>
+
+            <!-- NEW: Auction Management Section -->
+            <div class="mt-12">
+                <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">AUCTION MANAGEMENT</h3>
+                <div class="bb-card p-6">
+                    <h4 class="text-xl font-orbitron text-white mb-4">CREATE NEW AUCTION</h4>
+                    <div class="input-group mb-4">
+                        <label for="auction-nft-address">NFT CONTRACT ADDRESS</label>
+                        <input type="text" id="auction-nft-address" placeholder="e.g., 0x..." class="bb-input" value="0x669c46bdf06e111685fd58b271fb3a6a02423274">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-token-id">NFT TOKEN ID</label>
+                        <input type="number" id="auction-token-id" placeholder="e.g., 123" class="bb-input" min="0">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-duration">DURATION (Minutes)</label>
+                        <input type="number" id="auction-duration" placeholder="e.g., 60" class="bb-input" min="1">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-min-bid">MINIMUM BID ($BB)</label>
+                        <input type="number" id="auction-min-bid" placeholder="e.g., 1000" class="bb-input" min="0">
+                    </div>
+                    <button id="create-auction-btn" class="bb-btn bb-btn-primary w-full py-3 mt-4">
+                        CREATE AUCTION
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1253,6 +1280,32 @@
                 </button>
             </div>
         </div>
+
+        <!-- NEW: Auctions Tab Content -->
+        <div id="auctions" class="tab-content">
+            <div id="auctions-content" class="hidden">
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">NFT AUCTIONS</h2>
+                <p class="text-gray-400 mb-8">Bid on unique BlackByte NFTs! Highest bid wins when the timer runs out.</p>
+
+                <div id="active-auctions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <p class="text-gray-400">Loading active auctions...</p>
+                </div>
+
+                <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6 mt-12">ENDED AUCTIONS</h2>
+                <div id="ended-auctions-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <p class="text-gray-400">Loading ended auctions...</p>
+                </div>
+            </div>
+
+            <div id="auctions-login-prompt" class="text-center py-10 sm:py-20 bb-card max-w-lg mx-auto">
+                <i class="fas fa-gavel text-4xl sm:text-5xl text-blackbyte-red mb-4 sm:mb-6"></i>
+                <h2 class="text-2xl sm:text-3xl font-orbitron text-white mb-3 sm:mb-4">AUCTIONS LOCKED</h2>
+                <p class="text-gray-400 mb-6 sm:mb-8 text-sm sm:text-base">Connect your wallet and hold a BlackByte NFT to participate in auctions.</p>
+                <button id="auctions-prompt-auth-button" class="bb-btn bb-btn-primary px-6 py-2 sm:px-8 sm:py-3">
+                    CONNECT WALLET
+                </button>
+            </div>
+        </div>
     </main>
 
     <div id="update-info-modal" class="fixed inset-0 z-[1050] flex items-center justify-center bg-black bg-opacity-75 p-4 hidden modal-backdrop">
@@ -1304,6 +1357,10 @@
                 </li>
                 <li data-target-tab="raffles">
                     <span><i class="fas fa-ticket mr-2"></i> Raffles</span>
+                </li>
+                <!-- NEW: Auctions List Item -->
+                <li data-target-tab="auctions">
+                    <span><i class="fas fa-gavel mr-2"></i> Auctions</span>
                 </li>
                 <li data-target-tab="leaderboard">
                     <span><i class="fas fa-trophy mr-2"></i> Leaderboard</span>

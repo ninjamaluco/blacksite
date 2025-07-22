@@ -766,33 +766,37 @@
                 </div>
             </div>
 
-            <!-- NEW: Auction Management Section -->
-            <div class="input-group mb-4">
-    <label for="auction-name">AUCTION NAME</label>
-    <input type="text" id="auction-name" placeholder="e.g., BlackByte #123 Rare Edition" class="bb-input">
-</div>
-                <div class="input-group mb-4">
-                    <label for="auction-image-url">IMAGE URL (for NFT)</label>
-                    <input type="text" id="auction-image-url" placeholder="e.g., https://example.com/nft-rare.png" class="bb-input">
-                </div>
-                <div class="input-group mb-4">
-                    <label for="auction-token-id">NFT ID to Auction (e.g., 123)</label>
-                    <input type="text" id="auction-token-id" placeholder="e.g., 123" class="bb-input">
-                </div>
-                <div class="input-group mb-4">
-                    <label for="auction-duration">DURATION (Minutes)</label>
-                    <input type="number" id="auction-duration" placeholder="e.g., 60" class="bb-input" min="1">
-                </div>
-                <div class="input-group mb-4">
-                    <label for="auction-min-bid">MINIMUM BID ($BB)</label>
-                    <input type="number" id="auction-min-bid" placeholder="e.g., 1000" class="bb-input" min="0">
-                </div>
-                <button id="create-auction-btn" class="bb-btn bb-btn-primary w-full py-3 mt-4">
-                    CREATE AUCTION
-                </button>
+            <div class="mt-12">
+                <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">AUCTION MANAGEMENT</h3>
+                <div class="bb-card p-6">
+                    <h4 class="text-xl font-orbitron text-white mb-4">CREATE NEW AUCTION</h4>
+                    <div class="input-group mb-4">
+                        <label for="auction-name">AUCTION NAME</label>
+                        <input type="text" id="auction-name" placeholder="e.g., BlackByte #123 Rare Edition" class="bb-input">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-image-url">IMAGE URL (for NFT)</label>
+                        <input type="text" id="auction-image-url" placeholder="e.g., https://example.com/nft-rare.png" class="bb-input">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-token-id">NFT ID to Auction (e.g., 123)</label>
+                        <input type="text" id="auction-token-id" placeholder="e.g., 123" class="bb-input">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-duration">DURATION (Minutes)</label>
+                        <input type="number" id="auction-duration" placeholder="e.g., 60" class="bb-input" min="1">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-min-bid">MINIMUM BID ($BB)</label>
+                        <input type="number" id="auction-min-bid" placeholder="e.g., 1000" class="bb-input" min="0">
+                    </div>
+                    <button id="create-auction-btn" class="bb-btn bb-btn-primary w-full py-3 mt-4">
+                        CREATE AUCTION
+                    </button>
                 </div>
             </div>
         </div>
+
     </div>
 
     <div id="purchase-modal" class="purchase-modal modal-backdrop">
@@ -1281,7 +1285,6 @@
             </div>
         </div>
 
-        <!-- NEW: Auctions Tab Content -->
         <div id="auctions" class="tab-content">
             <div id="auctions-content" class="hidden">
                 <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">NFT AUCTIONS</h2>
@@ -1306,6 +1309,7 @@
                 </button>
             </div>
         </div>
+
     </main>
 
     <div id="update-info-modal" class="fixed inset-0 z-[1050] flex items-center justify-center bg-black bg-opacity-75 p-4 hidden modal-backdrop">
@@ -1358,9 +1362,8 @@
                 <li data-target-tab="raffles">
                     <span><i class="fas fa-ticket mr-2"></i> Raffles</span>
                 </li>
-                <!-- NEW: Auctions List Item -->
-                <li data-target-tab="auctions" class="disabled-button">
-                    <span><i class="fas fa-gavel mr-2"></i> Auctions | Soon</span>
+                <li data-target-tab="auctions">
+                    <span><i class="fas fa-gavel mr-2"></i> Auctions</span>
                 </li>
                 <li data-target-tab="leaderboard">
                     <span><i class="fas fa-trophy mr-2"></i> Leaderboard</span>

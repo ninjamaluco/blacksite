@@ -75,8 +75,7 @@ function initializeElements() {
     // Admin Auction inputs (UPDATED with new fields)
     auctionName: document.getElementById("auction-name"), // NEW
     auctionImageUrl: document.getElementById("auction-image-url"), // NEW
-    auctionNftAddress: document.getElementById("auction-nft-address"),
-    auctionTokenId: document.getElementById("auction-token-id"),
+    auctionTokenId: document.getElementById("auction-token-id"), // Keep this as it's for NFT ID
     auctionDuration: document.getElementById("auction-duration"),
     auctionMinBid: document.getElementById("auction-min-bid"),
     createAuctionBtn: document.getElementById("create-auction-btn"),
@@ -2876,14 +2875,18 @@ async function handleCreateRaffle() {
 
 // NEW: Handle Create Auction
 async function handleCreateAuction() {
-  const nftContractAddress = elements.auctionNftAddress.value.trim();
-  const tokenId = Number.parseInt(elements.auctionTokenId.value);
-  const name = elements.auctionName.value.trim(); // NEW
-  const imageUrl = elements.auctionImageUrl.value.trim(); // NEW
+  // We will hardcode the NFT_CONTRACT_ADDRESS here or get from a global constant if available
+  // Assuming NFT_CONTRACT_ADDRESS is defined as a constant in app.js if it's the same for all NFTs
+  const NFT_CONTRACT_ADDRESS_FIXED = "0x669c46bdf06e111685fd58b271fb3a6a02423274"; // Use your actual NFT contract address
+
+  const name = elements.auctionName.value.trim();
+  const imageUrl = elements.auctionImageUrl.value.trim();
+  const tokenId = elements.auctionTokenId.value.trim(); // Get as string, backend expects string
   const duration = Number.parseInt(elements.auctionDuration.value);
   const minBid = Number.parseInt(elements.auctionMinBid.value);
 
-  if (!nftContractAddress || !tokenId || isNaN(tokenId) || !name || !imageUrl || !duration || isNaN(duration) || !minBid || isNaN(minBid)) {
+  // Validate tokenId as it's now a text input (it might be a non-numeric string if it's not a strict NFT ID)
+  if (!name || !imageUrl || !tokenId || !duration || isNaN(duration) || !minBid || isNaN(minBid)) {
     showNotification("Please fill in all required fields for auction creation.", "error");
     return;
   }
@@ -2900,10 +2903,10 @@ async function handleCreateAuction() {
     await apiRequest(`${BACKEND_URL}/auctions/create`, {
       method: "POST",
       body: JSON.stringify({
-        nftContractAddress,
-        tokenId,
-        name, // Pass new field
-        imageUrl, // Pass new field
+        nftContractAddress: NFT_CONTRACT_ADDRESS_FIXED, // Use the fixed contract address
+        tokenId: tokenId, // Pass the tokenId (now string from text input)
+        name,
+        imageUrl,
         duration,
         minBid,
       }),
@@ -2912,10 +2915,9 @@ async function handleCreateAuction() {
     showNotification("Auction created successfully!", "success");
 
     // Clear form
-    elements.auctionNftAddress.value = "0x669c46bdf06e111685fd58b271fb3a6a02423274";
-    elements.auctionTokenId.value = "";
-    elements.auctionName.value = ""; // Clear new field
-    elements.auctionImageUrl.value = ""; // Clear new field
+    elements.auctionName.value = "";
+    elements.auctionImageUrl.value = "";
+    elements.auctionTokenId.value = ""; // Clear new field
     elements.auctionDuration.value = "";
     elements.auctionMinBid.value = "";
 

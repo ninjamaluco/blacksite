@@ -682,6 +682,10 @@
         </div>
 
         <div id="admin-content" class="hidden">
+            <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">WL PURCHASES OVERVIEW</h3>
+            <div id="wl-purchases" class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <p class="text-gray-400">Loading wallets...</p>
+            </div>
 
             <div class="mt-12">
                 <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">TWEET MISSION MANAGEMENT</h3>
@@ -763,10 +767,8 @@
             </div>
 
             <!-- NEW: Auction Management Section -->
-            <div id="admin-panel" class="admin-panel">
-    <div id="admin-content" class="hidden">
-        <div class="mt-12">
-            <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">AUCTION MANAGEMENT</h3>
+            <div class="mt-12">
+                <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">AUCTION MANAGEMENT</h3>
             <div class="bb-card p-6">
                 <h4 class="text-xl font-orbitron text-white mb-4">CREATE NEW AUCTION</h4>
                 <div class="input-group mb-4">
@@ -783,19 +785,19 @@
                     <label for="auction-token-id">NFT TOKEN ID</label>
                     <input type="number" id="auction-token-id" placeholder="e.g., 123" class="bb-input" min="0">
                 </div>
-                <div class="input-group mb-4">
-                    <label for="auction-duration">DURATION (Minutes)</label>
-                    <input type="number" id="auction-duration" placeholder="e.g., 60" class="bb-input" min="1">
+                    <div class="input-group mb-4">
+                        <label for="auction-duration">DURATION (Minutes)</label>
+                        <input type="number" id="auction-duration" placeholder="e.g., 60" class="bb-input" min="1">
+                    </div>
+                    <div class="input-group mb-4">
+                        <label for="auction-min-bid">MINIMUM BID ($BB)</label>
+                        <input type="number" id="auction-min-bid" placeholder="e.g., 1000" class="bb-input" min="0">
+                    </div>
+                    <button id="create-auction-btn" class="bb-btn bb-btn-primary w-full py-3 mt-4">
+                        CREATE AUCTION
+                    </button>
                 </div>
-                <div class="input-group mb-4">
-                    <label for="auction-min-bid">MINIMUM BID ($BB)</label>
-                    <input type="number" id="auction-min-bid" placeholder="e.g., 1000" class="bb-input" min="0">
-                </div>
-                <button id="create-auction-btn" class="bb-btn bb-btn-primary w-full py-3 mt-4">
-                    CREATE AUCTION
-                </button>
             </div>
-        </div>
         </div>
     </div>
 

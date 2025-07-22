@@ -3,6 +3,7 @@ let currentUser = JSON.parse(sessionStorage.getItem("current_user_wallet")) || n
 const allPurchases = []
 let allUsersData = []
 let bonusCountdownInterval
+let tweetMissionListenersAttached = false
 
 // NOVO: Variáveis globais para Web3
 let web3Modal;
@@ -12,11 +13,15 @@ let currentConnectedWalletAddress;
 let userHasNft = false; // NOVO: Adicione esta variável no topo do arquivo junto com `currentUser`
 
 // Constants
+// const ADMIN_PASSWORD = "admin" // ✨ REMOVA ESTA LINHA - NÃO PRECISAMOS MAIS DE SENHA FIXA NO FRONTEND!
 const BACKEND_URL = "https://blackbyte-backend.onrender.com"; // Adicione esta constante
 
 // NOVO: Configurações do Contrato da NFT
 const NFT_CONTRACT_ADDRESS = "0x669c46bdf06e111685fd58b271fb3a6a02423274"; // SEU CONTRATO
-const REQUIRED_CHAIN_ID = 33139; 
+// ✨ MODIFICAÇÃO AQUI: Chain ID da ApeChain Mainnet (verifique a documentação oficial da ApeChain se este for um exemplo real, geralmente 1 para Ethereum Mainnet, 137 para Polygon, etc.)
+// Pela URL da Alchemy, parece que "apechain" é a rede. Você precisa do Chain ID numérico dela.
+// Vou usar um placeholder `CHAIN_ID_APECHAIN` por enquanto, você precisa encontrar o valor correto.
+const REQUIRED_CHAIN_ID = 33139; // ✨ Placeholder: Substitua pelo Chain ID REAL da ApeChain Mainnet. Ex: 1 para Ethereum Mainnet, 137 para Polygon, etc.
 
 // ✨ NOVO: Chave da API da Alchemy e URL Base
 const ALCHEMY_API_KEY = "GecgOCM9PL3EQHXNxnWMg"; // Sua chave da API da Alchemy
@@ -24,6 +29,8 @@ const ALCHEMY_BASE_URL = "https://apechain-mainnet.g.alchemy.com/v2/";
 
 const NFT_CONTRACT_ABI = [
   "function balanceOf(address owner) view returns (uint256)",
+  // "function tokenOfOwnerByIndex(address owner, uint256 index) view returns (uint256)", // <-- REMOVA ESTA LINHA
+  // "function ownerOf(uint256 tokenId) view returns (address)" // <-- REMOVA ESTA LINHA (não precisaremos mais delas para listar)
 ];
 
 
@@ -43,6 +50,7 @@ function initializeElements() {
     walletModal: document.getElementById("wallet-modal"), // NOVO
     wrongChainModal: document.getElementById("wrong-chain-modal"), // ✨ NOVO ELEMENTO
     // Buttons
+    // authButton: document.getElementById("auth-button"), // REMOVIDO
     connectWalletButton: document.getElementById("connect-wallet-button"), // NOVO
     spinBtn: document.getElementById("spin-btn"),
     dailyBonusBtn: document.getElementById("daily-bonus-btn"),
@@ -79,6 +87,8 @@ function initializeElements() {
     utilitiesBtn: document.getElementById("utilities-btn"),
 
     // User interface
+    // userPoints: document.getElementById("user-points"), // REMOVIDO
+    // userAvatar: document.getElementById("user-avatar"), // REMOVIDO
     walletInfo: document.getElementById("wallet-info"), // NOVO
     connectedWalletAddress: document.getElementById("connected-wallet-address"), // NOVO
     userAvatar: document.getElementById("user-avatar"), // Manter, mas sua lógica de uso será diferente
@@ -131,7 +141,7 @@ function showNotification(message, type = "info") {
 function showLoginFirstMessage() {
   const msg = document.createElement("div")
   msg.className = "login-first-msg"
-  msg.textContent = "Connect wallet first."
+  msg.textContent = "Connect wallet first." // Texto original, já é bom
   document.body.appendChild(msg)
 
   setTimeout(() => msg.classList.add("fade-out"), 2000)
@@ -160,6 +170,8 @@ function hideModal(modalElement) {
     setTimeout(() => {
       modalElement.style.display = "none"; // Oculta o elemento após a transição
       document.body.classList.remove("modal-open"); // Remove a classe do body
+      // Remova backdrop-filter do body se ele foi aplicado globalmente, ou se estiver causando problemas.
+      // Se o backdrop-filter está apenas no próprio modal, não precisa disso.
     }, 200); // Tempo correspondente à transição CSS
   }
 }
@@ -588,10 +600,14 @@ async function apiRequest(url, options = {}) {
 
 // User Management
 function updateUserUI() {
+  // if (!elements.authButton) return // REMOVIDO
+
   if (currentUser && currentUser.walletAddress) { // Mude a condição
     // Hide connect button, show wallet info
     if (elements.connectWalletButton) elements.connectWalletButton.classList.add("hidden");
     if (elements.walletInfo) elements.walletInfo.classList.remove("hidden");
+    // if (elements.userPoints) elements.userPoints.classList.remove("hidden") // REMOVIDO
+    // if (elements.userAvatar) elements.userAvatar.classList.remove("hidden") // REMOVIDO
 
     // Update displays
     if (elements.pointsCounter) {
@@ -631,6 +647,8 @@ function updateUserUI() {
     // Show connect button, hide wallet info
     if (elements.connectWalletButton) elements.connectWalletButton.classList.remove("hidden");
     if (elements.walletInfo) elements.walletInfo.classList.add("hidden");
+    // if (elements.userPoints) elements.userPoints.classList.add("hidden") // REMOVIDO
+    // if (elements.userAvatar) elements.userAvatar.classList.add("hidden") // REMOVIDO
 
     // Update utility sidebar visibility
     updateUtilityItemsVisibility()
@@ -652,13 +670,13 @@ async function checkNftOwnership() {
     // Verifica se o usuário está na Chain ID correta
     if (chainId !== REQUIRED_CHAIN_ID) {
       showWrongChainModal(); // ✨ MOSTRA O NOVO MODAL
+      // showNotification(`Please switch to the correct network (Chain ID: ${REQUIRED_CHAIN_ID}) to access Holder Tools.`, "error"); // REMOVER ESTA NOTIFICAÇÃO
       return false;
     } else {
       hideWrongChainModal(); // ✨ ESCONDE O MODAL se a rede estiver correta
     }
 
     // Cria uma instância do contrato NFT
-    // Nota: O ABI precisa ter a função balanceOf para isso funcionar
     const nftContract = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
 
     // Chama a função balanceOf do contrato para verificar o saldo de NFTs
@@ -1264,8 +1282,16 @@ async function renderStakingDashboard() {
       // Tenta verificar a posse on-chain para cada NFT stakada
       let isOwnerOnChain = false;
       try {
+        // Reutiliza a lógica de isUserOwnerOfNft (que está no backend, mas precisamos de algo parecido no front)
+        // Ou, para o frontend, podemos confiar na lista da Alchemy para ver se ainda está na carteira
         // Se o NFT está na lista de nftsInWallet, ele ainda está na carteira conectada.
         isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
+
+        // Alternativa para checagem on-chain no frontend (more slow, but more accurate if NFT is gone by sale/transfer)
+        // const nftContractInstance = new ethers.Contract(NFT_CONTRACT_ADDRESS, NFT_CONTRACT_ABI, web3Provider);
+        // const ownerAddress = await nftContractInstance.ownerOf(record.tokenId);
+        // isOwnerOnChain = (ownerAddress.toLowerCase() === currentUser.walletAddress.toLowerCase());
+
       } catch (checkError) {
         console.warn(`Could not verify on-chain ownership for staked NFT ${record.tokenId}:`, checkError.message);
         isOwnerOnChain = false; // Se não conseguir verificar, assuma que não é o proprietário.
@@ -1326,10 +1352,13 @@ async function renderStakingDashboard() {
     // ✨ NOVO: Envia requisições ao backend para desativar os registros que não são mais do usuário
     if (recordsToDeactivate.length > 0) {
       console.log("Sending requests to deactivate stale staking records:", recordsToDeactivate);
+      // Você precisará de um novo endpoint no backend para lidar com isso, ou usar o unstake para cada um.
+      // O unstake já verifica posse. Então podemos iterar.
       for (const recordId of recordsToDeactivate) {
         const record = stakedRecords.find(r => r._id === recordId);
         if (record) {
           try {
+            // Chama o unstake, que já lida com a checagem de posse e desativação
             await apiRequest(`${BACKEND_URL}/staking/unstake`, {
               method: 'POST',
               body: JSON.stringify({
@@ -1342,6 +1371,9 @@ async function renderStakingDashboard() {
           }
         }
       }
+      // Após tentar desativar, re-renderiza para garantir que a UI esteja atualizada
+      // (Isso pode causar um loop se o backend não desativar, então tenha certeza da lógica do backend)
+      // setTimeout(() => renderStakingDashboard(), 1000); // Dar um pequeno tempo para o backend processar
     }
 
 
@@ -1353,6 +1385,7 @@ async function renderStakingDashboard() {
   }
 }
 // NOVO: Função para criar o card de NFT (stake/unstake)
+// ✨ Mantenha esta função como está, ela agora receberá a imageUrl corretamente.
 function createStakingNftCard(tokenId, isStaked, accumulatedRewards = 0, imageUrl = "nft-placeholder.png") {
   const card = document.createElement("div");
   card.className = "bb-card p-4 text-center";
@@ -1499,44 +1532,19 @@ async function loadAuctions() {
     elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading ended auctions...</p>';
 
     try {
-        const [activeResp] = await Promise.all([
-            fetch(`${BACKEND_URL}/auctions/active`),
+        const [activeResp, allResp] = await Promise.all([
+            fetch(`${BACKEND_URL}/auctions/active`), // Only active auctions
+            fetch(`${BACKEND_URL}/auctions/all`) // If you want to list ALL auctions in admin/another view
         ]);
 
         if (!activeResp.ok) {
             throw new Error(`HTTP error! status: ${activeResp.status}`);
         }
 
-        let activeAuctions = await activeResp.json();
-
-        // ✨ NOVO CÓDIGO AQUI: Buscar detalhes da NFT para cada leilão
-        // Usaremos Promise.all para buscar todos os metadados em paralelo para melhor performance
-        const auctionDetailsPromises = activeAuctions.map(async (auction) => {
-            try {
-                // A API da Alchemy getNFTMetadata espera o tokenId em hexadecimal
-                const hexTokenId = parseInt(auction.tokenId).toString(16);
-                const url = `${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTMetadata/?contractAddress=${auction.nftContractAddress}&tokenId=${hexTokenId}`;
-                
-                const response = await fetch(url);
-                const nftData = await response.json();
-
-                if (nftData && nftData.media && nftData.media.length > 0 && nftData.media[0].gateway) {
-                    auction.imageUrl = nftData.media[0].gateway;
-                    auction.name = nftData.title || `NFT #${auction.tokenId}`; // Usa o título da NFT, ou fallback
-                } else {
-                    auction.imageUrl = "nft-placeholder.png"; // Fallback se a imagem não for encontrada
-                    auction.name = `NFT #${auction.tokenId}`;
-                }
-            } catch (nftFetchError) {
-                console.error(`Error fetching NFT details for auction ${auction._id} (Token ID: ${auction.tokenId}):`, nftFetchError);
-                auction.imageUrl = "nft-placeholder.png"; // Garante fallback em caso de erro
-                auction.name = `NFT #${auction.tokenId}`;
-            }
-            return auction; // Retorna o objeto auction com imageUrl e name atualizados
-        });
-
-        activeAuctions = await Promise.all(auctionDetailsPromises);
-
+        const activeAuctions = await activeResp.json();
+        // For ended auctions, you'd need another endpoint or filter from 'all'
+        // For now, let's just display active ones, and ended ones will update via cron on backend
+        // We assume 'auctions/active' only returns active. Ended ones are handled by cron.
 
         renderActiveAuctions(activeAuctions);
         // renderEndedAuctions(); // Implement this if you create a separate endpoint for ended auctions
@@ -1579,9 +1587,8 @@ function createAuctionCard(auction, auctionEnded) {
     card.className = "bb-card p-6 flex flex-col";
     card.innerHTML = `
         <div class="raffle-image-wrapper">
-            <img src="${auction.imageUrl}" alt="${auction.name || `NFT #${auction.tokenId}`}" class="w-full h-full object-cover">
-        </div>
-        <h3 class="text-xl font-orbitron text-white mb-2">${auction.name || `NFT #${auction.tokenId}`}</h3>
+        <img src="${auction.imageUrl}" alt="${auction.name || `NFT #${auction.tokenId}`}" class="w-full h-full object-cover">        </div>
+        <h3 class="text-xl font-orbitron text-white mb-2">NFT #${auction.tokenId}</h3>
         <p class="text-sm text-gray-400 mb-3">Starting bid: <span class="font-bold text-green-400">${auction.minBid.toLocaleString()} $BB</span></p>
         
         <div class="flex justify-between items-center text-sm mb-2">
@@ -1686,7 +1693,10 @@ function setupEventListeners() {
   // Close modal events
   document.querySelectorAll(".close-modal").forEach((closeBtn) => {
     closeBtn.addEventListener("click", (e) => {
-      const modal = e.target.closest("#my-account-modal, #purchase-modal, #admin-panel, #update-info-modal, #wallet-modal, #wrong-chain-modal");
+      // AQUI está o ajuste. Use os IDs ou classes específicas para garantir que ele encontre o modal correto.
+      // O `my-account-modal` tem o ID `my-account-modal` e a classe `auth-modal`.
+      // Vamos usar uma combinação que abranja todos os seus modais com `close-modal`.
+      const modal = e.target.closest("#my-account-modal, #purchase-modal, #admin-panel, #update-info-modal, #wallet-modal, #wrong-chain-modal"); //
 
       if (modal) {
         hideModal(modal);
@@ -1705,12 +1715,16 @@ function setupEventListeners() {
 
   const connectMetamaskBtn = document.getElementById('connect-metamask');
   const connectRabbyBtn = document.getElementById('connect-rabby');
+  // const connectCoinbaseBtn = document.getElementById('connect-coinbase'); // Se houver no seu HTML
   if (connectMetamaskBtn) {
     connectMetamaskBtn.addEventListener('click', () => handleWalletOptionClick('injected'));
   }
   if (connectRabbyBtn) {
     connectRabbyBtn.addEventListener('click', () => handleWalletOptionClick('injected')); // Rabby geralmente é detectada como injetada
   }
+  // if (connectCoinbaseBtn) {
+  //     connectCoinbaseBtn.addEventListener('click', () => handleWalletOptionClick('coinbaseWallet')); // Use 'coinbaseWallet' ou 'injected' dependendo da integração
+  // }
 
   // Spin button
   if (elements.spinBtn) {
@@ -2037,9 +2051,20 @@ function initWeb3Modal() {
       display: {
         name: "Injected", // Nome genérico para provedores injetados
         description: "Connect with browser wallet (MetaMask, Rabby, etc.)",
+        // Se você tiver ícones específicos para Rabby/MetaMask, você pode colocar aqui ou o Web3Modal os detectará.
+        // icon: 'URL_DO_SEU_ICONE_PADRAO_AQUI.svg'
       },
       package: null
     },
+    // Você tinha walletconnect antes, mas se Rabby está sendo detectada como injetada, não é estritamente necessário.
+    // Se precisar de suporte amplo para outras carteiras via QR Code, pode manter.
+    // walletconnect: {
+    //     package: WalletConnectProvider,
+    //     options: {
+    //         rpc: { 1: "https://mainnet.infura.io/v3/YOUR_INFURA_PROJECT_ID" },
+    //         network: "mainnet"
+    //     }
+    // }
   };
 
   web3Modal = new Web3Modal.default({
@@ -2083,6 +2108,8 @@ async function connectWallet() {
       // Listen for network changes
       instance.on('chainChanged', (newChainId) => {
         console.log("Chain changed to:", parseInt(newChainId, 16));
+        // You might want to re-authenticate or show a warning if it's not the correct chain
+        // For now, we'll just update the UI
         authenticateWithBackend(currentConnectedWalletAddress); // Re-authenticate to get updated user data for new chain
       });
 
@@ -2145,6 +2172,8 @@ async function handleWalletOptionClick(providerType) {
       // Listen for network changes
       instance.on('chainChanged', (newChainId) => {
         console.log("Chain changed to:", parseInt(newChainId, 16));
+        // You might want to re-authenticate or show a warning if it's not the correct chain
+        // For now, we'll just update the UI
         authenticateWithBackend(currentConnectedWalletAddress); // Re-authenticate to get updated user data for new chain
       });
 
@@ -2182,6 +2211,7 @@ async function authenticateWithBackend(walletAddress) {
       sessionStorage.setItem("current_user_wallet", JSON.stringify(currentUser));
       updateUserUI(); // Isso atualiza o contador de pontos e o endereço da carteira
 
+      // ✨ PROBLEMA: checkNftOwnership pode não estar gerando a notificação ou o fluxo esperado para F5
       userHasNft = await checkNftOwnership(); // ✅ Esta linha precisa garantir que a UI é atualizada com base no resultado
 
       // ✨ ADIÇÃO/CORREÇÃO AQUI: Garanta que a UI seja re-avaliada com o novo status de userHasNft
@@ -2390,6 +2420,8 @@ function showMyAccountModal() {
   if (elements.editUsernameInput) elements.editUsernameInput.value = currentUser.username; // Preenche o input de edição
 
 
+  // Referral logic removed from here
+
   showModal(elements.myAccountModal)
 }
 
@@ -2515,6 +2547,8 @@ document.addEventListener("DOMContentLoaded", async () => {
 });
 
 function setupAdditionalEventListeners() {
+  // Removed copy buttons for referrals
+
   // Logout button
   const logoutBtn = document.getElementById("logout-btn-modal")
   if (logoutBtn) {
@@ -2592,6 +2626,10 @@ function setupAdditionalEventListeners() {
 }
 
 function setupAdminPanelEvents() {
+  // const adminLoginBtn = document.getElementById("admin-login"); // ✨ REMOVA OU COMENTE ESTA LINHA
+  // const closeAdminBtn = document.getElementById("close-admin"); // Já está ok
+
+  // ✨ NOVO: Listener para o item "Admin" no menu de utilitários
   const utilAdminItem = document.getElementById("util-admin-item");
   if (utilAdminItem) {
     utilAdminItem.addEventListener("click", () => {
@@ -2608,14 +2646,17 @@ function setupAdminPanelEvents() {
     });
   }
 
+  // Já existe um closeAdminBtn que funciona para fechar o modal
   const closeAdminBtn = document.getElementById("close-admin");
   if (closeAdminBtn) {
     closeAdminBtn.addEventListener("click", () => {
       hideModal(elements.adminPanel);
+      // Opcional: Esconder o conteúdo novamente ao fechar para reexibir na próxima abertura
       document.getElementById("admin-content").classList.add("hidden");
     });
   }
 
+  // Restante dos listeners do admin panel (postar tweet, criar raffle) permanecem inalterados
   const postTweetBtn = document.getElementById("post-tweet-mission-btn");
   const createRaffleBtn = document.getElementById("create-raffle-btn");
   const createAuctionBtn = document.getElementById("create-auction-btn"); // NEW
@@ -2632,6 +2673,25 @@ function setupAdminPanelEvents() {
         createAuctionBtn.addEventListener("click", handleCreateAuction);
     }
 }
+
+// ✨ REMOVA ESTA FUNÇÃO COMPLETAMENTE! NÃO PRECISAMOS MAIS DELA.
+/*
+async function handleAdminLogin() {
+  const password = document.getElementById("admin-password").value;
+
+  if (password !== ADMIN_PASSWORD) {
+    showNotification("Invalid admin password.", "error");
+    return;
+  }
+
+  document.getElementById("admin-content").classList.remove("hidden");
+  showNotification("Admin access granted.", "success");
+
+  // Load admin data
+  loadWLPurchases();
+  loadRaffleSelectOptions();
+}
+*/
 
 async function handleWalletSubmission() {
   const walletAddress = document.getElementById("wallet-address").value.trim()
@@ -2823,12 +2883,6 @@ async function handleCreateAuction() {
     const duration = Number.parseInt(elements.auctionDuration.value);
     const minBid = Number.parseInt(elements.auctionMinBid.value);
 
-    // Adicione os campos 'name' e 'imageUrl' para serem enviados no body,
-    // já que o backend foi modificado para não salvá-los, mas o admin ainda precisa
-    // preencher o nome para exibição no frontend antes da busca do Alchemy.
-    // O imageUrl não é necessário aqui, pois será buscado do Alchemy, mas o nome pode ser.
-    const nftName = `NFT #${tokenId}`; // Ou adicione um campo de input para o admin
-
     if (!nftContractAddress || !tokenId || isNaN(tokenId) || !duration || isNaN(duration) || !minBid || isNaN(minBid)) {
         showNotification("Please fill in all required fields for auction creation.", "error");
         return;
@@ -2848,8 +2902,6 @@ async function handleCreateAuction() {
             body: JSON.stringify({
                 nftContractAddress,
                 tokenId,
-                // name: nftName, // Comente ou remova se você não vai passar o nome do front para o back
-                // imageUrl: "nft-placeholder.png", // Comente ou remova, já que será buscado pelo Alchemy
                 duration,
                 minBid,
             }),
@@ -2928,6 +2980,8 @@ async function handleRaffleWinnerView() {
   }
 }
 
+// ✨ NOVO: Oculta a seção de input de senha no próprio HTML se ela ainda existir
+// (Recomendado para remover completamente o HTML do input de senha, mas essa é uma solução rápida no JS)
 document.addEventListener("DOMContentLoaded", () => {
   const adminPasswordInput = document.getElementById("admin-password");
   if (adminPasswordInput) {

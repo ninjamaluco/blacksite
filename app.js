@@ -73,9 +73,9 @@ function initializeElements() {
     endedAuctionsContainer: document.getElementById("ended-auctions-container"), // NEW
 
     // Admin Auction inputs (UPDATED with new fields)
-    auctionName: document.getElementById("auction-name"), // NEW
-    auctionImageUrl: document.getElementById("auction-image-url"), // NEW
-    auctionTokenId: document.getElementById("auction-token-id"), // Keep this as it's for NFT ID
+    auctionName: document.getElementById("auction-name"),
+    auctionImageUrl: document.getElementById("auction-image-url"),
+    auctionTokenId: document.getElementById("auction-token-id"), // Este campo está no HTML
     auctionDuration: document.getElementById("auction-duration"),
     auctionMinBid: document.getElementById("auction-min-bid"),
     createAuctionBtn: document.getElementById("create-auction-btn"),

@@ -1526,75 +1526,153 @@ async function handleClaimRewards(tokenId = null) { // Permite clamar todas ou d
 
 // --- AUCTIONS FUNCTIONS ---
 async function loadAuctions() {
-    if (!currentUser || !elements.activeAuctionsContainer || !elements.endedAuctionsContainer) return;
+  if (!currentUser || !elements.activeAuctionsContainer || !elements.endedAuctionsContainer) return;
 
-    elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading active auctions...</p>';
-    elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading ended auctions...</p>';
+  elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading active auctions...</p>';
+  elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading ended auctions...</p>';
 
-      try {
-        const [activeResp, allResp] = await Promise.all([
-            fetch(`${BACKEND_URL}/auctions/active`),
-            // fetch(`${BACKEND_URL}/auctions/all`) // Manter ou remover, dependendo do uso
-        ]);
+  let activeAuctions = [];
+  let endedAuctions = [];
 
-         if (!activeResp.ok) {
-            throw new Error(`HTTP error! status: ${activeResp.status}`);
-        }
-
-        let activeAuctions = await activeResp.json();
-
-        // ✨ NOVO CÓDIGO AQUI: Buscar detalhes da NFT para cada leilão
-        for (let i = 0; i < activeAuctions.length; i++) {
-            const auction = activeAuctions[i];
-            try {
-                // Reutilize a função getUserNftsInWallet para buscar detalhes da NFT,
-                // mas adapte-a para buscar um único NFT por tokenId e contractAddress
-                // Ou crie uma nova função auxiliar 'getNftDetailsFromAlchemy(contractAddress, tokenId)'
-                const nftDetails = await fetch(`${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTMetadata/?contractAddress=${auction.nftContractAddress}&tokenId=${parseInt(auction.tokenId).toString(16)}`);
-                const nftData = await nftDetails.json();
-
-                if (nftData && nftData.media && nftData.media.length > 0 && nftData.media[0].gateway) {
-                    auction.imageUrl = nftData.media[0].gateway;
-                    auction.name = nftData.title || `NFT #${auction.tokenId}`; // Usa o título da NFT, ou fallback
-                } else {
-                    auction.imageUrl = "nft-placeholder.png"; // Fallback
-                }
-            } catch (nftFetchError) {
-                console.error(`Error fetching NFT details for auction ${auction._id} (Token ID: ${auction.tokenId}):`, nftFetchError);
-                auction.imageUrl = "nft-placeholder.png"; // Garante fallback em caso de erro
-            }
-        }
-
-        renderActiveAuctions(activeAuctions);
-        // renderEndedAuctions(); // Implement this if you create a separate endpoint for ended auctions
-    } catch (error) {
-        console.error("Error loading auctions:", error);
-        elements.activeAuctionsContainer.innerHTML = '<p class="text-red-400">Error loading auctions. Please try again later.</p>';
-        elements.endedAuctionsContainer.innerHTML = ''; // Clear ended auctions on error
+  // Fetch active auctions
+  try {
+    const activeResp = await fetch(`${BACKEND_URL}/auctions/active`);
+    if (!activeResp.ok) {
+      throw new Error(`HTTP error! status active: ${activeResp.status}`);
     }
+    activeAuctions = await activeResp.json();
+  } catch (error) {
+    console.error('Error fetching active auctions:', error);
+    elements.activeAuctionsContainer.innerHTML = '<p class="text-red-400">Error loading active auctions.</p>';
+    // Não retorne aqui, para que o fetch das ended auctions possa continuar
+  }
+
+  // Fetch ended auctions
+  try {
+    const endedResp = await fetch(`${BACKEND_URL}/auctions/ended`);
+    if (!endedResp.ok) {
+      throw new Error(`HTTP error! status ended: ${endedResp.status}`);
+    }
+    endedAuctions = await endedResp.json();
+  } catch (error) {
+    console.error('Error fetching ended auctions:', error);
+    elements.endedAuctionsContainer.innerHTML = '<p class="text-red-400">Error loading ended auctions.</p>';
+    // Não retorne aqui, para que a renderização possa continuar com os dados disponíveis
+  }
+
+  // Se houver dados ativos, renderize-os
+  if (activeAuctions.length > 0) {
+    // Reutilize a função para buscar os detalhes do NFT para as auctions ativas
+    activeAuctions = await fetchNftDetailsForAuctions(activeAuctions);
+    renderActiveAuctions(activeAuctions);
+  } else if (!activeAuctions.error) { // Se não houve erro, mas a lista está vazia
+    elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No active auctions at the moment. Check back later!</p>';
+  }
+
+
+  // Se houver dados finalizados, renderize-os
+  if (endedAuctions.length > 0) {
+    // Reutilize a função para buscar os detalhes do NFT para as auctions finalizadas
+    endedAuctions = await fetchNftDetailsForAuctions(endedAuctions);
+    renderEndedAuctions(endedAuctions);
+  } else if (!endedAuctions.error) { // Se não houve erro, mas a lista está vazia
+    elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No ended auctions yet.</p>';
+  }
+
+  // A função fetchNftDetailsForAuctions deve ser definida fora de loadAuctions se você quiser reutilizá-la
+  // ou mova-a para dentro se ela só será usada aqui.
+  // O trecho abaixo assume que fetchNftDetailsForAuctions é uma função separada ou está sendo definida localmente.
+  async function fetchNftDetailsForAuctions(auctionsArray) {
+    for (let i = 0; i < auctionsArray.length; i++) {
+      const auction = auctionsArray[i];
+      try {
+        const nftDetailsResp = await fetch(`${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTMetadata/?contractAddress=${auction.nftContractAddress}&tokenId=${parseInt(auction.tokenId).toString(16)}`);
+        const nftData = await nftDetailsResp.json();
+
+        if (nftData && nftData.media && nftData.media.length > 0 && nftData.media[0].gateway) {
+          auction.imageUrl = nftData.media[0].gateway;
+          auction.name = nftData.title || `NFT #${auction.tokenId}`;
+        } else {
+          auction.imageUrl = "nft-placeholder.png";
+          auction.name = `NFT #${auction.tokenId}`;
+        }
+      } catch (nftFetchError) {
+        console.error(`Error fetching NFT details for auction ${auction._id} (Token ID: ${auction.tokenId}):`, nftFetchError);
+        auction.imageUrl = "nft-placeholder.png";
+        auction.name = `NFT #${auction.tokenId}`;
+      }
+    }
+    return auctionsArray;
+  }
 }
 
 function renderActiveAuctions(auctions) {
-    elements.activeAuctionsContainer.innerHTML = '';
+  elements.activeAuctionsContainer.innerHTML = '';
+
+  if (auctions.length === 0) {
+    elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No active auctions at the moment. Check back later!</p>';
+    return;
+  }
+
+  auctions.forEach(auction => {
+    const timeLeft = new Date(auction.endTime).getTime() - Date.now();
+    const auctionEnded = timeLeft <= 0;
+
+    const auctionCard = createAuctionCard(auction, auctionEnded);
+    elements.activeAuctionsContainer.appendChild(auctionCard);
+
+    if (!auctionEnded) {
+      const timerElement = document.getElementById(`auction-timer-${auction._id}`);
+      startAuctionCountdown(auction.endTime, timerElement, auction._id);
+    }
+  });
+}
+
+function renderEndedAuctions(auctions) {
+    elements.endedAuctionsContainer.innerHTML = '';
 
     if (auctions.length === 0) {
-        elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No active auctions at the moment. Check back later!</p>';
+        elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No ended auctions yet.</p>';
         return;
     }
 
     auctions.forEach(auction => {
-        const timeLeft = new Date(auction.endTime).getTime() - Date.now();
-        const auctionEnded = timeLeft <= 0;
+        const auctionCard = document.createElement("div");
+        auctionCard.className = "bb-card p-6 flex flex-col opacity-75"; // Adicione opacity-75 para indicar que é um leilão finalizado
 
-        const auctionCard = createAuctionCard(auction, auctionEnded);
-        elements.activeAuctionsContainer.appendChild(auctionCard);
+        const highestBidderDisplay = auction.highestBidder
+            ? `Winner: <span class="font-bold text-green-400">${auction.highestBidder.substring(0, 6)}...${auction.highestBidder.substring(auction.highestBidder.length - 4)}</span>`
+            : 'No winner.';
+        const finalBidDisplay = auction.currentBid
+            ? `Final Bid: <span class="font-bold text-yellow-400">${auction.currentBid.toLocaleString()} $BB</span>`
+            : 'No bids placed.';
 
-        if (!auctionEnded) {
-            const timerElement = document.getElementById(`auction-timer-${auction._id}`);
-            startAuctionCountdown(auction.endTime, timerElement, auction._id);
-        }
+        auctionCard.innerHTML = `
+            <div class="raffle-image-wrapper">
+                <img src="${auction.imageUrl}" alt="${auction.name || `NFT #${auction.tokenId}`}" class="w-full h-full object-cover">
+            </div>
+            <h3 class="text-xl font-orbitron text-white mb-2">${auction.name || `NFT #${auction.tokenId}`}</h3>
+            <p class="text-sm text-gray-400 mb-3">Starting bid: <span class="font-bold text-green-400">${auction.minBid.toLocaleString()} $BB</span></p>
+            
+            <div class="flex justify-between items-center text-sm mb-2">
+                <span>${finalBidDisplay}</span>
+            </div>
+            <div class="text-xs text-gray-500 mb-3">
+                ${highestBidderDisplay}
+            </div>
+            
+            <div class="text-xs text-gray-500 mt-2 text-center mb-4">
+                <span class="text-blackbyte-red">AUCTION ENDED</span>
+            </div>
+            
+            <button class="bb-btn bb-btn-secondary w-full py-2 mt-auto" disabled>
+                VIEW DETAILS
+            </button>
+        `;
+        elements.endedAuctionsContainer.appendChild(auctionCard);
     });
 }
+
 
 function createAuctionCard(auction, auctionEnded) {
     const timeDisplay = auctionEnded ? '<span class="text-blackbyte-red">AUCTION ENDED</span>' : '';

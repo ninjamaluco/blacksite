@@ -1250,7 +1250,10 @@ function checkCurrentUserRank() {
   }
 }
 
-// NOVO: Renderiza o dashboard de Staking
+// File: app.js
+
+// ... (todo o código acima da função renderStakingDashboard, sem mudanças) ...
+
 async function renderStakingDashboard() {
   if (!currentUser || !currentUser.walletAddress) return;
 
@@ -1287,48 +1290,30 @@ async function renderStakingDashboard() {
 
   try {
     const nftsInWallet = await getUserNftsInWallet(currentUser.walletAddress);
-    const stakedRecords = await apiRequest(`${BACKEND_URL}/staking/user-staked-nfts`);
+    // Busca TODOS os records do usuário, ativos e inativos, para processamento no frontend
+    const stakedRecords = await apiRequest(`${BACKEND_URL}/staking/user-staked-nfts`); 
 
     const nftsInWalletMap = new Map();
     nftsInWallet.forEach(nft => nftsInWalletMap.set(nft.tokenId, nft));
 
     let totalAccumulatedRewards = 0;
-    // DECLARE AS VARIÁVEIS AQUI, no início do bloco try, antes do loop
-    const confirmedStakedNfts = [];
-    const automaticallyUnstaked = [];
+    const confirmedStakedNfts = []; // NFTs ativamente stakadas (isActive: true)
+    const automaticallyUnstaked = []; // NFTs desativadas automaticamente (isActive: false e motivo)
 
-    // Itera sobre os registros de staking retornados pelo backend
     for (const record of stakedRecords) {
-        // Verifica se é um registro inativo com motivo de listagem no marketplace
-        if (!record.isActive && (record.unStakedReason === 'listed_on_marketplace' || record.unStakedReason === 'nft_transferred')) { // Modificado para incluir 'nft_transferred' aqui
-            automaticallyUnstaked.push(record);
-            continue; // Pula para o próximo registro, pois não está ativo para recompensas nem para verificação on-chain aqui
-        }
-
-        // Se for ativo ou inativo por motivo não tratado acima, procede com a verificação de posse.
-        let isOwnerOnChain = false;
-        try {
-            isOwnerOnChain = nftsInWalletMap.has(record.tokenId);
-        } catch (checkError) {
-            console.warn(`Could not verify on-chain ownership for staked NFT ${record.tokenId}:`, checkError.message);
-            isOwnerOnChain = false;
-        }
-
-        if (isOwnerOnChain) {
+        // Se o registro está ATIVO, ele vai para confirmedStakedNfts e contribui para recompensas.
+        if (record.isActive) {
             confirmedStakedNfts.push(record);
             totalAccumulatedRewards += record.accumulatedRewards;
-        } else {
-            // Se a NFT stakada não está mais na carteira do usuário, ela já será marcada como 'nft_transferred' pelo cron job ou pelo unstake manual.
-            // Apenas adicionamos à lista de automaticamenteUnstaked se ela já não estiver lá e o motivo for 'nft_transferred'.
-            // A desativação já é responsabilidade do cron job/backend.
-             if (record.unStakedReason === 'nft_transferred') {
-                 // Já foi adicionado acima, mas garante que não há duplicação se o filtro foi menos rigoroso.
-                 // A lógica correta é que 'automaticallyUnstaked' já pegou ambas as razões.
-             }
+        } else if (record.unStakedReason === 'listed_on_marketplace' || record.unStakedReason === 'nft_transferred') {
+            // Se o registro está INATIVO E TEM UM MOTIVO de deslistagem automática, vai para automaticallyUnstaked.
+            automaticallyUnstaked.push(record);
         }
+        // Registros inativos sem motivo de deslistagem automática (ex: manual unstake) são ignorados aqui
+        // pois não precisam de aviso e não afetam a lógica de "staked".
     }
 
-    // --- NOVO: Exibir mensagens para NFTs automaticamente deslistadas ---
+    // --- Exibir mensagens para NFTs automaticamente deslistadas ---
     const autoUnstakedList = document.getElementById('auto-unstaked-list');
     if (automaticallyUnstaked.length > 0) {
         autoUnstakedMessageContainer.classList.remove('hidden');
@@ -1361,7 +1346,7 @@ async function renderStakingDashboard() {
     // ✨ RENDERIZAÇÃO DAS NFTs STAKADAS (apenas as CONFIRMADAS ATIVAS)
     stakedNftsContainer.innerHTML = '';
     if (confirmedStakedNfts.length === 0) {
-      stakedNftsContainer.innerHTML = '<p class="text-gray-400">No NFTs currently staked or found in your wallet.</p>';
+      stakedNftsContainer.innerHTML = '<p class="text-gray-400">No NFTs currently staked.</p>';
     } else {
       confirmedStakedNfts.forEach(record => {
         let stakedImageUrl = "nft-placeholder.png";
@@ -1373,49 +1358,43 @@ async function renderStakingDashboard() {
       });
     }
 
-    // ✨ RENDERIZAÇÃO DAS NFTs NA CARTEIRA (UNSTAKED)
+    // ✨ RENDERIZAÇÃO DAS NFTs NA CARTEIRA (UNSTAKED e DISPONÍVEIS PARA STAKING)
     walletNftsContainer.innerHTML = '';
-    // Filtra para mostrar apenas NFTs que estão na carteira e NÃO ESTÃO ATIVAMENTE stakadas,
-    // E que não foram automaticamente deslistadas (para evitar que reapareçam aqui como "unstaked e prontos pra stakar" se o motivo foi por regra).
-    const unstakedNfts = nftsInWallet.filter(nft => 
-        !confirmedStakedNfts.some(s => s.tokenId === nft.tokenId) && 
-        !automaticallyUnstaked.some(au => au.tokenId === nft.tokenId) // Não renderiza como unstaked se foi deslistada automaticamente
-    );
+    // A lógica crucial aqui: um NFT está "unstaked" e disponível se ele está na carteira (nftsInWallet)
+    // E NÃO está ativamente stakado (não está em confirmedStakedNfts).
+    // O array automaticallyUnstaked é apenas para a mensagem de aviso, não para filtragem de disponibilidade.
+    const availableForStakingNfts = nftsInWallet.filter(nft => 
+    !confirmedStakedNfts.some(s => s.tokenId === nft.tokenId)
+);
 
-    if (unstakedNfts.length === 0 && confirmedStakedNfts.length === 0 && automaticallyUnstaked.length === 0) {
-      walletNftsContainer.innerHTML = '<p class="text-gray-400">No BlackByte NFTs found in your wallet.</p>'; // Mensagem ajustada
-    } else if (unstakedNfts.length === 0 && (confirmedStakedNfts.length > 0 || automaticallyUnstaked.length > 0)) {
-        if (confirmedStakedNfts.length > 0 && automaticallyUnstaked.length === 0) {
-            walletNftsContainer.innerHTML = '<p class="text-gray-400">All your NFTs are currently staked!</p>';
-        } else { // Há NFTs staked ativas E/OU automaticamente unstaked
-            // Esta mensagem pode ser mais geral ou omitida, pois as seções staked e unstaked já dão a informação
-            walletNftsContainer.innerHTML = '<p class="text-gray-400">All your NFTs are either currently staked or were automatically un-staked.</p>';
-        }
-    } else {
-      unstakedNfts.forEach(nft => {
+    if (availableForStakingNfts.length === 0 && confirmedStakedNfts.length === 0) { // Se não tem nenhum NFT na carteira ou todos foram desativados
+      walletNftsContainer.innerHTML = '<p class="text-gray-400">No BlackByte NFTs found in your wallet or all are currently staked.</p>';
+    } else if (availableForStakingNfts.length === 0 && confirmedStakedNfts.length > 0) { // Se tem NFTs, mas todas estão stakadas
+      walletNftsContainer.innerHTML = '<p class="text-gray-400">All your NFTs are currently staked!</p>';
+    } else { // Há NFTs disponíveis para staking
+      availableForStakingNfts.forEach(nft => {
         const card = createStakingNftCard(nft.tokenId, false, 0, nft.imageUrl || "nft-placeholder.png");
         walletNftsContainer.appendChild(card);
       });
     }
 
+
     // Atualizar exibição de recompensas totais
     accumulatedRewardsDisplay.textContent = `${totalAccumulatedRewards.toLocaleString()} $BB`;
     if (totalAccumulatedRewards > 0) {
       claimAllRewardsBtn.disabled = false;
-      // Garante que o event listener seja adicionado apenas uma vez
       claimAllRewardsBtn.removeEventListener('click', handleClaimRewards);
       claimAllRewardsBtn.addEventListener('click', () => handleClaimRewards());
     } else {
       claimAllRewardsBtn.disabled = true;
     }
 
-
   } catch (error) {
-    console.error("Error rendering staking dashboard:", error);
+    console.error("Error rendering staking dashboard:", error); 
     showNotification("Error loading staking dashboard.", "error");
     walletNftsContainer.innerHTML = '<p class="text-red-400">Error loading NFTs.</p>';
     stakedNftsContainer.innerHTML = '<p class="text-red-400">Error loading staked NFTs.</p>';
-    autoUnstakedMessageContainer.classList.add('hidden'); // Esconde a mensagem de deslistados em caso de erro geral
+    autoUnstakedMessageContainer.classList.add('hidden');
   }
 }
 // NOVO: Função para criar o card de NFT (stake/unstake)

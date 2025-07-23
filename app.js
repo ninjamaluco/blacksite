@@ -1531,55 +1531,46 @@ async function loadAuctions() {
     elements.activeAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading active auctions...</p>';
     elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400">Loading ended auctions...</p>';
 
-    try {
-        const [activeResp, endedResp] = await Promise.all([ // Renomeie 'allResp' para 'endedResp'
+      try {
+        const [activeResp, allResp] = await Promise.all([
             fetch(`${BACKEND_URL}/auctions/active`),
-            fetch(`${BACKEND_URL}/auctions/ended`) // NOVO: Chama o endpoint para auctions finalizadas
+            // fetch(`${BACKEND_URL}/auctions/all`) // Manter ou remover, dependendo do uso
         ]);
 
-        if (!activeResp.ok || !endedResp.ok) { // Verifique ambos
-            throw new Error(`HTTP error! status active: ${activeResp.status} / ended: ${endedResp.status}`);
+         if (!activeResp.ok) {
+            throw new Error(`HTTP error! status: ${activeResp.status}`);
         }
 
         let activeAuctions = await activeResp.json();
-        let endedAuctions = await endedResp.json(); // NOVO: Obtém as auctions finalizadas
 
-        // ✨ NOVO CÓDIGO AQUI: Buscar detalhes da NFT para cada leilão (tanto ativos quanto finalizados)
-        // Você já tem este loop para activeAuctions. Você precisa duplicá-lo ou criar uma função auxiliar
-        // para buscar os detalhes do NFT e aplicá-lo a ambos os arrays.
-        const fetchNftDetailsForAuctions = async (auctionsArray) => {
-            for (let i = 0; i < auctionsArray.length; i++) {
-                const auction = auctionsArray[i];
-                try {
-                    const nftDetails = await fetch(`${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTMetadata/?contractAddress=${auction.nftContractAddress}&tokenId=${parseInt(auction.tokenId).toString(16)}`);
-                    const nftData = await nftDetails.json();
+        // ✨ NOVO CÓDIGO AQUI: Buscar detalhes da NFT para cada leilão
+        for (let i = 0; i < activeAuctions.length; i++) {
+            const auction = activeAuctions[i];
+            try {
+                // Reutilize a função getUserNftsInWallet para buscar detalhes da NFT,
+                // mas adapte-a para buscar um único NFT por tokenId e contractAddress
+                // Ou crie uma nova função auxiliar 'getNftDetailsFromAlchemy(contractAddress, tokenId)'
+                const nftDetails = await fetch(`${ALCHEMY_BASE_URL}${ALCHEMY_API_KEY}/getNFTMetadata/?contractAddress=${auction.nftContractAddress}&tokenId=${parseInt(auction.tokenId).toString(16)}`);
+                const nftData = await nftDetails.json();
 
-                    if (nftData && nftData.media && nftData.media.length > 0 && nftData.media[0].gateway) {
-                        auction.imageUrl = nftData.media[0].gateway;
-                        // Use o título da NFT, ou fallback para um nome genérico
-                        auction.name = nftData.title || `NFT #${auction.tokenId}`;
-                    } else {
-                        auction.imageUrl = "nft-placeholder.png";
-                        auction.name = `NFT #${auction.tokenId}`; // Fallback para o nome também
-                    }
-                } catch (nftFetchError) {
-                    console.error(`Error fetching NFT details for auction ${auction._id} (Token ID: ${auction.tokenId}):`, nftFetchError);
-                    auction.imageUrl = "nft-placeholder.png";
-                    auction.name = `NFT #${auction.tokenId}`; // Garante fallback em caso de erro
+                if (nftData && nftData.media && nftData.media.length > 0 && nftData.media[0].gateway) {
+                    auction.imageUrl = nftData.media[0].gateway;
+                    auction.name = nftData.title || `NFT #${auction.tokenId}`; // Usa o título da NFT, ou fallback
+                } else {
+                    auction.imageUrl = "nft-placeholder.png"; // Fallback
                 }
+            } catch (nftFetchError) {
+                console.error(`Error fetching NFT details for auction ${auction._id} (Token ID: ${auction.tokenId}):`, nftFetchError);
+                auction.imageUrl = "nft-placeholder.png"; // Garante fallback em caso de erro
             }
-            return auctionsArray;
-        };
-
-        activeAuctions = await fetchNftDetailsForAuctions(activeAuctions);
-        endedAuctions = await fetchNftDetailsForAuctions(endedAuctions); // Aplica para as auctions finalizadas também
+        }
 
         renderActiveAuctions(activeAuctions);
-        renderEndedAuctions(endedAuctions); // NOVO: Chama a função para renderizar as auctions finalizadas
+        // renderEndedAuctions(); // Implement this if you create a separate endpoint for ended auctions
     } catch (error) {
         console.error("Error loading auctions:", error);
         elements.activeAuctionsContainer.innerHTML = '<p class="text-red-400">Error loading auctions. Please try again later.</p>';
-        elements.endedAuctionsContainer.innerHTML = '<p class="text-red-400">Error loading ended auctions.</p>'; // Mensagem de erro para as finalizadas
+        elements.endedAuctionsContainer.innerHTML = ''; // Clear ended auctions on error
     }
 }
 
@@ -3090,41 +3081,6 @@ async function handleRaffleWinnerView() {
   }
 }
 
-// File: app.js
-// ... (existente renderActiveAuctions e createAuctionCard) ...
-function renderEndedAuctions(auctions) {
-    elements.endedAuctionsContainer.innerHTML = '';
-
-    if (auctions.length === 0) {
-        elements.endedAuctionsContainer.innerHTML = '<p class="text-gray-400 col-span-full">No ended auctions yet.</p>';
-        return;
-    }
-
-    auctions.forEach(auction => {
-        // Crie um card para leilões finalizados, talvez com um estilo diferente
-        const winnerDisplay = auction.highestBidder
-            ? `<p class="text-green-400 font-bold text-lg">WINNER: ${auction.highestBidder.substring(0, 6)}...${auction.highestBidder.substring(auction.highestBidder.length - 4)}</p>
-               <p class="text-gray-500 text-sm">Winning Bid: ${auction.currentBid.toLocaleString()} $BB</p>`
-            : `<p class="text-yellow-400 font-bold text-lg">No winner (no valid bids).</p>`;
-
-        const card = document.createElement("div");
-        card.className = "bb-card p-6 flex flex-col opacity-75"; // Um pouco opaco para indicar que terminou
-        card.innerHTML = `
-            <div class="raffle-image-wrapper">
-                <img src="${auction.imageUrl}" alt="${auction.name || `NFT #${auction.tokenId}`}" class="w-full h-full object-cover">
-            </div>
-            <h3 class="text-xl font-orbitron text-white mb-2">${auction.name || `NFT #${auction.tokenId}`}</h3>
-            <p class="text-sm text-gray-400 mb-3">${auction.description || 'Auction has ended.'}</p>
-            <div class="text-xs text-gray-500 mt-2 text-center mb-4">
-                <span class="text-blackbyte-red">AUCTION ENDED</span>
-            </div>
-            <div class="text-center mt-auto">
-                ${winnerDisplay}
-            </div>
-        `;
-        elements.endedAuctionsContainer.appendChild(card);
-    });
-}
 // ✨ NOVO: Oculta a seção de input de senha no próprio HTML se ela ainda existir
 // (Recomendado para remover completamente o HTML do input de senha, mas essa é uma solução rápida no JS)
 document.addEventListener("DOMContentLoaded", () => {

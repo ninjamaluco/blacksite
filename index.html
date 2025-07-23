@@ -766,7 +766,6 @@
                 </div>
             </div>
 
-            <!-- NEW: Auction Management Section -->
             <div class="mt-12">
                 <h3 class="text-2xl font-orbitron text-blackbyte-red mb-6">AUCTION MANAGEMENT</h3>
                 <div class="bb-card p-6">
@@ -897,19 +896,32 @@
                 </a>
             </div>
 
-            <div class="flex items-center space-x-2 sm:space-x-4"> <div id="wallet-info" class="flex items-center space-x-2 sm:space-x-4 hidden flex-wrap justify-end"> <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-4 sm:py-2 rounded-md mb-2 sm:mb-0"> <i class="fas fa-wallet text-blue-400 text-sm sm:text-base"></i>
-                        <span id="connected-wallet-address" class="font-bold text-white text-xs sm:text-sm">0x...</span>
+            <div class="flex items-center space-x-2 sm:space-x-4"> 
+                <button id="mobile-menu-button" class="sm:hidden bb-btn bb-btn-secondary px-3 py-2">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+
+                <div class="hidden sm:flex items-center space-x-2 sm:space-x-4">
+                    <div id="wallet-info" class="flex items-center space-x-2 sm:space-x-4 hidden flex-wrap justify-end"> 
+                        <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-4 sm:py-2 rounded-md mb-2 sm:mb-0"> 
+                            <i class="fas fa-wallet text-blue-400 text-sm sm:text-base"></i>
+                            <span id="connected-wallet-address" class="font-bold text-white text-xs sm:text-sm">0x...</span>
+                        </div>
+                        <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-6 sm:py-4 rounded-md mb-2 sm:mb-0"> 
+                            <i class="fas fa-coins text-yellow-400 text-sm sm:text-base"></i>
+                            <span id="points-counter" class="font-bold text-white text-xs sm:text-base"></span> 
+                        </div>
+                        <div id="user-avatar" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition"> 
+                            <span class="font-bold text-white text-md sm:text-lg">W</span>
+                        </div>
                     </div>
-                    <div class="flex items-center space-x-2 border border-gray-700 bg-blackbyte-gray px-2 py-1 sm:px-6 sm:py-4 rounded-md mb-2 sm:mb-0"> <i class="fas fa-coins text-yellow-400 text-sm sm:text-base"></i>
-                        <span id="points-counter" class="font-bold text-white text-xs sm:text-base"></span> 
-                    </div>
-                    <div id="user-avatar" class="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition"> <span class="font-bold text-white text-md sm:text-lg">W</span>
-                    </div>
+                    <button id="connect-wallet-button" class="bb-btn bb-btn-primary text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> 
+                        <i class="fas fa-wallet mr-1 sm:mr-2"></i> CONNECT
+                    </button>
+                    <button id="utilities-btn" class="bb-btn bb-btn-secondary ml-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> 
+                        <i class="fas fa-th-large mr-1"></i> UTILITIES
+                    </button>
                 </div>
-                <button id="connect-wallet-button" class="bb-btn bb-btn-primary text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> <i class="fas fa-wallet mr-1 sm:mr-2"></i> CONNECT
-                </button>
-                <button id="utilities-btn" class="bb-btn bb-btn-secondary ml-2 text-sm sm:text-base px-3 py-2 sm:px-4 sm:py-2"> <i class="fas fa-th-large mr-1"></i> UTILITIES
-                </button>
             </div>
         </div>
     </header>
@@ -1281,7 +1293,6 @@
             </div>
         </div>
 
-        <!-- NEW: Auctions Tab Content -->
         <div id="auctions" class="tab-content">
             <div id="auctions-content" class="hidden">
                 <h2 class="text-2xl font-orbitron text-blackbyte-red mb-6">NFT AUCTIONS</h2>
@@ -1336,11 +1347,29 @@
         <div class="utilities-overlay"></div>
         <nav class="utilities-nav">
             <ul>
-                <li data-target-tab="home">
-                    <span><i class="fas fa-home mr-2"></i> Home</span>
+                <li>
+                    <div id="wallet-info-mobile" class="flex flex-col space-y-2 mb-4 p-2 border border-gray-700 rounded-md bg-blackbyte-dark">
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-wallet text-blue-400"></i>
+                            <span id="connected-wallet-address" class="font-bold text-white text-sm">0x...</span>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <i class="fas fa-coins text-yellow-400"></i>
+                            <span id="points-counter" class="font-bold text-white text-sm"></span>
+                        </div>
+                        <div id="user-avatar-mobile" class="w-8 h-8 rounded-full bg-blackbyte-red flex items-center justify-center border-2 border-gray-700 cursor-pointer hover:opacity-80 transition">
+                            <span class="font-bold text-white text-md">W</span>
+                        </div>
+                    </div>
+                    <button id="connect-wallet-button-mobile" class="bb-btn bb-btn-primary w-full py-2">
+                        <i class="fas fa-wallet mr-2"></i> CONNECT
+                    </button>
                 </li>
                 <li id="util-my-account-item" style="display:none;" data-target-modal="my-account">
                     <span><i class="fas fa-user-circle mr-2"></i> My Account</span>
+                </li>
+                <li data-target-tab="home">
+                    <span><i class="fas fa-home mr-2"></i> Home</span>
                 </li>
                 <li>
                     <span><i class="fas fa-dice mr-2"></i> Games</span>
@@ -1358,7 +1387,6 @@
                 <li data-target-tab="raffles">
                     <span><i class="fas fa-ticket mr-2"></i> Raffles</span>
                 </li>
-                <!-- NEW: Auctions List Item -->
                 <li data-target-tab="auctions">
                     <span><i class="fas fa-gavel mr-2"></i> Auctions</span>
                 </li>
@@ -1375,6 +1403,26 @@
         </nav>
     </div>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const utilitiesSidebar = document.getElementById('utilities-sidebar');
+
+        if (mobileMenuButton && utilitiesSidebar) {
+            mobileMenuButton.addEventListener('click', function() {
+                // Reutilize a lógica de abertura/fechamento do sidebar que já existe no app.js
+                // A classe 'open' é o que o app.js usa para controlar a sidebar.
+                // Verifique se o app.js já definiu 'elements.utilitiesSidebar'
+                // ou se você precisa acessar diretamente o elemento aqui.
+                utilitiesSidebar.classList.toggle('open');
+            });
+        }
+
+        // Opcional: Se o seu app.js já tem um listener no elements.utilitiesBtn
+        // que abre o sidebar, e você quer que o botão "UTILITIES" do desktop
+        // ainda faça isso, o ID permanece o mesmo, então não precisa de alteração.
+        // Apenas certifique-se de que o mobileMenuButton é o único visível no mobile.
+    });</script>
     <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
     <script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/ethers@5.7.2/dist/ethers.umd.min.js"></script>

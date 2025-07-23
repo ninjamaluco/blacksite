@@ -1644,10 +1644,7 @@ function createAuctionCard(auction, auctionEnded) {
 }
 
 function startAuctionCountdown(endTime, timerElement, auctionId) {
-    // Adicione um mecanismo para parar o intervalo se o leilão não existir mais ou for atualizado por outra chamada
-    let auctionDataCache = null; // Cache para os dados do leilão, para evitar refetching constante
-
-    const interval = setInterval(async () => { // Torne a função async para poder usar await
+    const interval = setInterval(() => {
         const now = new Date().getTime();
         const distance = new Date(endTime).getTime() - now;
 
@@ -1659,8 +1656,7 @@ function startAuctionCountdown(endTime, timerElement, auctionId) {
                 bidButton.disabled = true;
                 bidButton.textContent = "AUCTION ENDED";
             }
-            // Não chame loadAuctions aqui, para evitar loops em cascata.
-            // O cron job no backend ou um refresh manual lidará com o estado final.
+            loadAuctions(); // Refresh to update status
             return;
         }
 
@@ -1670,95 +1666,7 @@ function startAuctionCountdown(endTime, timerElement, auctionId) {
         const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
         if (timerElement) timerElement.innerHTML = `${days}d ${hours}h ${minutes}m ${seconds}s`;
-
-        // *** NOVO CÓDIGO AQUI: Atualizar o estado do botão ***
-        // A cada 5 segundos (ou ajuste a frequência conforme necessário),
-        // busca os detalhes do leilão para atualizar o estado do botão
-        if (seconds % 5 === 0) { // Atualiza a cada 5 segundos para não sobrecarregar com requisições
-            try {
-                // Busca os detalhes mais recentes do leilão no backend
-                const updatedAuction = await apiRequest(`${BACKEND_URL}/auctions/${auctionId}`);
-                auctionDataCache = updatedAuction; // Atualiza o cache
-
-                // Chama a função para atualizar o card e o botão
-                updateSingleAuctionCard(auctionId, updatedAuction);
-
-            } catch (error) {
-                console.error(`Error refreshing auction ${auctionId} details:`, error);
-                // Em caso de erro, talvez desabilitar o botão temporariamente ou mostrar um aviso
-                const bidButton = document.getElementById(`place-bid-btn-${auctionId}`);
-                if (bidButton) {
-                    bidButton.disabled = true; // Desabilita o botão em caso de erro para evitar lances inválidos
-                    bidButton.textContent = "Error Updating...";
-                }
-            }
-        }
-        // *** FIM NOVO CÓDIGO ***
-
-    }, 1000); // Roda a cada segundo
-}
-// ✨ NOVA FUNÇÃO: Para atualizar um único card de leilão
-// ✨ NOVA FUNÇÃO: Para atualizar um único card de leilão
-// Esta função será chamada pelo timer para atualizar apenas o card relevante.
-function updateSingleAuctionCard(auctionId, updatedAuctionData) {
-    const cardElement = document.querySelector(`.bb-card[data-auction-id="${auctionId}"]`); // Se você adicionou data-auction-id ao card
-    if (!cardElement) {
-        // Se o card não for encontrado, significa que ele não está mais na tela ou foi removido.
-        // Não há necessidade de atualizar.
-        return;
-    }
-
-    // Encontre os elementos específicos dentro do card que precisam ser atualizados
-    const currentBidSpan = cardElement.querySelector('.text-blackbyte-red:last-of-type');
-    const highestBidderSpan = cardElement.querySelector('.text-xs.text-gray-500');
-    const bidInput = cardElement.querySelector(`#auction-bid-input-${auctionId}`);
-    const placeBidButton = cardElement.querySelector(`#place-bid-btn-${auctionId}`);
-    const nftImage = cardElement.querySelector('.raffle-image-wrapper img'); // Seleciona a imagem dentro do wrapper 
-    // Atualiza a imagem da NFT
-    if (nftImage && updatedAuctionData.imageUrl) { // Verifica se o elemento da imagem e a URL existem
-        nftImage.src = updatedAuctionData.imageUrl;
-        nftImage.alt = updatedAuctionData.name || `NFT #${updatedAuctionData.tokenId}`;
-    } else if (nftImage) {
-        // Fallback caso a imagem não venha por algum motivo, para evitar que fique vazia
-        nftImage.src = "nft-placeholder.png";
-        nftImage.alt = updatedAuctionData.name || `NFT #${updatedAuctionData.tokenId}`;
-    }
-
-    if (currentBidSpan) {
-        currentBidSpan.textContent = `${updatedAuctionData.currentBid.toLocaleString()} $BB`;
-    }
-    if (highestBidderSpan) {
-        if (updatedAuctionData.highestBidder) {
-            highestBidderSpan.innerHTML = `Highest Bidder: <span class="font-bold text-yellow-400">${updatedAuctionData.highestBidder.substring(0, 6)}...${updatedAuctionData.highestBidder.substring(updatedAuctionData.highestBidder.length - 4)}</span>`;
-        } else {
-            highestBidderSpan.textContent = 'No bids yet.';
-        }
-    }
-    if (bidInput) {
-        bidInput.min = updatedAuctionData.currentBid + 1;
-        bidInput.value = updatedAuctionData.currentBid + 1;
-    }
-
-    // Lógica para habilitar/desabilitar o botão (já deve estar correta)
-    let placeBidButtonDisabled = updatedAuctionData.status !== 'active' || updatedAuctionData.endTime < new Date();
-    let placeBidButtonText = "PLACE BID";
-
-    if (currentUser && updatedAuctionData.highestBidder && updatedAuctionData.highestBidder.toLowerCase() === currentUser.walletAddress.toLowerCase()) {
-        placeBidButtonDisabled = true;
-        placeBidButtonText = "YOU ARE HIGHEST BIDDER";
-    }
-
-    if (placeBidButton) {
-        placeBidButton.disabled = placeBidButtonDisabled;
-        placeBidButton.textContent = placeBidButtonText;
-        if (placeBidButtonDisabled) {
-            placeBidButton.classList.remove("bb-btn-primary");
-            placeBidButton.classList.add("bb-btn-secondary", "opacity-50");
-        } else {
-            placeBidButton.classList.remove("bb-btn-secondary", "opacity-50");
-            placeBidButton.classList.add("bb-btn-primary");
-        }
-    }
+    }, 1000);
 }
 
 async function handlePlaceBid(auctionId, bidAmount, buttonElement) {

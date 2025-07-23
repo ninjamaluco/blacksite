@@ -1608,7 +1608,7 @@ function createAuctionCard(auction, auctionEnded) {
     card.innerHTML = `
         <div class="raffle-image-wrapper">
         <img src="${auction.imageUrl}" alt="${auction.name || `NFT #${auction.tokenId}`}" class="w-full h-full object-cover">        </div>
-        <h3 class="text-xl font-orbitron text-white mb-2">NFT #${auction.tokenId}</h3>
+        <h3 class="text-xl font-orbitron text-white mb-2">${auction.name || `NFT #${auction.tokenId}`}</h3>
         <p class="text-sm text-gray-400 mb-3">Starting bid: <span class="font-bold text-green-400">${auction.minBid.toLocaleString()} $BB</span></p>
         
         <div class="flex justify-between items-center text-sm mb-2">
